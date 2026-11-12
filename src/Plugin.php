@@ -9,6 +9,13 @@ declare( strict_types=1 );
 
 namespace Formwerk;
 
+use Formwerk\Admin\EmailPage;
+use Formwerk\Rest\SmtpController;
+use Formwerk\Smtp\Log;
+use Formwerk\Smtp\Mailer;
+use Formwerk\Smtp\Settings;
+use Formwerk\Smtp\TestMail;
+
 /**
  * Wires the plugin's modules into WordPress.
  */
@@ -47,6 +54,35 @@ final class Plugin {
 		$this->booted = true;
 
 		add_action( 'init', array( $this, 'load_textdomain' ) );
+		add_action( 'plugins_loaded', array( $this, 'register_modules' ) );
+	}
+
+	/**
+	 * Builds the modules and registers their hooks.
+	 */
+	public function register_modules(): void {
+		$settings = new Settings();
+		$log      = new Log();
+
+		$log->register();
+		( new Mailer( $settings, $log ) )->register();
+
+		$controller = new SmtpController( $settings, $log, new TestMail( $settings, $log ) );
+		add_action( 'rest_api_init', array( $controller, 'register_routes' ) );
+
+		if ( is_admin() ) {
+			( new EmailPage( $settings ) )->register();
+		}
+	}
+
+	/**
+	 * Capability needed to manage the plugin.
+	 *
+	 * Mail settings control where password reset mails go. In a network, a site administrator
+	 * could use them to take over other accounts, so only network administrators may change them.
+	 */
+	public static function capability(): string {
+		return is_multisite() ? 'manage_network_options' : 'manage_options';
 	}
 
 	/**

@@ -3,6 +3,7 @@
 	<description>WordPress coding standards, adapted for PSR-4 class files.</description>
 
 	<file>formwerk.php</file>
+	<file>uninstall.php</file>
 	<file>src</file>
 	<file>tests</file>
 
@@ -11,7 +12,7 @@
 	<arg value="sp"/>
 	<arg name="parallel" value="8"/>
 
-	<config name="minimum_wp_version" value="6.4"/>
+	<config name="minimum_wp_version" value="6.6"/>
 	<config name="testVersion" value="8.1-"/>
 
 	<rule ref="WordPress">
@@ -36,6 +37,26 @@
 		</properties>
 	</rule>
 
+	<!-- PHPMailer's public properties are not snake_case. -->
+	<rule ref="WordPress.NamingConventions.ValidVariableName">
+		<properties>
+			<property name="allowed_custom_properties" type="array">
+				<element value="Host"/>
+				<element value="Port"/>
+				<element value="SMTPSecure"/>
+				<element value="SMTPAutoTLS"/>
+				<element value="SMTPAuth"/>
+				<element value="Username"/>
+				<element value="Password"/>
+				<element value="Timeout"/>
+				<element value="From"/>
+				<element value="Sender"/>
+				<element value="SMTPDebug"/>
+				<element value="Debugoutput"/>
+			</property>
+		</properties>
+	</rule>
+
 	<!-- Tests are plain PHPUnit: no doc blocks per test, no WordPress file-access rules. -->
 	<rule ref="Squiz.Commenting">
 		<exclude-pattern>tests/*</exclude-pattern>
@@ -46,4 +67,16 @@
 	<rule ref="WordPress.WP.AlternativeFunctions">
 		<exclude-pattern>tests/*</exclude-pattern>
 	</rule>
+	<rule ref="WordPress.PHP.DiscouragedPHPFunctions">
+		<exclude-pattern>tests/*</exclude-pattern>
+	</rule>
+	<!-- Test doubles mirror PHPMailer's naming. -->
+	<rule ref="WordPress.NamingConventions.ValidVariableName">
+		<exclude-pattern>tests/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.NamingConventions.ValidFunctionName">
+		<exclude-pattern>tests/*</exclude-pattern>
+	</rule>
+	<!-- Stand-ins for WordPress functions: global, unprefixed and incomplete on purpose. -->
+	<exclude-pattern>tests/stubs.php</exclude-pattern>
 </ruleset>
