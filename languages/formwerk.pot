@@ -1,0 +1,521 @@
+# Copyright (C) 2026 Tim Heinrichs
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Formwerk 0.1.0-dev\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/formwerk\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-11-12T17:20:50+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: formwerk\n"
+
+#. Plugin Name of the plugin
+#: formwerk.php
+msgid "Formwerk"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: formwerk.php
+msgid "https://github.com/timheinrichs/formwerk"
+msgstr ""
+
+#. Description of the plugin
+#: formwerk.php
+msgid "Forms and SMTP for WordPress: a form builder that cannot lose submission data, plus SMTP delivery for all site mail."
+msgstr ""
+
+#. Author of the plugin
+#: formwerk.php
+msgid "Tim Heinrichs"
+msgstr ""
+
+#. translators: 1: required PHP version, 2: running PHP version.
+#: formwerk.php:41
+#, php-format
+msgid "PHP %1$s or newer is required. This site runs PHP %2$s, so the plugin is inactive."
+msgstr ""
+
+#: formwerk.php:46
+msgid "The vendor folder is missing, so the plugin is inactive. Install the release ZIP from GitHub, or run \"composer install\" in the plugin folder."
+msgstr ""
+
+#: src/Admin/EmailPage.php:60
+#: src/Admin/EmailPage.php:70
+#: src/Admin/EmailPage.php:103
+msgid "Email delivery"
+msgstr ""
+
+#: src/Admin/EmailPage.php:71
+msgid "Email"
+msgstr ""
+
+#: src/Admin/EmailPage.php:91
+msgid "Emails from this website are currently not sent through your mail server, because its settings are incomplete or invalid. They are sent by the web server instead and may land in spam folders."
+msgstr ""
+
+#: src/Admin/EmailPage.php:93
+msgid "Check the email settings"
+msgstr ""
+
+#: src/Admin/EmailPage.php:107
+msgid "This page cannot be shown, because files of the Formwerk plugin are missing. If you do not maintain this website yourself, please contact the person who does."
+msgstr ""
+
+#: src/Admin/EmailPage.php:110
+msgid "For developers: install the release ZIP from GitHub, or run \"npm run build\" in the plugin folder."
+msgstr ""
+
+#: src/Admin/EmailPage.php:117
+msgid "This page needs JavaScript. Please enable it in your browser."
+msgstr ""
+
+#: src/Rest/SmtpController.php:157
+msgid "The settings were not saved, because the request contained no data."
+msgstr ""
+
+#: src/Rest/SmtpController.php:166
+msgid "The settings were not saved, because the database did not accept them. Please try again."
+msgstr ""
+
+#: src/Rest/SmtpController.php:173
+msgid "The settings were not saved. Please correct the marked fields."
+msgstr ""
+
+#: src/Rest/SmtpController.php:196
+msgid "Please enter a valid email address for the test."
+msgstr ""
+
+#. translators: %s: email address.
+#: src/Rest/SmtpController.php:252
+#, php-format
+msgid "The mail server accepted the test email for %s. Check that inbox, including the spam folder."
+msgstr ""
+
+#. translators: %s: email address.
+#: src/Rest/SmtpController.php:259
+#, php-format
+msgid "The web server took the test email for %s. No mail server is in use, so it may arrive late or land in the spam folder. Check that inbox."
+msgstr ""
+
+#: src/Rest/SmtpController.php:272
+msgid "The website could not reach the mail server. Check the server name and the port. If both are correct, ask your web host whether outgoing connections on this port are allowed."
+msgstr ""
+
+#: src/Rest/SmtpController.php:274
+msgid "The mail server did not accept the username or password. Enter both again. Some providers require a separate app password."
+msgstr ""
+
+#: src/Rest/SmtpController.php:276
+msgid "The secure connection failed. Try the other encryption type: STARTTLS normally uses port 587, SSL/TLS port 465."
+msgstr ""
+
+#: src/Rest/SmtpController.php:278
+msgid "The mail server did not accept the sender address. Use the address of the mailbox you log in with."
+msgstr ""
+
+#: src/Rest/SmtpController.php:280
+msgid "The test email was not sent."
+msgstr ""
+
+#: src/Rest/SmtpController.php:292
+msgid "Enter the server name without \"https://\", port or spaces, for example smtp.example.com."
+msgstr ""
+
+#: src/Rest/SmtpController.php:294
+msgid "Enter a port between 1 and 65535. Common ports are 587 and 465."
+msgstr ""
+
+#: src/Rest/SmtpController.php:296
+msgid "Choose one of the listed encryption types."
+msgstr ""
+
+#: src/Rest/SmtpController.php:298
+msgid "Enter the username of the mailbox, or switch off \"Server requires login\"."
+msgstr ""
+
+#: src/Rest/SmtpController.php:300
+msgid "Enter the password of the mailbox, or switch off \"Server requires login\"."
+msgstr ""
+
+#: src/Rest/SmtpController.php:302
+msgid "Enter a complete email address, for example info@example.com."
+msgstr ""
+
+#: src/Rest/SmtpController.php:304
+msgid "The value fixed in wp-config.php is not valid. Ask the person who maintains this website to correct it there."
+msgstr ""
+
+#: src/Rest/SmtpController.php:306
+msgid "This value is not valid."
+msgstr ""
+
+#: src/Smtp/Log.php:116
+msgid "Formwerk email log"
+msgstr ""
+
+#: src/Smtp/Mailer.php:167
+msgid "The saved mail server settings are incomplete or invalid. Emails are sent by the web server instead until this is corrected."
+msgstr ""
+
+#. translators: %s: site name.
+#: src/Smtp/TestMail.php:78
+#, php-format
+msgid "Formwerk test email from %s"
+msgstr ""
+
+#: src/Smtp/TestMail.php:81
+msgid "This is a test email from Formwerk."
+msgstr ""
+
+#: src/Smtp/TestMail.php:82
+msgid "If you can read this, your website can send email with the current settings."
+msgstr ""
+
+#: src/Smtp/TestMail.php:105
+msgid "Test email accepted by the mail server."
+msgstr ""
+
+#: src/Smtp/TestMail.php:106
+msgid "Test email handed to the web server (no mail server in use)."
+msgstr ""
+
+#: build/admin.js:1
+msgid "You have been logged out. Open a new tab, log in again, then come back and try again."
+msgstr ""
+
+#: build/admin.js:1
+msgid "Check your internet connection and try again."
+msgstr ""
+
+#. translators: 1: first email address, 2: number of further recipients.
+#: build/admin.js:2
+#, js-format
+msgid "%1$s and %2$d more"
+msgstr ""
+
+#: build/admin.js:2
+msgid "Show less"
+msgstr ""
+
+#: build/admin.js:2
+msgid "Show more"
+msgstr ""
+
+#: build/admin.js:2
+#: build/admin.js:6
+msgid "Try again"
+msgstr ""
+
+#: build/admin.js:2
+msgid "No failed emails so far. If an email from this website cannot be sent, it appears here with the reason. Test emails are listed too. Entries are removed after 30 days."
+msgstr ""
+
+#: build/admin.js:2
+#: build/admin.js:3
+msgid "Email log"
+msgstr ""
+
+#: build/admin.js:2
+msgid "Failed emails and test results, newest first"
+msgstr ""
+
+#: build/admin.js:2
+msgid "Time"
+msgstr ""
+
+#: build/admin.js:2
+msgid "Result"
+msgstr ""
+
+#: build/admin.js:2
+msgid "Recipient"
+msgstr ""
+
+#: build/admin.js:2
+msgid "Subject"
+msgstr ""
+
+#: build/admin.js:2
+msgid "Details"
+msgstr ""
+
+#: build/admin.js:2
+msgid "Sent"
+msgstr ""
+
+#: build/admin.js:2
+msgid "Failed"
+msgstr ""
+
+#. translators: %d: number of log entries.
+#: build/admin.js:3
+#, js-format
+msgid "Show all %d entries"
+msgstr ""
+
+#: build/admin.js:3
+msgid "Clear log"
+msgstr ""
+
+#: build/admin.js:3
+msgid "Delete all log entries?"
+msgstr ""
+
+#: build/admin.js:3
+msgid "This cannot be undone."
+msgstr ""
+
+#: build/admin.js:3
+msgid "Cancel"
+msgstr ""
+
+#: build/admin.js:3
+msgid "The log could not be cleared."
+msgstr ""
+
+#: build/admin.js:3
+msgid "Delete entries"
+msgstr ""
+
+#: build/admin.js:3
+msgid "Mail server (SMTP host)"
+msgstr ""
+
+#: build/admin.js:3
+msgid "Encryption"
+msgstr ""
+
+#: build/admin.js:3
+msgid "Port"
+msgstr ""
+
+#: build/admin.js:3
+msgid "Server requires login"
+msgstr ""
+
+#: build/admin.js:3
+msgid "Username"
+msgstr ""
+
+#: build/admin.js:3
+msgid "Password"
+msgstr ""
+
+#: build/admin.js:3
+msgid "Sender address"
+msgstr ""
+
+#: build/admin.js:3
+msgid "Sender name"
+msgstr ""
+
+#: build/admin.js:3
+msgid "Use this sender for every email"
+msgstr ""
+
+#: build/admin.js:3
+msgid "Error:"
+msgstr ""
+
+#: build/admin.js:3
+msgid "Fixed in wp-config.php."
+msgstr ""
+
+#. translators: %s: field label.
+#: build/admin.js:4
+#, js-format
+msgid "%s (required)"
+msgstr ""
+
+#. translators: %s: host name of the mail server.
+#: build/admin.js:5
+#, js-format
+msgid "Emails from this website are sent through %s."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Emails are currently not sent through the mail server, because the settings below are incomplete or invalid. The web server sends them instead, which often ends in spam folders."
+msgstr ""
+
+#: build/admin.js:5
+msgid "No mail server is set. Emails are sent by the web server, which often ends in spam folders."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Saved. Now send a test email below to check that the mail server accepts it."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Saved, but the mail server cannot be used yet. Emails are sent by the web server until this is corrected:"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Saved. No mail server is set, so emails are sent by the web server."
+msgstr ""
+
+#: build/admin.js:5
+msgid "The settings were not saved. Your entries are still here."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Some settings are fixed by the person who maintains this website (in the file wp-config.php). They are shown here but cannot be changed."
+msgstr ""
+
+#: build/admin.js:5
+msgid "The saved mail password can no longer be read. This can happen after the website was moved. Enter the password again in the “Password” field and save."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Mail server"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Emails sent through a real mailbox arrive more reliably and are less likely to land in spam. You get these details from your email provider."
+msgstr ""
+
+#: build/admin.js:5
+msgid "For example smtp.example.com. Leave empty to send email without a mail server."
+msgstr ""
+
+#: build/admin.js:5
+msgid "STARTTLS (usually port 587)"
+msgstr ""
+
+#: build/admin.js:5
+msgid "SSL/TLS (usually port 465)"
+msgstr ""
+
+#: build/admin.js:5
+msgid "None (not recommended)"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Follows the encryption. Change it only if your provider names a different port."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Almost every mail server does."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Often the full email address of the mailbox."
+msgstr ""
+
+#: build/admin.js:5
+msgid "A password is saved. Leave empty to keep it."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Stored encrypted in the database."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Note for developers: this website has no security keys in wp-config.php, so the key that protects the password lies in the same database. Add the keys, or set the password with the constant FORMWERK_SMTP_PASSWORD."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Sender"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Use the address of the mailbox above. Other addresses are often rejected or marked as spam."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Shown to recipients, for example the name of your website."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Also replaces senders that other plugins set. Switch this on if their emails are rejected."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Saving…"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Save settings"
+msgstr ""
+
+#: build/admin.js:5
+msgid "You have unsaved changes."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Copy details"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Copied."
+msgstr ""
+
+#: build/admin.js:5
+msgid "No mail server is set. The test is sent by the web server, the way WordPress sends email by default."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Sends a short email with the saved settings, so you can check that it arrives."
+msgstr ""
+
+#: build/admin.js:5
+msgid "The mail server settings above cannot be used yet. Until they are corrected, the test is sent by the web server and does not check the mail server."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Send a test email"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Save your changes first. The test always uses the saved settings."
+msgstr ""
+
+#: build/admin.js:5
+msgid "The test could not be started."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Send test to"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Sending…"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Send test email"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Conversation with the mail server (technical details)"
+msgstr ""
+
+#: build/admin.js:5
+msgid "Passwords and the email text are hidden. You can send these details to your email provider or developer."
+msgstr ""
+
+#: build/admin.js:5
+msgid "Conversation with the mail server"
+msgstr ""
+
+#. translators: %s: raw error message.
+#: build/admin.js:6
+#, js-format
+msgid "Error: %s"
+msgstr ""
+
+#: build/admin.js:6
+msgid "The settings could not be loaded."
+msgstr ""
+
+#: build/admin.js:6
+msgid "The log could not be loaded."
+msgstr ""
+
+#: build/admin.js:6
+msgid "Loading settings…"
+msgstr ""
