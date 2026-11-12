@@ -1,0 +1,21 @@
+# Files left out of the release ZIP.
+/.git
+/.github
+/node_modules
+/assets/src
+/tests
+/.phpunit.cache
+/.editorconfig
+/.gitignore
+/.distignore
+/composer.json
+/composer.lock
+/package.json
+/package-lock.json
+/phpcs.xml.dist
+/phpunit.xml.dist
+/webpack.config.js
+/CLAUDE.md
+/PLAN.md
+/PRODUCT.md
+/DESIGN.md

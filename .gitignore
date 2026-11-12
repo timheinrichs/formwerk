@@ -1,0 +1,11 @@
+/vendor/
+/node_modules/
+/build/
+/.phpunit.cache/
+/.phpcs-cache
+*.zip
+.DS_Store
+.env
+*.local.md
+# Local planning notes (contain site-specific details)
+/PLAN.md
