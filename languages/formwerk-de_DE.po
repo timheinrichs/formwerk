@@ -1,9 +1,5 @@
-# Copyright (C) 2026 Tim Heinrichs
-# This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Language: de_DE\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Project-Id-Version: Formwerk 0.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/formwerk\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
@@ -13,6 +9,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2026-11-12T17:20:50+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Language: de_DE\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: formwerk\n"
 
@@ -42,37 +40,38 @@ msgstr "Tim Heinrichs"
 msgid "PHP %1$s or newer is required. This site runs PHP %2$s, so the plugin is inactive."
 msgstr "PHP %1$s oder neuer wird benötigt. Diese Website läuft mit PHP %2$s, deshalb ist das Plugin inaktiv."
 
-#: formwerk.php:46
+#: formwerk.php:48
 msgid "The vendor folder is missing, so the plugin is inactive. Install the release ZIP from GitHub, or run \"composer install\" in the plugin folder."
 msgstr "Der Ordner „vendor“ fehlt, deshalb ist das Plugin inaktiv. Installiere das Release-ZIP von GitHub oder führe im Plugin-Ordner „composer install“ aus."
 
-#: src/Admin/EmailPage.php:60
-#: src/Admin/EmailPage.php:70
-#: src/Admin/EmailPage.php:103
+#: src/Admin/EmailPage.php:61
+#: src/Admin/EmailPage.php:92
 msgid "Email delivery"
 msgstr "E-Mail-Versand"
 
-#: src/Admin/EmailPage.php:71
+#: src/Admin/EmailPage.php:62
+#: src/Admin/SubmissionsTable.php:64
 msgid "Email"
 msgstr "E-Mail"
 
-#: src/Admin/EmailPage.php:91
+#: src/Admin/EmailPage.php:82
 msgid "Emails from this website are currently not sent through your mail server, because its settings are incomplete or invalid. They are sent by the web server instead and may land in spam folders."
 msgstr "E-Mails dieser Website werden gerade nicht über deinen Mailserver verschickt, weil seine Einstellungen unvollständig oder ungültig sind. Stattdessen verschickt sie der Webserver, und sie können im Spam landen."
 
-#: src/Admin/EmailPage.php:93
+#: src/Admin/EmailPage.php:84
+#: src/Admin/SubmissionsPage.php:368
 msgid "Check the email settings"
 msgstr "E-Mail-Einstellungen prüfen"
 
-#: src/Admin/EmailPage.php:107
+#: src/Admin/Screen.php:32
 msgid "This page cannot be shown, because files of the Formwerk plugin are missing. If you do not maintain this website yourself, please contact the person who does."
 msgstr "Diese Seite kann nicht angezeigt werden, weil Dateien des Plugins Formwerk fehlen. Wenn du die Website nicht selbst betreust, wende dich bitte an die Person, die das tut."
 
-#: src/Admin/EmailPage.php:110
+#: src/Admin/Screen.php:35
 msgid "For developers: install the release ZIP from GitHub, or run \"npm run build\" in the plugin folder."
 msgstr "Für Entwickler*innen: Installiere das Release-ZIP von GitHub oder führe im Plugin-Ordner „npm run build“ aus."
 
-#: src/Admin/EmailPage.php:117
+#: src/Admin/Screen.php:42
 msgid "This page needs JavaScript. Please enable it in your browser."
 msgstr "Diese Seite braucht JavaScript. Bitte aktiviere es in deinem Browser."
 
@@ -195,329 +194,1467 @@ msgid "Check your internet connection and try again."
 msgstr "Prüfe deine Internetverbindung und versuche es erneut."
 
 #. translators: 1: first email address, 2: number of further recipients.
-#: build/admin.js:2
+#: build/admin.js:21
 #, js-format
 msgid "%1$s and %2$d more"
 msgstr "%1$s und %2$d weitere"
 
-#: build/admin.js:2
+#: build/admin.js:21
 msgid "Show less"
 msgstr "Weniger anzeigen"
 
-#: build/admin.js:2
+#: build/admin.js:21
 msgid "Show more"
 msgstr "Mehr anzeigen"
 
-#: build/admin.js:2
-#: build/admin.js:6
+#: build/admin.js:11
+#: build/admin.js:16
+#: build/admin.js:21
+#: build/admin.js:25
 msgid "Try again"
 msgstr "Erneut versuchen"
 
-#: build/admin.js:2
+#: build/admin.js:21
 msgid "No failed emails so far. If an email from this website cannot be sent, it appears here with the reason. Test emails are listed too. Entries are removed after 30 days."
 msgstr "Bisher keine fehlgeschlagenen E-Mails. Kann eine E-Mail dieser Website nicht verschickt werden, erscheint sie hier mit dem Grund. Test-E-Mails stehen ebenfalls hier. Einträge werden nach 30 Tagen entfernt."
 
-#: build/admin.js:2
-#: build/admin.js:3
+#: build/admin.js:21
+#: build/admin.js:22
 msgid "Email log"
 msgstr "E-Mail-Protokoll"
 
-#: build/admin.js:2
+#: build/admin.js:21
 msgid "Failed emails and test results, newest first"
 msgstr "Fehlgeschlagene E-Mails und Testergebnisse, neueste zuerst"
 
-#: build/admin.js:2
+#: build/admin.js:21
 msgid "Time"
 msgstr "Zeit"
 
-#: build/admin.js:2
+#: build/admin.js:21
 msgid "Result"
 msgstr "Ergebnis"
 
-#: build/admin.js:2
+#: build/admin.js:21
 msgid "Recipient"
 msgstr "Empfänger*in"
 
-#: build/admin.js:2
+#: build/admin.js:15
+#: build/admin.js:18
+#: build/admin.js:21
 msgid "Subject"
 msgstr "Betreff"
 
-#: build/admin.js:2
+#: src/Admin/SubmissionsPage.php:393
+#: build/admin.js:21
 msgid "Details"
 msgstr "Details"
 
-#: build/admin.js:2
+#: src/Admin/SubmissionsTable.php:296
+#: build/admin.js:21
 msgid "Sent"
 msgstr "Verschickt"
 
-#: build/admin.js:2
+#: build/admin.js:21
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
 #. translators: %d: number of log entries.
-#: build/admin.js:3
+#: build/admin.js:22
 #, js-format
 msgid "Show all %d entries"
 msgstr "Alle %d Einträge anzeigen"
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "Clear log"
 msgstr "Protokoll leeren"
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "Delete all log entries?"
 msgstr "Alle Protokolleinträge löschen?"
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "This cannot be undone."
 msgstr "Das lässt sich nicht rückgängig machen."
 
-#: build/admin.js:3
+#: src/Admin/SubmissionsPage.php:469
+#: build/admin.js:15
+#: build/admin.js:22
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "The log could not be cleared."
 msgstr "Das Protokoll konnte nicht geleert werden."
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "Delete entries"
 msgstr "Einträge löschen"
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "Mail server (SMTP host)"
 msgstr "Mailserver (SMTP-Host)"
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "Encryption"
 msgstr "Verschlüsselung"
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "Port"
 msgstr "Port"
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "Server requires login"
 msgstr "Server verlangt Anmeldung"
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "Username"
 msgstr "Benutzername"
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "Password"
 msgstr "Passwort"
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "Sender address"
 msgstr "Absenderadresse"
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "Sender name"
 msgstr "Absendername"
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "Use this sender for every email"
 msgstr "Diesen Absender für jede E-Mail verwenden"
 
-#: build/admin.js:3
+#: build/admin.js:10
+#: build/admin.js:15
+#: build/admin.js:19
+#: build/admin.js:22
 msgid "Error:"
 msgstr "Fehler:"
 
-#: build/admin.js:3
+#: build/admin.js:22
 msgid "Fixed in wp-config.php."
 msgstr "In wp-config.php festgelegt."
 
 #. translators: %s: field label.
-#: build/admin.js:4
+#: build/admin.js:23
 #, js-format
 msgid "%s (required)"
 msgstr "%s (erforderlich)"
 
 #. translators: %s: host name of the mail server.
-#: build/admin.js:5
+#: build/admin.js:24
 #, js-format
 msgid "Emails from this website are sent through %s."
 msgstr "E-Mails dieser Website werden über %s verschickt."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Emails are currently not sent through the mail server, because the settings below are incomplete or invalid. The web server sends them instead, which often ends in spam folders."
 msgstr "E-Mails werden gerade nicht über den Mailserver verschickt, weil die Einstellungen unten unvollständig oder ungültig sind. Stattdessen verschickt sie der Webserver, und sie landen oft im Spam."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "No mail server is set. Emails are sent by the web server, which often ends in spam folders."
 msgstr "Es ist kein Mailserver eingetragen. E-Mails verschickt der Webserver, und sie landen oft im Spam."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Saved. Now send a test email below to check that the mail server accepts it."
 msgstr "Gespeichert. Verschicke jetzt unten eine Test-E-Mail, um zu prüfen, ob der Mailserver sie annimmt."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Saved, but the mail server cannot be used yet. Emails are sent by the web server until this is corrected:"
 msgstr "Gespeichert, aber der Mailserver kann noch nicht verwendet werden. Bis das korrigiert ist, verschickt der Webserver die E-Mails:"
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Saved. No mail server is set, so emails are sent by the web server."
 msgstr "Gespeichert. Es ist kein Mailserver eingetragen, E-Mails verschickt der Webserver."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "The settings were not saved. Your entries are still here."
 msgstr "Die Einstellungen wurden nicht gespeichert. Deine Eingaben sind noch da."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Some settings are fixed by the person who maintains this website (in the file wp-config.php). They are shown here but cannot be changed."
 msgstr "Einige Einstellungen hat die Person festgelegt, die diese Website betreut (in der Datei wp-config.php). Sie werden hier angezeigt, lassen sich aber nicht ändern."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "The saved mail password can no longer be read. This can happen after the website was moved. Enter the password again in the “Password” field and save."
 msgstr "Das gespeicherte E-Mail-Passwort kann nicht mehr gelesen werden. Das kann nach einem Umzug der Website passieren. Gib das Passwort im Feld „Passwort“ erneut ein und speichere."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Mail server"
 msgstr "Mailserver"
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Emails sent through a real mailbox arrive more reliably and are less likely to land in spam. You get these details from your email provider."
 msgstr "E-Mails, die über ein echtes Postfach verschickt werden, kommen zuverlässiger an und landen seltener im Spam. Die Angaben bekommst du von deinem E-Mail-Anbieter."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "For example smtp.example.com. Leave empty to send email without a mail server."
 msgstr "Zum Beispiel smtp.example.com. Leer lassen, um E-Mails ohne Mailserver zu verschicken."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "STARTTLS (usually port 587)"
 msgstr "STARTTLS (meist Port 587)"
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "SSL/TLS (usually port 465)"
 msgstr "SSL/TLS (meist Port 465)"
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "None (not recommended)"
 msgstr "Keine (nicht empfohlen)"
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Follows the encryption. Change it only if your provider names a different port."
 msgstr "Richtet sich nach der Verschlüsselung. Ändere ihn nur, wenn dein Anbieter einen anderen Port nennt."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Almost every mail server does."
 msgstr "Fast jeder Mailserver verlangt das."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Often the full email address of the mailbox."
 msgstr "Oft die vollständige E-Mail-Adresse des Postfachs."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "A password is saved. Leave empty to keep it."
 msgstr "Ein Passwort ist gespeichert. Leer lassen, um es zu behalten."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Stored encrypted in the database."
 msgstr "Wird verschlüsselt in der Datenbank gespeichert."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Note for developers: this website has no security keys in wp-config.php, so the key that protects the password lies in the same database. Add the keys, or set the password with the constant FORMWERK_SMTP_PASSWORD."
 msgstr "Hinweis für Entwickler*innen: Diese Website hat keine Sicherheitsschlüssel in wp-config.php. Der Schlüssel, der das Passwort schützt, liegt deshalb in derselben Datenbank. Ergänze die Schlüssel oder setze das Passwort über die Konstante FORMWERK_SMTP_PASSWORD."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Sender"
 msgstr "Absender"
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Use the address of the mailbox above. Other addresses are often rejected or marked as spam."
 msgstr "Verwende die Adresse des Postfachs oben. Andere Adressen werden oft abgelehnt oder als Spam markiert."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Shown to recipients, for example the name of your website."
 msgstr "Sehen die Empfänger*innen, zum Beispiel der Name deiner Website."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Also replaces senders that other plugins set. Switch this on if their emails are rejected."
 msgstr "Ersetzt auch Absender, die andere Plugins setzen. Schalte das ein, wenn deren E-Mails abgelehnt werden."
 
-#: build/admin.js:5
+#: build/admin.js:19
+#: build/admin.js:24
 msgid "Saving…"
 msgstr "Wird gespeichert …"
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Save settings"
 msgstr "Einstellungen speichern"
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "You have unsaved changes."
 msgstr "Du hast ungespeicherte Änderungen."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Copy details"
 msgstr "Details kopieren"
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Copied."
 msgstr "Kopiert."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "No mail server is set. The test is sent by the web server, the way WordPress sends email by default."
 msgstr "Es ist kein Mailserver eingetragen. Der Test wird vom Webserver verschickt, so wie WordPress E-Mails standardmäßig verschickt."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Sends a short email with the saved settings, so you can check that it arrives."
 msgstr "Verschickt eine kurze E-Mail mit den gespeicherten Einstellungen, damit du prüfen kannst, ob sie ankommt."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "The mail server settings above cannot be used yet. Until they are corrected, the test is sent by the web server and does not check the mail server."
 msgstr "Die Mailserver-Einstellungen oben können noch nicht verwendet werden. Bis sie korrigiert sind, verschickt der Webserver den Test, und der Mailserver wird dabei nicht geprüft."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Send a test email"
 msgstr "Test-E-Mail verschicken"
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Save your changes first. The test always uses the saved settings."
 msgstr "Speichere zuerst deine Änderungen. Der Test verwendet immer die gespeicherten Einstellungen."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "The test could not be started."
 msgstr "Der Test konnte nicht gestartet werden."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Send test to"
 msgstr "Test senden an"
 
-#: build/admin.js:5
+#: src/Frontend/Renderer.php:49
+#: build/admin.js:24
 msgid "Sending…"
 msgstr "Wird verschickt …"
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Send test email"
 msgstr "Test-E-Mail verschicken"
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Conversation with the mail server (technical details)"
 msgstr "Austausch mit dem Mailserver (technische Details)"
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Passwords and the email text are hidden. You can send these details to your email provider or developer."
 msgstr "Passwörter und der E-Mail-Text sind ausgeblendet. Du kannst diese Details an deinen E-Mail-Anbieter oder deine Entwickler*in schicken."
 
-#: build/admin.js:5
+#: build/admin.js:24
 msgid "Conversation with the mail server"
 msgstr "Austausch mit dem Mailserver"
 
 #. translators: %s: raw error message.
-#: build/admin.js:6
+#: build/admin.js:25
 #, js-format
 msgid "Error: %s"
 msgstr "Fehler: %s"
 
-#: build/admin.js:6
+#: build/admin.js:25
 msgid "The settings could not be loaded."
 msgstr "Die Einstellungen konnten nicht geladen werden."
 
-#: build/admin.js:6
+#: build/admin.js:25
 msgid "The log could not be loaded."
 msgstr "Das Protokoll konnte nicht geladen werden."
 
-#: build/admin.js:6
+#: build/admin.js:25
 msgid "Loading settings…"
 msgstr "Einstellungen werden geladen …"
+
+#: formwerk.php:46
+msgid "The PHP extension \"mbstring\" is missing, so the plugin is inactive. Please ask your web host to enable it."
+msgstr "Die PHP-Erweiterung „mbstring“ fehlt, deshalb ist das Plugin inaktiv. Bitte deinen Webhoster, sie einzuschalten."
+
+#: src/Admin/FormsPage.php:41
+#: src/Admin/FormsPage.php:49
+#: src/Admin/FormsPage.php:56
+#: src/Forms/FormRepository.php:40
+#: build/admin.js:11
+msgid "Forms"
+msgstr "Formulare"
+
+#: src/Admin/SubmissionsPage.php:86
+#: src/Admin/SubmissionsPage.php:102
+#: src/Admin/SubmissionsPage.php:288
+msgid "Submissions"
+msgstr "Einsendungen"
+
+#. translators: %s: number of emails.
+#: src/Admin/SubmissionsPage.php:95
+#, php-format
+msgid "%s email not sent"
+msgid_plural "%s emails not sent"
+msgstr[0] "%s E-Mail nicht verschickt"
+msgstr[1] "%s E-Mails nicht verschickt"
+
+#. translators: %s: number of emails.
+#: src/Admin/SubmissionsPage.php:133
+#, php-format
+msgid "%s notification email could not be sent. The submission is saved."
+msgid_plural "%s notification emails could not be sent. The submissions are saved."
+msgstr[0] "%s Benachrichtigung konnte nicht verschickt werden. Die Einsendung ist gespeichert."
+msgstr[1] "%s Benachrichtigungen konnten nicht verschickt werden. Die Einsendungen sind gespeichert."
+
+#: src/Admin/SubmissionsPage.php:143
+msgid "View submission"
+msgid_plural "View submissions"
+msgstr[0] "Einsendung ansehen"
+msgstr[1] "Einsendungen ansehen"
+
+#. translators: %s: number of submissions.
+#: src/Admin/SubmissionsPage.php:298
+#, php-format
+msgid "%s submission deleted."
+msgid_plural "%s submissions deleted."
+msgstr[0] "%s Einsendung gelöscht."
+msgstr[1] "%s Einsendungen gelöscht."
+
+#: src/Admin/SubmissionsPage.php:320
+#: src/Admin/SubmissionsPage.php:421
+msgid "All submissions"
+msgstr "Alle Einsendungen"
+
+#: src/Admin/SubmissionsPage.php:322
+msgid "Submission not found"
+msgstr "Einsendung nicht gefunden"
+
+#: src/Admin/SubmissionsPage.php:322
+msgid "This submission does not exist any more. It may have been deleted."
+msgstr "Diese Einsendung gibt es nicht mehr. Vielleicht wurde sie gelöscht."
+
+#: src/Admin/SubmissionsPage.php:327
+#: src/Admin/SubmissionsTable.php:214
+msgid "Send email again"
+msgstr "E-Mail erneut senden"
+
+#: src/Admin/SubmissionsPage.php:327
+#: src/Admin/SubmissionsTable.php:214
+msgid "Send email"
+msgstr "E-Mail senden"
+
+#. translators: %s: date and time.
+#: src/Admin/SubmissionsPage.php:334
+#, php-format
+msgid "Submission from %s"
+msgstr "Einsendung vom %s"
+
+#: src/Admin/SubmissionsPage.php:347
+msgid "The email was sent."
+msgstr "Die E-Mail wurde verschickt."
+
+#: src/Admin/SubmissionsPage.php:351
+msgid "The notification email for this submission was not sent. The submission itself is saved."
+msgstr "Die Benachrichtigung zu dieser Einsendung wurde nicht verschickt. Die Einsendung selbst ist gespeichert."
+
+#. translators: %s: error message.
+#: src/Admin/SubmissionsPage.php:358
+#, php-format
+msgid "Reason: %s"
+msgstr "Grund: %s"
+
+#: src/Admin/SubmissionsPage.php:373
+#: src/Submissions/Notifier.php:37
+msgid "Yes"
+msgstr "Ja"
+
+#: src/Admin/SubmissionsPage.php:374
+#: src/Submissions/Notifier.php:38
+msgid "No"
+msgstr "Nein"
+
+#: src/Admin/SubmissionsPage.php:395
+#: src/Admin/SubmissionsTable.php:62
+#: build/admin.js:11
+#: build/admin.js:18
+#: build/block.js:1
+msgid "Form"
+msgstr "Formular"
+
+#: src/Admin/SubmissionsPage.php:397
+msgid "Sent from"
+msgstr "Gesendet von"
+
+#: src/Admin/SubmissionsPage.php:399
+msgid "Language"
+msgstr "Sprache"
+
+#: src/Admin/SubmissionsPage.php:401
+msgid "Notification email"
+msgstr "Benachrichtigung"
+
+#: src/Admin/SubmissionsPage.php:408
+#: src/Admin/SubmissionsPage.php:464
+msgid "Delete submission"
+msgstr "Einsendung löschen"
+
+#: src/Admin/SubmissionsPage.php:420
+msgid "Nothing to delete"
+msgstr "Nichts zu löschen"
+
+#: src/Admin/SubmissionsPage.php:420
+msgid "These submissions do not exist any more."
+msgstr "Diese Einsendungen gibt es nicht mehr."
+
+#: src/Admin/SubmissionsPage.php:431
+msgid "Delete this submission?"
+msgstr "Diese Einsendung löschen?"
+
+#. translators: %s: number of submissions.
+#: src/Admin/SubmissionsPage.php:433
+#, php-format
+msgid "Delete %s submissions?"
+msgstr "%s Einsendungen löschen?"
+
+#: src/Admin/SubmissionsPage.php:436
+msgid "This submission will be deleted permanently. This cannot be undone."
+msgid_plural "These submissions will be deleted permanently. This cannot be undone."
+msgstr[0] "Diese Einsendung wird endgültig gelöscht. Das lässt sich nicht rückgängig machen."
+msgstr[1] "Diese Einsendungen werden endgültig gelöscht. Das lässt sich nicht rückgängig machen."
+
+#. translators: %s: number of further submissions.
+#: src/Admin/SubmissionsPage.php:449
+#, php-format
+msgid "and %s more"
+msgstr "und %s weitere"
+
+#. translators: %s: number of submissions.
+#: src/Admin/SubmissionsPage.php:466
+#, php-format
+msgid "Delete %s submissions"
+msgstr "%s Einsendungen löschen"
+
+#. translators: %s: form name.
+#: src/Admin/SubmissionsPage.php:495
+#: src/Admin/SubmissionsTable.php:244
+#, php-format
+msgid "%s (form deleted)"
+msgstr "%s (Formular gelöscht)"
+
+#: src/Admin/SubmissionsTable.php:61
+msgid "Received"
+msgstr "Eingegangen"
+
+#: src/Admin/SubmissionsTable.php:63
+msgid "Content"
+msgstr "Inhalt"
+
+#: src/Admin/SubmissionsTable.php:115
+msgid "No submissions match this filter."
+msgstr "Keine Einsendung passt zu diesem Filter."
+
+#: src/Admin/SubmissionsTable.php:118
+msgid "No submissions yet. As soon as someone sends one of your forms, the message appears here, even if its email could not be sent."
+msgstr "Noch keine Einsendungen. Sobald jemand eines deiner Formulare abschickt, erscheint die Nachricht hier, auch wenn die E-Mail dazu nicht verschickt werden konnte."
+
+#: src/Admin/SubmissionsTable.php:136
+msgid "All"
+msgstr "Alle"
+
+#: src/Admin/SubmissionsTable.php:143
+#: src/Admin/SubmissionsTable.php:225
+msgid "Email not sent"
+msgstr "E-Mail nicht verschickt"
+
+#: src/Admin/SubmissionsTable.php:157
+msgid "Delete permanently"
+msgstr "Endgültig löschen"
+
+#: src/Admin/SubmissionsTable.php:170
+msgid "Filter by form"
+msgstr "Nach Formular filtern"
+
+#: src/Admin/SubmissionsTable.php:172
+#: build/admin.js:19
+msgid "All forms"
+msgstr "Alle Formulare"
+
+#: src/Admin/SubmissionsTable.php:177
+msgid "Filter"
+msgstr "Filtern"
+
+#. translators: %s: date and time.
+#: src/Admin/SubmissionsTable.php:193
+#, php-format
+msgid "Select submission from %s"
+msgstr "Einsendung vom %s auswählen"
+
+#: src/Admin/SubmissionsTable.php:208
+msgid "View"
+msgstr "Ansehen"
+
+#: src/Admin/SubmissionsTable.php:220
+#: build/admin.js:14
+msgid "Delete"
+msgstr "Löschen"
+
+#: src/Admin/SubmissionsTable.php:299
+msgid "Sending was interrupted."
+msgstr "Der Versand wurde unterbrochen."
+
+#: src/Admin/SubmissionsTable.php:303
+msgid "Not sent"
+msgstr "Nicht verschickt"
+
+#: src/Admin/SubmissionsTable.php:308
+msgid "Being sent"
+msgstr "Wird verschickt"
+
+#. translators: {form} is a placeholder and must stay as it is.
+#: src/Forms/FormRepository.php:302
+msgid "New submission: {form}"
+msgstr "Neue Einsendung: {form}"
+
+#. translators: The words in braces are placeholders and must stay as they are.
+#: src/Forms/FormRepository.php:306
+msgid ""
+"{all_fields}\n"
+"\n"
+"--\n"
+"Sent with the form \"{form}\" on {page} ({date})."
+msgstr "{all_fields}\n\n--\nGesendet über das Formular „{form}“ auf {page} ({date})."
+
+#: src/Forms/FormRepository.php:323
+msgid "Send"
+msgstr "Senden"
+
+#: src/Forms/FormRepository.php:324
+msgid "Thank you. Your message has been sent."
+msgstr "Danke! Deine Nachricht wurde gesendet."
+
+#. translators: %d: form ID.
+#: src/Frontend/Controller.php:158
+#, php-format
+msgid "Formwerk: the form with the ID %d does not exist. Only you can see this note."
+msgstr "Formwerk: Das Formular mit der ID %d gibt es nicht. Nur du siehst diesen Hinweis."
+
+#: src/Frontend/Renderer.php:66
+msgid "Please leave this field empty"
+msgstr "Bitte dieses Feld leer lassen"
+
+#: src/Frontend/Renderer.php:153
+#: build/admin.js:2
+#: build/admin.js:16
+msgid "(required)"
+msgstr "(Pflichtfeld)"
+
+#: src/Frontend/Renderer.php:225
+#: build/admin.js:16
+msgid "Please choose"
+msgstr "Bitte auswählen"
+
+#: src/Rest/FormsController.php:164
+msgid "The form was not saved, because the request contained no data."
+msgstr "Das Formular wurde nicht gespeichert, weil die Anfrage keine Daten enthielt."
+
+#: src/Rest/FormsController.php:178
+msgid "The form was not saved. Please correct the points listed below."
+msgstr "Das Formular wurde nicht gespeichert. Bitte korrigiere die Punkte unten."
+
+#: src/Rest/FormsController.php:204
+#: src/Rest/FormsController.php:243
+msgid "This form no longer exists. It may have been deleted in another tab."
+msgstr "Dieses Formular gibt es nicht mehr. Vielleicht wurde es in einem anderen Tab gelöscht."
+
+#: src/Rest/FormsController.php:215
+msgid "Give the form a name, so you can find it again."
+msgstr "Gib dem Formular einen Namen, damit du es wiederfindest."
+
+#: src/Rest/FormsController.php:217
+msgid "Add at least one field that visitors can fill in."
+msgstr "Füge mindestens ein Feld hinzu, das Besucher*innen ausfüllen können."
+
+#: src/Rest/FormsController.php:219
+msgid "Give this field a label, so visitors know what to enter."
+msgstr "Gib diesem Feld eine Beschriftung, damit Besucher*innen wissen, was sie eintragen sollen."
+
+#: src/Rest/FormsController.php:221
+msgid "Add at least one option to choose from."
+msgstr "Füge mindestens eine Auswahlmöglichkeit hinzu."
+
+#: src/Rest/FormsController.php:223
+msgid "This field type is not supported. Remove the field and add it again."
+msgstr "Dieser Feldtyp wird nicht unterstützt. Entferne das Feld und füge es neu hinzu."
+
+#: src/Rest/FormsController.php:225
+msgid "A form can have at most 100 fields. Remove some fields."
+msgstr "Ein Formular kann höchstens 100 Felder haben. Entferne einige Felder."
+
+#: src/Rest/FormsController.php:227
+msgid "Enter the email address that should receive the submissions."
+msgstr "Gib die E-Mail-Adresse ein, an die die Einsendungen gehen sollen."
+
+#: src/Rest/FormsController.php:229
+msgid "Enter a subject for the notification email."
+msgstr "Gib einen Betreff für die Benachrichtigung ein."
+
+#: src/Rest/FormsController.php:231
+msgid "The email text is empty. Insert {all_fields} to send every field."
+msgstr "Der E-Mail-Text ist leer. Füge {all_fields} ein, um alle Felder zu senden."
+
+#: src/Rest/FormsController.php:233
+msgid "Enter complete email addresses, separated by commas, for example info@example.com."
+msgstr "Gib vollständige E-Mail-Adressen ein, durch Kommas getrennt, zum Beispiel info@example.com."
+
+#: src/Rest/FormsController.php:235
+msgid "Only fixed email addresses can be used here, no placeholders. A confirmation to the person who sent the form will follow in a later version."
+msgstr "Hier sind nur feste E-Mail-Adressen möglich, keine Platzhalter. Eine Bestätigung an die einsendende Person kommt in einer späteren Version."
+
+#. translators: %s: list of placeholders.
+#: src/Rest/FormsController.php:239
+#, php-format
+msgid "These placeholders do not match any field and would be sent as they are: %s. Remove them or insert a placeholder from the list."
+msgstr "Diese Platzhalter passen zu keinem Feld und würden so verschickt, wie sie dastehen: %s. Entferne sie oder füge einen Platzhalter aus der Liste ein."
+
+#: src/Rest/FormsController.php:245
+msgid "The form could not be saved. Please try again."
+msgstr "Das Formular konnte nicht gespeichert werden. Bitte versuche es erneut."
+
+#: src/Submissions/Handler.php:101
+msgid "This form no longer exists. Please reload the page."
+msgstr "Dieses Formular gibt es nicht mehr. Bitte lade die Seite neu."
+
+#: src/Submissions/Handler.php:110
+msgid "The form was open for too long. Please send it again; your entries are still here."
+msgstr "Das Formular war zu lange geöffnet. Bitte sende es noch einmal; deine Eingaben sind noch da."
+
+#: src/Submissions/Handler.php:122
+msgid "The form was not sent. Please check the marked fields."
+msgstr "Das Formular wurde nicht gesendet. Bitte prüfe die markierten Felder."
+
+#: src/Submissions/Handler.php:126
+msgid "That was very quick. Please wait a few seconds and send the form again."
+msgstr "Das ging sehr schnell. Bitte warte ein paar Sekunden und sende das Formular noch einmal."
+
+#: src/Submissions/Handler.php:131
+msgid "The form was not sent, because it contains too many links. Please remove some and send it again."
+msgstr "Das Formular wurde nicht gesendet, weil es zu viele Links enthält. Bitte entferne einige und sende es noch einmal."
+
+#: src/Submissions/Handler.php:136
+msgid "The form was not sent, because it looked like an automated message. Please reload the page and try again."
+msgstr "Das Formular wurde nicht gesendet, weil es wie eine automatische Nachricht aussah. Bitte lade die Seite neu und versuche es noch einmal."
+
+#: src/Submissions/Handler.php:148
+msgid "Several messages were just sent from your network. Please wait about 10 minutes and send the form again; your entries stay here."
+msgstr "Aus deinem Netzwerk wurden gerade mehrere Nachrichten gesendet. Bitte warte etwa 10 Minuten und sende das Formular dann noch einmal; deine Eingaben bleiben hier."
+
+#: src/Submissions/Handler.php:181
+msgid "Your message could not be saved. Please try again later or contact us another way."
+msgstr "Deine Nachricht konnte nicht gespeichert werden. Bitte versuche es später noch einmal oder melde dich auf einem anderen Weg."
+
+#: src/Submissions/Handler.php:216
+msgid "The form of this submission no longer exists, so its email cannot be sent again."
+msgstr "Das Formular dieser Einsendung gibt es nicht mehr, deshalb kann die E-Mail nicht erneut verschickt werden."
+
+#: src/Submissions/Messages.php:29
+msgid "Please tick this box to continue."
+msgstr "Bitte setze hier ein Häkchen, um fortzufahren."
+
+#: src/Submissions/Messages.php:32
+msgid "Please choose an option."
+msgstr "Bitte wähle eine Möglichkeit aus."
+
+#: src/Submissions/Messages.php:34
+msgid "Please fill in this field."
+msgstr "Bitte fülle dieses Feld aus."
+
+#: src/Submissions/Messages.php:36
+msgid "Please enter a complete email address, for example name@example.com."
+msgstr "Bitte gib eine vollständige E-Mail-Adresse ein, zum Beispiel name@example.com."
+
+#: src/Submissions/Messages.php:38
+msgid "Please enter a phone number using digits, for example 0221 123456."
+msgstr "Bitte gib eine Telefonnummer mit Ziffern ein, zum Beispiel 0221 123456."
+
+#: src/Submissions/Messages.php:40
+msgid "Please enter a number using digits only."
+msgstr "Bitte gib eine Zahl nur mit Ziffern ein."
+
+#: src/Submissions/Messages.php:42
+msgid "Please enter a valid date."
+msgstr "Bitte gib ein gültiges Datum ein."
+
+#: src/Submissions/Messages.php:44
+msgid "Please choose one of the listed options."
+msgstr "Bitte wähle eine der angebotenen Möglichkeiten."
+
+#. translators: %s: maximum number of characters.
+#: src/Submissions/Messages.php:48
+#, php-format
+msgid "This text is too long. Please shorten it to %s characters."
+msgstr "Dieser Text ist zu lang. Bitte kürze ihn auf %s Zeichen."
+
+#: src/Submissions/Messages.php:52
+msgid "Please check this field."
+msgstr "Bitte prüfe dieses Feld."
+
+#: src/Submissions/Notifier.php:53
+msgid "The form has no valid recipient address."
+msgstr "Das Formular hat keine gültige Empfängeradresse."
+
+#. translators: %s: error message.
+#: src/Submissions/Notifier.php:86
+#, php-format
+msgid "Sending stopped with an error: %s"
+msgstr "Der Versand brach mit einem Fehler ab: %s"
+
+#: src/Submissions/Notifier.php:93
+msgid "The mail system gave no reason."
+msgstr "Das Mailsystem hat keinen Grund genannt."
+
+#: src/Submissions/Store.php:102
+msgid "The database table for submissions could not be created, so forms cannot be sent. Please ask your web host whether the database user may create tables."
+msgstr "Die Datenbanktabelle für Einsendungen konnte nicht angelegt werden, deshalb lassen sich keine Formulare absenden. Bitte frag deinen Webhoster, ob der Datenbank-Benutzer Tabellen anlegen darf."
+
+#: build/admin.js:1
+msgid "Text (one line)"
+msgstr "Text (eine Zeile)"
+
+#: build/admin.js:1
+msgid "Email address"
+msgstr "E-Mail-Adresse"
+
+#: build/admin.js:1
+msgid "Phone number"
+msgstr "Telefonnummer"
+
+#: build/admin.js:1
+msgid "Text (several lines)"
+msgstr "Text (mehrere Zeilen)"
+
+#: build/admin.js:1
+msgid "Dropdown (choose one)"
+msgstr "Auswahlliste (eins wählen)"
+
+#: build/admin.js:1
+msgid "Options (choose one)"
+msgstr "Optionen (eins wählen)"
+
+#: build/admin.js:1
+msgid "Checkboxes (choose several)"
+msgstr "Kontrollkästchen (mehrere wählen)"
+
+#: build/admin.js:1
+msgid "Consent checkbox"
+msgstr "Einwilligung"
+
+#: build/admin.js:1
+msgid "Number"
+msgstr "Zahl"
+
+#: build/admin.js:1
+msgid "Date"
+msgstr "Datum"
+
+#: build/admin.js:1
+msgid "Heading or note"
+msgstr "Zwischenüberschrift oder Hinweis"
+
+#: build/admin.js:1
+msgid "Name"
+msgstr "Name"
+
+#: build/admin.js:1
+msgid "Message"
+msgstr "Nachricht"
+
+#: build/admin.js:1
+msgid "Your choice"
+msgstr "Deine Auswahl"
+
+#: build/admin.js:1
+msgid "Your choices"
+msgstr "Deine Auswahl (mehrere möglich)"
+
+#: build/admin.js:1
+msgid "I have read the privacy policy and agree."
+msgstr "Ich habe die Datenschutzerklärung gelesen und bin einverstanden."
+
+#: build/admin.js:1
+#: build/admin.js:10
+msgid "Heading"
+msgstr "Zwischenüberschrift"
+
+#: build/admin.js:1
+msgid "No suggestion"
+msgstr "Kein Vorschlag"
+
+#: build/admin.js:1
+msgid "Full name"
+msgstr "Vollständiger Name"
+
+#: build/admin.js:1
+msgid "First name"
+msgstr "Vorname"
+
+#: build/admin.js:1
+msgid "Last name"
+msgstr "Nachname"
+
+#: build/admin.js:1
+msgid "Company or organisation"
+msgstr "Firma oder Organisation"
+
+#: build/admin.js:1
+msgid "Street and number"
+msgstr "Straße und Hausnummer"
+
+#: build/admin.js:1
+msgid "Postcode"
+msgstr "Postleitzahl"
+
+#: build/admin.js:1
+msgid "Town or city"
+msgstr "Ort"
+
+#: build/admin.js:1
+msgid "Country"
+msgstr "Land"
+
+#: build/admin.js:1
+#: build/admin.js:6
+#: build/admin.js:17
+#: build/admin.js:18
+#: build/admin.js:20
+msgid "(no label)"
+msgstr "(ohne Beschriftung)"
+
+#. translators: %s: field label.
+#: build/admin.js:2
+#, js-format
+msgid "Move “%s” (drag, or press Space and use the arrow keys)"
+msgstr "„%s“ verschieben (ziehen oder Leertaste und Pfeiltasten)"
+
+#: build/admin.js:2
+msgid "Needs attention"
+msgstr "Bitte prüfen"
+
+#. translators: %s: field label.
+#: build/admin.js:3
+#, js-format
+msgid "Move “%s” up"
+msgstr "„%s“ nach oben"
+
+#. translators: %s: field label.
+#: build/admin.js:4
+#, js-format
+msgid "Move “%s” down"
+msgstr "„%s“ nach unten"
+
+#. translators: %s: field label.
+#: build/admin.js:5
+#, js-format
+msgid "Remove “%s”"
+msgstr "„%s“ entfernen"
+
+#. translators: 1: field label, 2: new position, 3: number of fields.
+#: build/admin.js:6
+#, js-format
+msgid "“%1$s” moved to position %2$d of %3$d."
+msgstr "„%1$s“ steht jetzt an Position %2$d von %3$d."
+
+#. translators: 1: field label, 2: position, 3: number of fields.
+#: build/admin.js:7
+#, js-format
+msgid "Picked up “%1$s” at position %2$d of %3$d. Use the arrow keys to move it, Space to drop it, Escape to cancel."
+msgstr "„%1$s“ an Position %2$d von %3$d aufgenommen. Mit den Pfeiltasten verschieben, mit der Leertaste ablegen, mit Escape abbrechen."
+
+#. translators: 1: field label, 2: position, 3: number of fields.
+#: build/admin.js:8
+#, js-format
+msgid "“%1$s” is now at position %2$d of %3$d."
+msgstr "„%1$s“ ist jetzt an Position %2$d von %3$d."
+
+#. translators: 1: field label, 2: position, 3: number of fields.
+#: build/admin.js:9
+#, js-format
+msgid "“%1$s” dropped at position %2$d of %3$d."
+msgstr "„%1$s“ an Position %2$d von %3$d abgelegt."
+
+#. translators: %s: field label.
+#: build/admin.js:10
+#, js-format
+msgid "Moving “%s” cancelled."
+msgstr "Verschieben von „%s“ abgebrochen."
+
+#: build/admin.js:10
+msgid "To move a field, press Space, use the arrow keys, then press Space again. Press Escape to cancel."
+msgstr "Zum Verschieben eines Felds die Leertaste drücken, mit den Pfeiltasten bewegen und erneut die Leertaste drücken. Mit Escape abbrechen."
+
+#: build/admin.js:10
+msgid "This form has no fields yet. Add the first one, for example a name or an email address."
+msgstr "Dieses Formular hat noch keine Felder. Füge das erste hinzu, zum Beispiel einen Namen oder eine E-Mail-Adresse."
+
+#: build/admin.js:10
+msgid "Add field"
+msgstr "Feld hinzufügen"
+
+#: build/admin.js:10
+msgid "Select a field in the list to change its settings."
+msgstr "Wähle ein Feld in der Liste aus, um seine Einstellungen zu ändern."
+
+#: build/admin.js:10
+msgid "The form can only be sent when this field is filled in."
+msgstr "Das Formular lässt sich nur absenden, wenn dieses Feld ausgefüllt ist."
+
+#: build/admin.js:10
+msgid "The form can only be sent when the box is ticked."
+msgstr "Das Formular lässt sich nur absenden, wenn das Häkchen gesetzt ist."
+
+#: build/admin.js:10
+msgid "The form can only be sent when an option is chosen."
+msgstr "Das Formular lässt sich nur absenden, wenn eine Möglichkeit gewählt ist."
+
+#: build/admin.js:10
+msgid "The sentence visitors agree to, shown next to the checkbox."
+msgstr "Der Satz, dem Besucher*innen zustimmen. Er steht neben dem Kästchen."
+
+#: build/admin.js:10
+msgid "Shown as a heading between the fields. May stay empty if you only need the text below."
+msgstr "Erscheint als Überschrift zwischen den Feldern. Kann leer bleiben, wenn du nur den Text darunter brauchst."
+
+#: build/admin.js:10
+msgid "Label"
+msgstr "Beschriftung"
+
+#: build/admin.js:10
+msgid "Text"
+msgstr "Text"
+
+#: build/admin.js:10
+msgid "Optional note for visitors, for example how to fill in the following fields."
+msgstr "Optionaler Hinweis für Besucher*innen, zum Beispiel wie die folgenden Felder auszufüllen sind."
+
+#: build/admin.js:10
+msgid "Options"
+msgstr "Auswahlmöglichkeiten"
+
+#: build/admin.js:10
+msgid "One option per line."
+msgstr "Eine Möglichkeit pro Zeile."
+
+#: build/admin.js:10
+msgid "Required"
+msgstr "Pflichtfeld"
+
+#: build/admin.js:10
+msgid "Help text"
+msgstr "Hilfetext"
+
+#: build/admin.js:10
+msgid "Optional. Shown between label and field, for example what the answer is used for."
+msgstr "Optional. Steht zwischen Beschriftung und Feld, zum Beispiel wofür die Angabe gebraucht wird."
+
+#: build/admin.js:10
+msgid "Example in the empty field"
+msgstr "Beispiel im leeren Feld"
+
+#: build/admin.js:10
+msgid "Optional. Disappears when someone starts typing, so do not put instructions here."
+msgstr "Optional. Verschwindet, sobald jemand tippt, daher keine Anleitungen hier eintragen."
+
+#: build/admin.js:10
+msgid "Width"
+msgstr "Breite"
+
+#: build/admin.js:10
+msgid "Full width"
+msgstr "Volle Breite"
+
+#: build/admin.js:10
+msgid "Half width (two fields side by side)"
+msgstr "Halbe Breite (zwei Felder nebeneinander)"
+
+#: build/admin.js:10
+msgid "On small screens every field uses the full width."
+msgstr "Auf kleinen Bildschirmen nutzt jedes Feld die volle Breite."
+
+#: build/admin.js:10
+msgid "Browser suggestion"
+msgstr "Vorschlag des Browsers"
+
+#: build/admin.js:10
+msgid "Lets browsers fill in the field with saved details of the visitor."
+msgstr "Browser können das Feld mit gespeicherten Angaben der Besucher*innen ausfüllen."
+
+#: build/admin.js:10
+msgid "To put this answer into the email text, use:"
+msgstr "Um diese Antwort in den E-Mail-Text zu übernehmen, verwende:"
+
+#: build/admin.js:10
+msgid "The look of the forms could not be loaded."
+msgstr "Das Aussehen der Formulare konnte nicht geladen werden."
+
+#: build/admin.js:10
+msgid "Look of the forms"
+msgstr "Aussehen der Formulare"
+
+#: build/admin.js:10
+msgid "Like the rest of the website"
+msgstr "Wie der Rest der Website"
+
+#: build/admin.js:10
+msgid "Fields and buttons look the way your theme designs them. Choose this first."
+msgstr "Felder und Buttons sehen so aus, wie dein Theme sie gestaltet. Wähle das zuerst."
+
+#: build/admin.js:10
+msgid "Formwerk’s own look"
+msgstr "Eigenes Aussehen von Formwerk"
+
+#: build/admin.js:10
+msgid "Fields and buttons get a plain, complete design. Choose this if the forms look unfinished with your theme."
+msgstr "Felder und Buttons bekommen eine schlichte, vollständige Gestaltung. Wähle das, wenn die Formulare mit deinem Theme unfertig aussehen."
+
+#: build/admin.js:10
+msgid "Saved. The forms on your website now use this look."
+msgstr "Gespeichert. Die Formulare auf deiner Website nutzen jetzt dieses Aussehen."
+
+#: build/admin.js:10
+msgid "The look was not changed."
+msgstr "Das Aussehen wurde nicht geändert."
+
+#: build/admin.js:10
+msgid "Save look"
+msgstr "Aussehen speichern"
+
+#: build/admin.js:10
+msgid "Shortcode copied"
+msgstr "Shortcode kopiert"
+
+#. translators: %s: shortcode.
+#: build/admin.js:11
+#, js-format
+msgid "Copy shortcode %s"
+msgstr "Shortcode %s kopieren"
+
+#: build/admin.js:11
+msgid "Copied"
+msgstr "Kopiert"
+
+#: build/admin.js:11
+msgid "Copy"
+msgstr "Kopieren"
+
+#: build/admin.js:11
+msgid "Shortcode copied."
+msgstr "Shortcode kopiert."
+
+#: build/admin.js:11
+msgid "The forms could not be loaded."
+msgstr "Die Formulare konnten nicht geladen werden."
+
+#: build/admin.js:11
+#: build/admin.js:16
+msgid "Add form"
+msgstr "Formular hinzufügen"
+
+#: build/admin.js:11
+msgid "Loading forms…"
+msgstr "Formulare werden geladen …"
+
+#: build/admin.js:11
+msgid "No forms yet"
+msgstr "Noch keine Formulare"
+
+#: build/admin.js:11
+msgid "A form collects messages from visitors, for example a contact request or a registration. Every message is saved here and sent to you by email."
+msgstr "Ein Formular sammelt Nachrichten von Besucher*innen, zum Beispiel eine Kontaktanfrage oder eine Anmeldung. Jede Nachricht wird hier gespeichert und dir per E-Mail geschickt."
+
+#: build/admin.js:11
+#: build/admin.js:12
+msgid "Shortcode"
+msgstr "Shortcode"
+
+#: build/admin.js:11
+#: build/admin.js:12
+msgid "Fields to fill in"
+msgstr "Felder zum Ausfüllen"
+
+#: build/admin.js:11
+#: build/admin.js:12
+msgid "Last changed"
+msgstr "Zuletzt geändert"
+
+#: build/admin.js:11
+msgid "Actions"
+msgstr "Aktionen"
+
+#. translators: %d: number of rejected spam attempts.
+#: build/admin.js:12
+#, js-format
+msgid "%d spam attempt rejected"
+msgid_plural "%d spam attempts rejected"
+msgstr[0] "%d Spam-Versuch abgewiesen"
+msgstr[1] "%d Spam-Versuche abgewiesen"
+
+#. translators: %s: form name.
+#: build/admin.js:13
+#, js-format
+msgid "Edit “%s”"
+msgstr "„%s“ bearbeiten"
+
+#: build/admin.js:13
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#. translators: %s: form name.
+#: build/admin.js:14
+#, js-format
+msgid "Delete “%s”"
+msgstr "„%s“ löschen"
+
+#: build/admin.js:14
+msgid "To show a form, paste its shortcode into a page, or add the “Formwerk form” block."
+msgstr "Um ein Formular anzuzeigen, füge seinen Shortcode in eine Seite ein oder verwende den Block „Formwerk-Formular“."
+
+#. translators: %s: form name.
+#: build/admin.js:15
+#, js-format
+msgid "Delete the form “%s”?"
+msgstr "Das Formular „%s“ löschen?"
+
+#: build/admin.js:15
+msgid "Pages that show this form will show nothing in its place. Submissions already received are kept. The form itself cannot be restored."
+msgstr "Seiten, die dieses Formular zeigen, zeigen an seiner Stelle nichts mehr. Bereits eingegangene Einsendungen bleiben erhalten. Das Formular selbst lässt sich nicht wiederherstellen."
+
+#: build/admin.js:15
+msgid "The form was not deleted."
+msgstr "Das Formular wurde nicht gelöscht."
+
+#: build/admin.js:15
+msgid "Delete form"
+msgstr "Formular löschen"
+
+#: build/admin.js:15
+msgid "Every submission is saved under “Submissions” and also sent to you by email. If the visitor entered an email address, a reply to that email goes straight to them."
+msgstr "Jede Einsendung wird unter „Einsendungen“ gespeichert und dir zusätzlich per E-Mail geschickt. Hat die Person eine E-Mail-Adresse angegeben, geht eine Antwort auf diese E-Mail direkt an sie."
+
+#: build/admin.js:15
+#: build/admin.js:18
+msgid "Send to"
+msgstr "Senden an"
+
+#: build/admin.js:15
+msgid "One or more email addresses, separated by commas."
+msgstr "Eine oder mehrere E-Mail-Adressen, durch Kommas getrennt."
+
+#: build/admin.js:15
+#: build/admin.js:18
+msgid "Email text"
+msgstr "E-Mail-Text"
+
+#: build/admin.js:15
+msgid "{all_fields} lists every field with its label. Keep it in the text and no answer can be missing from the email."
+msgstr "{all_fields} listet jedes Feld mit seiner Beschriftung auf. Lass es im Text, dann fehlt keine Antwort in der E-Mail."
+
+#: build/admin.js:15
+msgid "Insert placeholder"
+msgstr "Platzhalter einfügen"
+
+#: build/admin.js:15
+msgid "Insert a placeholder into subject or text"
+msgstr "Platzhalter in Betreff oder Text einfügen"
+
+#: build/admin.js:15
+msgid "All fields"
+msgstr "Alle Felder"
+
+#. translators: %s: field label.
+#: build/admin.js:16
+#, js-format
+msgid "Insert the answer to “%s”"
+msgstr "Antwort auf „%s“ einfügen"
+
+#: build/admin.js:16
+msgid "Form name"
+msgstr "Name des Formulars"
+
+#: build/admin.js:16
+msgid "Page address"
+msgstr "Adresse der Seite"
+
+#: build/admin.js:16
+msgid "Date and time"
+msgstr "Datum und Uhrzeit"
+
+#: build/admin.js:16
+msgid "Website name"
+msgstr "Name der Website"
+
+#: build/admin.js:16
+msgid "New fields get their own placeholder once the form is saved. “All fields” already includes them."
+msgstr "Neue Felder bekommen ihren eigenen Platzhalter, sobald das Formular gespeichert ist. „Alle Felder“ enthält sie schon."
+
+#: build/admin.js:16
+#: build/admin.js:19
+msgid "Preview"
+msgstr "Vorschau"
+
+#: build/admin.js:16
+msgid "Layout and wording as visitors see them. Fonts and colours follow your website. You can type here to try it; nothing is sent."
+msgstr "Aufbau und Texte, wie Besucher*innen sie sehen. Schrift und Farben richten sich nach deiner Website. Du kannst hier zum Ausprobieren tippen; es wird nichts gesendet."
+
+#: build/admin.js:16
+msgid "The form could not be loaded."
+msgstr "Das Formular konnte nicht geladen werden."
+
+#: build/admin.js:16
+msgid "Edit form"
+msgstr "Formular bearbeiten"
+
+#: build/admin.js:16
+msgid "Back to all forms"
+msgstr "Zurück zu allen Formularen"
+
+#: build/admin.js:16
+msgid "Loading form…"
+msgstr "Formular wird geladen …"
+
+#: build/admin.js:16
+msgid "Option 1"
+msgstr "Möglichkeit 1"
+
+#: build/admin.js:16
+msgid "Option 2"
+msgstr "Möglichkeit 2"
+
+#. translators: %s: field label.
+#: build/admin.js:17
+#: build/admin.js:20
+#, js-format
+msgid "Field “%s” removed."
+msgstr "Feld „%s“ entfernt."
+
+#. translators: 1: field label, 2: field type.
+#: build/admin.js:18
+#, js-format
+msgid "Field “%1$s” (%2$s)"
+msgstr "Feld „%1$s“ (%2$s)"
+
+#: build/admin.js:18
+#: build/admin.js:19
+msgid "Name of the form"
+msgstr "Name des Formulars"
+
+#: build/admin.js:18
+#: build/admin.js:19
+msgid "Fields"
+msgstr "Felder"
+
+#. translators: %s: tab title.
+#: build/admin.js:19
+#, js-format
+msgid "%s (needs attention)"
+msgstr "%s (bitte prüfen)"
+
+#: build/admin.js:19
+msgid "Unsaved changes"
+msgstr "Ungespeicherte Änderungen"
+
+#: build/admin.js:19
+msgid "All changes saved"
+msgstr "Alle Änderungen gespeichert"
+
+#: build/admin.js:19
+msgid "Not saved yet"
+msgstr "Noch nicht gespeichert"
+
+#: build/admin.js:19
+msgid "Form saved. To show it on your website, add the “Formwerk form” block to a page, or paste this shortcode:"
+msgstr "Formular gespeichert. Um es auf deiner Website zu zeigen, füge einer Seite den Block „Formwerk-Formular“ hinzu oder verwende diesen Shortcode:"
+
+#: build/admin.js:19
+msgid "Form saved."
+msgstr "Formular gespeichert."
+
+#: build/admin.js:19
+msgid "The form was not saved. Your changes are still here."
+msgstr "Das Formular wurde nicht gespeichert. Deine Änderungen sind noch da."
+
+#: build/admin.js:19
+msgid "Save form"
+msgstr "Formular speichern"
+
+#: build/admin.js:19
+msgid "For example “Contact” or “Course registration”"
+msgstr "Zum Beispiel „Kontakt“ oder „Kursanmeldung“"
+
+#: build/admin.js:19
+msgid "Only you see this name. It also appears in the notification email."
+msgstr "Nur du siehst diesen Namen. Er erscheint auch in der Benachrichtigung."
+
+#: build/admin.js:19
+msgid "All points are corrected. Save the form now."
+msgstr "Alle Punkte sind korrigiert. Speichere das Formular jetzt."
+
+#: build/admin.js:19
+msgid "Notification"
+msgstr "Benachrichtigung"
+
+#: build/admin.js:19
+msgid "Messages and spam protection"
+msgstr "Meldungen und Spamschutz"
+
+#: build/admin.js:19
+msgid "Show"
+msgstr "Anzeigen"
+
+#: build/admin.js:19
+msgid "Field settings"
+msgstr "Feldeinstellungen"
+
+#: build/admin.js:19
+msgid "Text on the send button"
+msgstr "Text auf dem Absende-Button"
+
+#: build/admin.js:19
+msgid "Message after sending"
+msgstr "Meldung nach dem Absenden"
+
+#: build/admin.js:19
+msgid "Replaces the form once a submission was saved. Say what happens next, for example when you will reply."
+msgstr "Ersetzt das Formular, sobald eine Einsendung gespeichert ist. Sag, wie es weitergeht, zum Beispiel wann du antwortest."
+
+#: build/admin.js:19
+msgid "Spam protection"
+msgstr "Spamschutz"
+
+#: build/admin.js:19
+msgid "Links allowed per submission"
+msgstr "Erlaubte Links pro Einsendung"
+
+#: build/admin.js:19
+msgid "Spam often contains many links. Submissions with more links than this are rejected with a note to the sender. 0 means no limit."
+msgstr "Spam enthält oft viele Links. Einsendungen mit mehr Links werden mit einem Hinweis an die Person abgewiesen. 0 bedeutet keine Begrenzung."
+
+#: build/admin.js:19
+msgid "Undo"
+msgstr "Rückgängig"
+
+#: build/admin.js:25
+msgid "Leave without saving?"
+msgstr "Ohne Speichern verlassen?"
+
+#: build/admin.js:25
+msgid "Your changes to this form have not been saved and will be lost."
+msgstr "Deine Änderungen an diesem Formular sind nicht gespeichert und gehen verloren."
+
+#: build/admin.js:25
+msgid "Discard changes"
+msgstr "Änderungen verwerfen"
+
+#: build/admin.js:25
+msgid "Keep editing"
+msgstr "Weiter bearbeiten"
+
+#: build/block.js:1
+msgid "Formwerk form"
+msgstr "Formwerk-Formular"
+
+#: build/block.js:1
+msgid "Shows a form you built with Formwerk."
+msgstr "Zeigt ein Formular, das du mit Formwerk gebaut hast."
+
+#: build/block.js:1
+msgid "contact"
+msgstr "Kontakt"
+
+#: build/block.js:1
+msgid "registration"
+msgstr "Anmeldung"
+
+#: build/block.js:1
+msgid "You are not allowed to choose a form. Ask an administrator to choose it for you."
+msgstr "Du darfst kein Formular auswählen. Bitte eine*n Administrator*in, es für dich auszuwählen."
+
+#: build/block.js:1
+msgid "The forms could not be loaded. Reload the page to try again."
+msgstr "Die Formulare konnten nicht geladen werden. Lade die Seite neu, um es noch einmal zu versuchen."
+
+#: build/block.js:1
+msgid "Choose a form"
+msgstr "Formular auswählen"
+
+#: build/block.js:1
+msgid "Choose the form to show here."
+msgstr "Wähle das Formular, das hier erscheinen soll."
+
+#: build/block.js:1
+msgid "The form chosen here was deleted. Choose another form, or remove this block."
+msgstr "Das hier gewählte Formular wurde gelöscht. Wähle ein anderes Formular oder entferne diesen Block."
+
+#: build/block.js:1
+msgid "There are no forms yet. Create one under Formwerk → Forms, then come back."
+msgstr "Es gibt noch keine Formulare. Lege unter Formwerk → Formulare eines an und komm dann zurück."
