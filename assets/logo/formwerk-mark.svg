@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="t">
+  <title id="t">formwerk</title>
+  <style>
+    .tile { fill: #1e1e1e; }
+    .field { fill: #ffffff; }
+    .sent { fill: #4ab866; }
+    @media (prefers-color-scheme: dark) {
+      .tile { fill: #ffffff; }
+      .field { fill: #1e1e1e; }
+      .sent { fill: #008a20; }
+    }
+  </style>
+  <rect class="tile" width="64" height="64" rx="14"/>
+  <!-- An "f" stacked from a full-width field, a half-width field and the submit button. -->
+  <rect class="field" x="17" y="15" width="30" height="9" rx="2.5"/>
+  <rect class="field" x="17" y="27.5" width="20" height="9" rx="2.5"/>
+  <rect class="sent" x="17" y="40" width="9" height="9" rx="2.5"/>
+</svg>

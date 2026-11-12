@@ -1,4 +1,9 @@
-# Formwerk
+<h1>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo/formwerk-logo-dark.svg">
+    <img src="assets/logo/formwerk-logo.svg" alt="Formwerk" width="279" height="64">
+  </picture>
+</h1>
 
 Forms and SMTP for WordPress.
 
