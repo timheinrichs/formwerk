@@ -3,7 +3,7 @@
  * Plugin Name:       Formwerk
  * Plugin URI:        https://github.com/timheinrichs/formwerk
  * Description:       Forms and SMTP for WordPress: a form builder that cannot lose submission data, plus SMTP delivery for all site mail.
- * Version:           0.1.0
+ * Version:           0.2.0-dev
  * Requires at least: 6.6
  * Requires PHP:      8.1
  * Author:            Tim Heinrichs
@@ -29,7 +29,7 @@ define( 'FORMWERK_MIN_PHP', '8.1' );
  *
  * The text is built when the notice is printed: translations must not be loaded this early.
  *
- * @param string $problem Either 'php' or 'vendor'.
+ * @param string $problem One of 'php', 'mbstring' or 'vendor'.
  */
 function formwerk_boot_notice( $problem ) {
 	add_action(
@@ -42,6 +42,8 @@ function formwerk_boot_notice( $problem ) {
 					FORMWERK_MIN_PHP,
 					PHP_VERSION
 				);
+			} elseif ( 'mbstring' === $problem ) {
+				$message = __( 'The PHP extension "mbstring" is missing, so the plugin is inactive. Please ask your web host to enable it.', 'formwerk' );
 			} else {
 				$message = __( 'The vendor folder is missing, so the plugin is inactive. Install the release ZIP from GitHub, or run "composer install" in the plugin folder.', 'formwerk' );
 			}
@@ -52,6 +54,11 @@ function formwerk_boot_notice( $problem ) {
 
 if ( version_compare( PHP_VERSION, FORMWERK_MIN_PHP, '<' ) ) {
 	formwerk_boot_notice( 'php' );
+	return;
+}
+
+if ( ! extension_loaded( 'mbstring' ) ) {
+	formwerk_boot_notice( 'mbstring' );
 	return;
 }
 
