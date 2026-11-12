@@ -3,7 +3,7 @@
  * Plugin Name:       Formwerk
  * Plugin URI:        https://github.com/timheinrichs/formwerk
  * Description:       Forms and SMTP for WordPress: a form builder that cannot lose submission data, plus SMTP delivery for all site mail.
- * Version:           0.1.0-dev
+ * Version:           0.1.0
  * Requires at least: 6.6
  * Requires PHP:      8.1
  * Author:            Tim Heinrichs
