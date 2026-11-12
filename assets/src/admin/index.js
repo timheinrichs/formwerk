@@ -5,10 +5,12 @@
 import domReady from '@wordpress/dom-ready';
 import { createRoot } from '@wordpress/element';
 
+import FormsScreen from './forms';
 import SmtpScreen from './smtp';
 import './admin.scss';
 
 const screens = {
+	forms: FormsScreen,
 	smtp: SmtpScreen,
 };
 

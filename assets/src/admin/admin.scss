@@ -1,3 +1,6 @@
+// The builder preview uses the same layout rules as the form on the website.
+@use "../frontend/frontend";
+
 // Layout only. Colours, type and controls come from WordPress (see DESIGN.md).
 // The one exception is the error red. It is the red of the WordPress notice,
 // so both match.
@@ -202,6 +205,403 @@ $error: #cc1818;
 
 	.formwerk-row {
 		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Forms: list and builder
+// ---------------------------------------------------------------------------
+
+.formwerk-forms,
+.formwerk-builder {
+	max-width: 1100px;
+	margin-top: 16px;
+}
+
+.formwerk-toolbar {
+	margin-bottom: 16px;
+}
+
+.formwerk-empty {
+	max-width: 60ch;
+	padding: 32px;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+
+	h2 {
+		margin-top: 0;
+	}
+
+	p {
+		margin-bottom: 20px;
+	}
+}
+
+.formwerk-form-table {
+	min-width: 720px;
+
+	th[scope="row"] {
+		font-weight: 600;
+	}
+}
+
+.formwerk-spam-count {
+	display: block;
+	margin-top: 4px;
+	font-weight: 400;
+}
+
+.formwerk-shortcode {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	align-items: center;
+}
+
+.formwerk-builder__bar {
+	// Save stays in view while the field list is long: under the admin bar.
+	position: sticky;
+	top: var(--wp-admin--admin-bar--height, 32px);
+	z-index: 20;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+	align-items: center;
+	justify-content: space-between;
+	margin: 0 0 16px;
+	padding: 8px 0;
+	background: #f0f0f1;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.formwerk-builder__save {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: center;
+}
+
+.formwerk-builder__title {
+	max-width: 560px;
+	margin-bottom: 20px;
+}
+
+.formwerk-builder .formwerk-notice {
+	margin-bottom: 16px;
+}
+
+.formwerk-tabs .components-tab-panel__tabs {
+	margin-bottom: 16px;
+	border-bottom: 1px solid #c3c4c7;
+}
+
+.formwerk-tab h2 {
+	margin: 0 0 12px;
+	font-size: 14px;
+}
+
+.formwerk-builder__columns {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: 32px;
+	align-items: start;
+}
+
+.formwerk-field-rows {
+	margin: 0 0 16px;
+	padding: 0;
+	list-style: none;
+}
+
+.formwerk-field-row {
+	display: flex;
+	gap: 4px;
+	align-items: center;
+	margin: 0 0 6px;
+	padding: 4px;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 2px;
+
+	&.is-selected {
+		border-color: var(--wp-admin-theme-color, #3858e9);
+		box-shadow: inset 4px 0 0 var(--wp-admin-theme-color, #3858e9);
+	}
+
+	&.has-error {
+		border-color: $error;
+	}
+
+	&.is-dragging {
+		position: relative;
+		z-index: 1;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+	}
+}
+
+.formwerk-field-row__handle,
+.formwerk-field-row__main {
+	margin: 0;
+	padding: 0;
+	color: inherit;
+	font: inherit;
+	text-align: left;
+	background: none;
+	border: 0;
+	border-radius: 2px;
+}
+
+.formwerk-field-row__handle {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 40px;
+	color: #50575e;
+	cursor: grab;
+	touch-action: none;
+}
+
+.formwerk-field-row__main {
+	flex: 1 1 auto;
+	min-width: 0;
+	padding: 4px 6px;
+	cursor: pointer;
+}
+
+.formwerk-field-row__handle:focus-visible,
+.formwerk-field-row__main:focus-visible {
+	outline: 2px solid var(--wp-admin-theme-color, #3858e9);
+	outline-offset: 1px;
+}
+
+.formwerk-field-row__label,
+.formwerk-field-row__type {
+	display: block;
+	overflow-wrap: anywhere;
+}
+
+.formwerk-field-row__label {
+	font-weight: 600;
+}
+
+.formwerk-field-row__required {
+	font-weight: 400;
+}
+
+.formwerk-field-row__type {
+	font-size: 12px;
+
+	strong {
+		color: $error;
+	}
+}
+
+.formwerk-field-row__actions {
+	display: flex;
+	flex: none;
+}
+
+// Removing sits apart from moving, so a slip of the finger does not
+// remove a field.
+.formwerk-field-row__remove {
+	margin-left: 8px;
+}
+
+.formwerk-builder__side {
+	// The settings stay next to the list while it scrolls.
+	position: sticky;
+	top: calc(var(--wp-admin--admin-bar--height, 32px) + 72px);
+	max-height: calc(100vh - var(--wp-admin--admin-bar--height, 32px) - 96px);
+	overflow-y: auto;
+	padding: 2px 4px 2px 2px;
+}
+
+.formwerk-switch {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 16px;
+}
+
+.formwerk-snackbar {
+	position: fixed;
+	bottom: 24px;
+	left: 50%;
+	z-index: 100000;
+	transform: translateX(-50%);
+}
+
+.formwerk-messages h3 {
+	margin: 12px 0 0;
+	font-size: 14px;
+}
+
+.formwerk-modal-actions--start {
+	justify-content: flex-start;
+	margin-top: 12px;
+}
+
+.formwerk-confirm-list {
+	max-width: 900px;
+	margin: 16px 0 24px;
+	padding-left: 18px;
+	list-style: disc;
+}
+
+.formwerk-unsent .button {
+	margin-top: 4px;
+}
+
+.formwerk-forms .formwerk-hint {
+	margin-top: 12px;
+}
+
+.formwerk-field-list .formwerk-intro {
+	margin-bottom: 16px;
+}
+
+.formwerk-field-settings__type {
+	margin: 0;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.formwerk-preview {
+	margin-top: 32px;
+	padding-top: 24px;
+	border-top: 1px solid #c3c4c7;
+}
+
+.formwerk-preview__title {
+	margin: 0 0 4px;
+	font-size: 14px;
+}
+
+.formwerk-preview__form {
+	max-width: 640px;
+	margin-top: 16px;
+	padding: 24px;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+}
+
+.formwerk-mail,
+.formwerk-messages {
+	max-width: 720px;
+}
+
+.formwerk-placeholders__title {
+	margin: 0 0 8px;
+	font-weight: 600;
+}
+
+.formwerk-placeholders__list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.formwerk-placeholders .formwerk-hint {
+	margin-top: 8px;
+}
+
+.formwerk-has-error .components-textarea-control__input:not(:focus) {
+	border-color: $error;
+	box-shadow: 0 0 0 1px $error;
+}
+
+.formwerk-appearance {
+	max-width: 720px;
+	margin-top: 32px;
+}
+
+.formwerk-appearance__notice {
+	margin: 16px 0 0;
+}
+
+// Submissions (server-rendered pages)
+.formwerk-detail {
+	max-width: 900px;
+	margin-top: 12px;
+
+	th {
+		width: 30%;
+		font-weight: 600;
+		vertical-align: top;
+	}
+
+	td {
+		overflow-wrap: anywhere;
+	}
+}
+
+.formwerk-detail-actions {
+	margin-top: 20px;
+}
+
+@media (max-width: 782px) {
+
+	.formwerk-builder__columns {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.formwerk-builder__side {
+		position: static;
+		max-height: none;
+		overflow: visible;
+	}
+
+	// On narrow screens each form is a small card instead of a wide table row.
+	.formwerk-form-table {
+		min-width: 0;
+
+		thead {
+			display: none;
+		}
+
+		tr,
+		th,
+		td {
+			display: block;
+			width: auto;
+		}
+
+		tr {
+			padding: 8px 12px;
+			border-bottom: 1px solid #dcdcde;
+		}
+
+		th,
+		td {
+			padding: 4px 0;
+		}
+
+		td[data-colname]::before {
+			content: attr(data-colname) ": ";
+			font-weight: 600;
+		}
+	}
+
+	.formwerk-forms .formwerk-table-wrap {
+		overflow-x: visible;
+	}
+
+	// Answers below their question, so long texts use the whole width.
+	.formwerk-detail {
+
+		tr,
+		th,
+		td {
+			display: block;
+			width: auto;
+		}
+
+		th {
+			padding-bottom: 0;
+		}
 	}
 }
 

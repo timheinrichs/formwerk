@@ -10,6 +10,16 @@ declare( strict_types=1 );
 namespace Formwerk;
 
 use Formwerk\Admin\EmailPage;
+use Formwerk\Admin\FormsPage;
+use Formwerk\Admin\SubmissionsPage;
+use Formwerk\Forms\FormRepository;
+use Formwerk\Frontend\Controller as FrontendController;
+use Formwerk\Frontend\Renderer;
+use Formwerk\Rest\FormsController;
+use Formwerk\Rest\SubmitController;
+use Formwerk\Submissions\Handler;
+use Formwerk\Submissions\Notifier;
+use Formwerk\Submissions\Store;
 use Formwerk\Rest\SmtpController;
 use Formwerk\Smtp\Log;
 use Formwerk\Smtp\Mailer;
@@ -21,7 +31,7 @@ use Formwerk\Smtp\TestMail;
  */
 final class Plugin {
 
-	public const VERSION = '0.1.0';
+	public const VERSION = '0.2.0-dev';
 
 	/**
 	 * Shared instance.
@@ -70,7 +80,22 @@ final class Plugin {
 		$controller = new SmtpController( $settings, $log, new TestMail( $settings, $log ) );
 		add_action( 'rest_api_init', array( $controller, 'register_routes' ) );
 
+		$forms = new FormRepository();
+		$forms->register();
+
+		$store = new Store();
+		$store->maybe_install();
+		$store->register();
+
+		$handler = new Handler( $forms, $store, new Notifier() );
+		( new FrontendController( $forms, $handler, new Renderer() ) )->register();
+
+		add_action( 'rest_api_init', array( new FormsController( $forms ), 'register_routes' ) );
+		add_action( 'rest_api_init', array( new SubmitController( $handler ), 'register_routes' ) );
+
 		if ( is_admin() ) {
+			( new FormsPage() )->register();
+			( new SubmissionsPage( $store, $forms, $handler ) )->register();
 			( new EmailPage( $settings ) )->register();
 		}
 	}
