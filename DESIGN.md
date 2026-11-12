@@ -3,7 +3,7 @@ name: formwerk
 description: Formulare und SMTP für WordPress – im Backend ein Teil von WordPress, im Frontend ein Teil des Themes.
 ---
 
-<!-- SEED: vor der Implementierung festgelegt (2026-11-12). Sobald Oberflächen existieren, mit `/impeccable document` die echten Tokens und Komponenten nachtragen. -->
+<!-- Stand: v0.2.0 (2026-11-12). Die Werte unten sind die umgesetzten; bei Änderungen am Code hier nachziehen. -->
 
 # Design System: formwerk
 
@@ -23,7 +23,8 @@ ungespeichert, Fehler), Erklärung dort, wo die Entscheidung fällt.
 
 - Backend ausschließlich aus `@wordpress/components` und den Mustern von wp-admin gebaut.
 - Frontend erbt Schrift, Farben und Button-Stil vom Theme; formwerk liefert Struktur und Zustände.
-- Ein eigenes Frontend-Styling ist pro Website einschaltbar. Sein Aussehen ist noch nicht festgelegt.
+- Ein eigenes Frontend-Styling („Formwerk’s own look“) ist pro Website einschaltbar: schlicht, ein Akzent, runde
+  Ecken, alles über `--formwerk-*` anpassbar.
 - Fehler sind die auffälligsten Elemente jeder Ansicht. Alles andere bleibt ruhig.
 
 ## Colors
@@ -36,13 +37,18 @@ formwerk definiert im Backend keine eigenen Farben.
   Info). Keine eigenen Statusfarben.
 - **Frontend, Standard:** `currentColor` und geerbte Werte. Rahmen und Hilfetexte leiten sich aus der Textfarbe ab
   (`color-mix` mit `currentColor`), damit sie auf hellen und dunklen Themes funktionieren.
-- **Frontend, Fehlerfarbe:** ein einziger eigener Wert, als CSS-Variable `--formwerk-error` überschreibbar.
-  `[Wert wird bei der Implementierung festgelegt; muss auf Weiß und auf Schwarz mindestens 4,5:1 erreichen oder je
-  Farbschema einen eigenen Wert bekommen]`
-- **Frontend, mitgeliefertes Styling:** `[Palette wird in Phase 3 festgelegt]`
+- **Frontend, Fehlerfarbe:** `--formwerk-error: color-mix(in srgb, #e0002b 65%, currentcolor)`. Rot gemischt mit
+  der Textfarbe des Themes: dunkelrot auf hellen, hellrot auf dunklen Themes (auf Weiß gemessen 8,8:1). Nicht vom
+  Farbschema des Systems abhängig machen; es sagt nichts über das Theme.
+- **Frontend, Hilfslinien:** `--formwerk-muted` (Textfarbe 72 %) für Hilfetexte und „(required)“,
+  `--formwerk-line` (Textfarbe 45 %) für Rahmen.
+- **Frontend, eigenes Styling:** `--formwerk-accent: #2b4acb` (Button, Kontrollkästchen, Fokusring am Button),
+  `--formwerk-on-accent: #fff`, `--formwerk-surface` (Textfarbe 4 %) als Feldhintergrund.
+- **Backend, Fehlerrot:** `#cc1818`, das Rot der WordPress-Notice. Nur für Fehlertext, Fehlerrahmen und
+  „Not sent“.
 
-**The Borrowed Color Rule.** Jede Farbe kommt von WordPress oder vom Theme. Die einzige Ausnahme ist die
-Fehlerfarbe im Frontend.
+**The Borrowed Color Rule.** Jede Farbe kommt von WordPress oder vom Theme. Ausnahmen sind die Fehlerfarbe und das
+einschaltbare eigene Styling.
 
 **The Never Color Alone Rule.** Ein Zustand wird nie nur über Farbe gezeigt. Fehler haben immer Text und ein Symbol,
 Pflichtfelder immer ein Wort oder Zeichen im Label.
@@ -52,38 +58,43 @@ Pflichtfelder immer ein Wort oder Zeichen im Label.
 - **Backend:** die Systemschrift von wp-admin, Größen und Gewichte aus `@wordpress/components`. Keine eigenen
   Schriftgrößen außerhalb dieser Skala.
 - **Frontend:** `font: inherit` für alle Felder und Buttons. Labels in der Fließtextgröße des Themes, Hilfetexte
-  und Fehlermeldungen relativ dazu (`[Faktor wird bei der Implementierung festgelegt, nicht kleiner als 0.875em]`).
-- **Frontend, mitgeliefertes Styling:** `[wird in Phase 3 festgelegt]`
+  und Fehlermeldungen in `0.9em`, Labels und Fehlermeldungen halbfett (600).
+- **Frontend, eigenes Styling:** ebenfalls `font: inherit`; nur der Button wird halbfett.
 
 **The 16px Floor Rule.** Eingabefelder im Frontend haben auf schmalen Bildschirmen mindestens 16px Schriftgröße,
 damit iOS beim Fokus nicht zoomt.
 
 ## Layout
 
-- **Backend, Builder:** das Muster des Block-Editors. Arbeitsfläche mit Feldliste und Vorschau, Einstellungen des
-  gewählten Felds in einer Seitenleiste rechts, Bereiche (Felder, Benachrichtigung, Bestätigung, Meldungen) als
-  Tabs. Speichern oben rechts, immer an derselben Stelle.
+- **Backend, Builder:** eine Leiste oben („← All forms“ links, Status und „Save form“ rechts) bleibt beim Scrollen
+  unter der Admin-Leiste stehen. Darunter der Name, dann Tabs (Felder, Benachrichtigung, Meldungen und Spamschutz).
+  Im Tab Felder links die Feldliste, rechts eine mitlaufende Spalte, umschaltbar zwischen Feldeinstellungen und
+  Vorschau.
 - **Backend, Listen und Einstellungen:** Standardseiten von wp-admin (`.wrap`, Seitentitel, `WP_List_Table`).
-- **Backend, schmal:** Unter der wp-admin-Schwelle von 782px rückt die Seitenleiste unter die Feldliste oder wird
-  zum einblendbaren Panel. Nichts scrollt horizontal.
+- **Backend, schmal:** Unter 782px rückt die Seitenspalte unter die Feldliste; die Auswahl eines Felds scrollt zu
+  seinen Einstellungen. Tabellen werden zu gestapelten Karten mit Spaltennamen. Nichts scrollt horizontal, außer
+  dem Mail-Protokoll in seinem eigenen, per Tastatur erreichbaren Rahmen.
 - **Frontend:** ein Raster mit zwei Spalten für die Feldbreiten „voll“ und „halb“. Unterhalb einer Breite des
-  Formular-Containers (Container Query, `[Schwelle wird bei der Implementierung festgelegt]`) sind alle Felder voll
-  breit. Reihenfolge immer Label, Hilfetext, Feld, Fehlermeldung.
-- **Abstände:** im Backend das 4px-Raster von WordPress (`[Stufen werden aus den verwendeten Komponenten
-  übernommen]`), im Frontend in `em`, damit sie mit der Schriftgröße des Themes mitwachsen.
+  Formular-Containers von 480px (Container Query) sind alle Felder voll breit. Reihenfolge immer Label, Hilfetext,
+  Feld, Fehlermeldung.
+- **Abstände:** im Backend das 4px-Raster von WordPress (8, 12, 16, 20, 24, 32px), im Frontend in `em`
+  (`--formwerk-gap: 1.25em` zwischen Feldern), damit sie mit der Schriftgröße des Themes mitwachsen.
 
 ## Elevation & Depth
 
 Flach. Im Backend entsteht Tiefe nur dort, wo WordPress-Komponenten sie mitbringen (`Popover`, `Modal`,
-`Snackbar`). Im Frontend gibt es keine Schatten; das mitgelieferte Styling entscheidet das in Phase 3 für sich.
+`Snackbar`) und an der mitlaufenden Builder-Leiste (eine Trennlinie, kein Schatten). Im Frontend gibt es keine
+Schatten, auch nicht im eigenen Styling.
 
 ## Shapes
 
 - **Backend:** Radien und Rahmen der WordPress-Komponenten, unverändert.
 - **Frontend, Standard:** formwerk setzt keinen Radius und keinen Rahmenstil, wenn das Theme Felder bereits
-  gestaltet. Fehlt ein Theme-Stil, gilt ein schlichter 1px-Rahmen aus der Textfarbe.
+  gestaltet. Fehlt ein Theme-Stil, gilt ein schlichter 1px-Rahmen aus `--formwerk-line` (per `:where()`, also
+  schwächer als jede Theme-Regel). Eigenes Styling: `--formwerk-radius: 6px` für Felder, Button und Meldungen.
 - **Fokus:** immer sichtbar. Im Backend der Fokusring von WordPress, im Frontend der des Themes; fehlt er, ein
-  Umriss von mindestens 2px mit Abstand zum Feld.
+  Umriss von mindestens 2px mit Abstand zum Feld. Am Button des eigenen Stylings in der Akzentfarbe, weil seine
+  Textfarbe weiß ist.
 
 ## Do's and Don'ts
 

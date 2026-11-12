@@ -20,6 +20,11 @@ Vor jedem Commit müssen `composer test`, `composer lint`, `npm run lint:js` und
 - `src/`: PHP, Namespace `Formwerk\`, PSR-4. Dateiname = Klassenname.
 - `assets/src/`: JS/SCSS-Quellen (React, `@wordpress/components`). `src/` gehört PHP, darum liegt JS hier.
   Einstiegspunkte stehen in `webpack.config.js`, Ausgabe nach `build/` (nicht versioniert).
+- `src/Forms/`: reine Logik (Schema, Validator, Placeholders, SpamGuard) plus FormRepository (Post-Type
+  `formwerk_form`, JSON in Post-Meta). `src/Submissions/`: Store (eigene Tabelle), Handler (einziger Weg jeder
+  Einsendung: Token → Validierung → Spam → Dedupe → Limits → speichern → Mail), Notifier, RateLimiter.
+  `src/Frontend/`: Renderer (HTML, ohne JS lauffähig) und Controller (Shortcode, Block, Weg ohne JS).
+  Platzhalter heißen englisch: `{all_fields}`, `{field:name}`, `{form}`, `{page}`, `{date}`, `{site}`.
 - `tests/Unit/`: PHPUnit ohne WordPress. Die wenigen benötigten WP-Funktionen sind in `tests/stubs.php` nachgebaut
   (Optionen im Speicher, Zustand über `Formwerk\Tests\WpState`). Logik (Validierung, Platzhalter, Spam-Token, Verschlüsselung) so
   schreiben, dass sie ohne WP-Funktionen testbar ist; WP-Aufrufe in dünne Klassen am Rand legen.
@@ -60,7 +65,8 @@ Nach Textänderungen erst `npm run build`, dann im Ordner `formwerk-dev` (`P=wp-
 1. `wp i18n make-pot $P $P/languages/formwerk.pot --exclude=vendor,node_modules,tests,assets/src`
 2. `wp i18n update-po $P/languages/formwerk.pot $P/languages`, danach neue Texte in `formwerk-de_DE.po` übersetzen
 3. `wp i18n make-mo $P/languages` und `wp i18n make-json $P/languages --no-purge`
-4. Die erzeugte JSON-Datei in `formwerk-de_DE-formwerk-admin.json` umbenennen (Name = Script-Handle; der
-   Hash-Name von `make-json` passt nicht zu `build/admin.js`).
+4. Die erzeugten JSON-Dateien nach dem Script-Handle benennen: Quelle `build/admin.js` (bzw. `build/a.js`) →
+   `formwerk-de_DE-formwerk-admin.json`, Quelle `build/block.js` → `formwerk-de_DE-formwerk-block.json`. Der
+   Hash-Name von `make-json` passt nicht zu den Handles. Das Frontend-Script hat keine eigenen Texte.
 
 Deutsch ist die du-Form (`de_DE`), gendersensibel mit Stern.
