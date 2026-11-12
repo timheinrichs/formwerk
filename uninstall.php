@@ -16,6 +16,25 @@ function formwerk_uninstall_site() {
 	delete_option( 'formwerk_smtp' );
 	delete_option( 'formwerk_mail_log' );
 	delete_transient( 'formwerk_smtp_broken_logged' );
+	delete_option( 'formwerk_db_version' );
+	delete_option( 'formwerk_frontend_style' );
+
+	global $wpdb;
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Dropping the plugin's own table; the name is built from the table prefix.
+	$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}formwerk_submissions" );
+
+	$formwerk_forms = get_posts(
+		array(
+			'post_type'      => 'formwerk_form',
+			// 'any' leaves out the trash and drafts that were never saved.
+			'post_status'    => array( 'publish', 'draft', 'pending', 'private', 'future', 'trash', 'auto-draft' ),
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+		)
+	);
+	foreach ( $formwerk_forms as $formwerk_form ) {
+		wp_delete_post( (int) $formwerk_form, true );
+	}
 }
 
 if ( is_multisite() ) {
