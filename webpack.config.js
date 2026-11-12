@@ -6,6 +6,8 @@ module.exports = {
 	...defaultConfig,
 	entry: {
 		admin: path.resolve( __dirname, 'assets/src/admin/index.js' ),
+		frontend: path.resolve( __dirname, 'assets/src/frontend/index.js' ),
+		block: path.resolve( __dirname, 'assets/src/block/index.js' ),
 	},
 	output: {
 		...defaultConfig.output,

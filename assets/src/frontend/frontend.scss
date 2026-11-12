@@ -1,0 +1,233 @@
+// Structure and states only. Type, colours and button style come from the
+// theme (see DESIGN.md). Everything sits inside :where() so that any theme
+// rule wins, and own values are --formwerk-* variables.
+
+:where(.formwerk-form) {
+	--formwerk-gap: 1.25em;
+	// Red mixed with the text colour: dark red on light themes, light red on
+	// dark ones. The system's colour scheme says nothing about the theme.
+	--formwerk-error: color-mix(in srgb, #e0002b 65%, currentcolor);
+	--formwerk-muted: color-mix(in srgb, currentcolor 72%, transparent);
+	--formwerk-line: color-mix(in srgb, currentcolor 45%, transparent);
+
+	container-type: inline-size;
+}
+
+// Honeypot: out of sight for people, still in the page for bots.
+.formwerk-form__hp {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+:where(.formwerk-form__fields) {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--formwerk-gap);
+}
+
+:where(.formwerk-field) {
+	grid-column: 1 / -1;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+// Two columns once the form itself is wide enough, whatever the screen is.
+@container (min-width: 480px) {
+
+	:where(.formwerk-field--half) {
+		grid-column: span 1;
+	}
+}
+
+:where(.formwerk-field__label) {
+	display: block;
+	margin: 0 0 0.35em;
+	padding: 0;
+	font-weight: 600;
+}
+
+:where(.formwerk-field__required) {
+	font-weight: 400;
+	color: var(--formwerk-muted);
+}
+
+:where(.formwerk-field__help) {
+	margin: 0 0 0.5em;
+	font-size: 0.9em;
+	color: var(--formwerk-muted);
+}
+
+:where(.formwerk-field) :where(input:not([type="checkbox"], [type="radio"]), select, textarea) {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 100%;
+	padding: 0.45em 0.6em;
+	font: inherit;
+	// Below 16px, iOS zooms into the field on focus.
+	font-size: max(1em, 16px);
+	// A plain frame for themes that leave fields unstyled.
+	// Any theme rule wins over :where().
+	border: 1px solid var(--formwerk-line);
+	border-radius: 0;
+}
+
+:where(.formwerk-field) :where(input[type="checkbox"], input[type="radio"]) {
+	width: 1.15em;
+	height: 1.15em;
+}
+
+:where(.formwerk-field__option) {
+	display: flex;
+	gap: 0.6em;
+	align-items: baseline;
+	min-height: 1.75em;
+	margin: 0 0 0.4em;
+}
+
+:where(.formwerk-field__option) :where(input) {
+	flex: none;
+	margin: 0;
+}
+
+:where(.formwerk-field__heading) {
+	margin: 0.5em 0 0;
+}
+
+:where(.formwerk-field__text) {
+	margin: 0.35em 0 0;
+}
+
+// Errors: a word, a mark and a line. Never colour alone.
+:where(.formwerk-field__error) {
+	margin: 0.4em 0 0;
+	font-size: 0.9em;
+	font-weight: 600;
+	color: var(--formwerk-error);
+}
+
+:where(.formwerk-field__error)::before {
+	content: "! ";
+}
+
+:where(.formwerk-field--error) :where(input:not([type="checkbox"], [type="radio"]), select, textarea) {
+	border-color: var(--formwerk-error);
+	outline: 1px solid var(--formwerk-error);
+	outline-offset: -2px;
+}
+
+:where(.formwerk-field--error) :where(input, select, textarea):focus-visible {
+	outline: 2px solid currentcolor;
+	outline-offset: 2px;
+}
+
+:where(.formwerk-form__status) {
+	margin: 0 0 var(--formwerk-gap);
+	padding: 0.9em 1.1em;
+	border: 2px solid var(--formwerk-error);
+}
+
+:where(.formwerk-form__status) :where(p) {
+	margin: 0;
+	font-weight: 600;
+}
+
+:where(.formwerk-form__status) :where(ul) {
+	margin: 0.6em 0 0;
+	padding-left: 1.2em;
+}
+
+:where(.formwerk-form__status, .formwerk-form__success, fieldset.formwerk-field):focus-visible {
+	outline: 2px solid currentcolor;
+	outline-offset: 3px;
+}
+
+:where(.formwerk-form__success) {
+	margin: 0;
+	padding: 0.9em 1.1em;
+	font-weight: 600;
+	white-space: pre-line;
+	border: 2px solid currentcolor;
+}
+
+:where(.formwerk-form__actions) {
+	margin-top: var(--formwerk-gap);
+}
+
+:where(.formwerk-form__submit[aria-disabled="true"]) {
+	opacity: 0.6;
+	cursor: progress;
+}
+
+:where(.formwerk-form__missing) {
+	padding: 0.75em 1em;
+	border: 1px dashed currentcolor;
+}
+
+// ---------------------------------------------------------------------------
+// Formwerk's own look. Off by default; switched on per website under
+// Formwerk → Forms. Adjust it with the --formwerk-* variables.
+// ---------------------------------------------------------------------------
+
+.formwerk-form--styled {
+	--formwerk-accent: #2b4acb;
+	--formwerk-on-accent: #fff;
+	--formwerk-radius: 6px;
+	--formwerk-surface: color-mix(in srgb, currentcolor 4%, transparent);
+}
+
+.formwerk-form--styled :where(input:not([type="checkbox"], [type="radio"]), select, textarea) {
+	padding: 0.7em 0.85em;
+	line-height: 1.4;
+	color: inherit;
+	background-color: var(--formwerk-surface);
+	border: 1px solid var(--formwerk-line);
+	border-radius: var(--formwerk-radius);
+}
+
+.formwerk-form--styled :where(input, select, textarea):focus-visible {
+	outline: 2px solid currentcolor;
+	outline-offset: 2px;
+}
+
+.formwerk-form--styled :where(input[type="checkbox"], input[type="radio"]) {
+	accent-color: var(--formwerk-accent);
+}
+
+// Without :where(): in the own look the button must win over the
+// theme's button style.
+.formwerk-form--styled .formwerk-form__submit {
+	padding: 0.8em 1.6em;
+	font: inherit;
+	font-weight: 600;
+	line-height: 1.2;
+	color: var(--formwerk-on-accent);
+	cursor: pointer;
+	background: var(--formwerk-accent);
+	border: 0;
+	border-radius: var(--formwerk-radius);
+}
+
+.formwerk-form--styled .formwerk-form__submit:hover {
+	filter: brightness(1.12);
+}
+
+// The button's text colour is white, so the ring takes the accent
+// colour instead.
+.formwerk-form--styled .formwerk-form__submit:focus-visible {
+	outline: 2px solid var(--formwerk-accent);
+	outline-offset: 3px;
+}
+
+.formwerk-form--styled :where(.formwerk-form__status, .formwerk-form__success) {
+	background-color: var(--formwerk-surface);
+	border-radius: var(--formwerk-radius);
+}
