@@ -2,7 +2,7 @@
 /.git
 /.github
 /node_modules
-/assets/src
+/assets
 /tests
 /.phpunit.cache
 /.editorconfig
@@ -19,3 +19,5 @@
 /PLAN.md
 /PRODUCT.md
 /DESIGN.md
+/bin
+/dist

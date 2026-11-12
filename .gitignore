@@ -9,3 +9,4 @@
 *.local.md
 # Local planning notes (contain site-specific details)
 /PLAN.md
+/dist/
