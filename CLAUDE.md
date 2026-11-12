@@ -20,17 +20,20 @@ Vor jedem Commit müssen `composer test`, `composer lint`, `npm run lint:js` und
 - `src/`: PHP, Namespace `Formwerk\`, PSR-4. Dateiname = Klassenname.
 - `assets/src/`: JS/SCSS-Quellen (React, `@wordpress/components`). `src/` gehört PHP, darum liegt JS hier.
   Einstiegspunkte stehen in `webpack.config.js`, Ausgabe nach `build/` (nicht versioniert).
-- `tests/Unit/`: PHPUnit ohne WordPress. Logik (Validierung, Platzhalter, Spam-Token, Verschlüsselung) so
+- `tests/Unit/`: PHPUnit ohne WordPress. Die wenigen benötigten WP-Funktionen sind in `tests/stubs.php` nachgebaut
+  (Optionen im Speicher, Zustand über `Formwerk\Tests\WpState`). Logik (Validierung, Platzhalter, Spam-Token, Verschlüsselung) so
   schreiben, dass sie ohne WP-Funktionen testbar ist; WP-Aufrufe in dünne Klassen am Rand legen.
 - `.distignore`: was nicht ins Release-ZIP kommt.
 
 ## Regeln
 
-- PHP ≥ 8.1, WordPress ≥ 6.4. `declare( strict_types=1 )` in jeder Datei unter `src/`.
+- PHP ≥ 8.1, WordPress ≥ 6.6. `declare( strict_types=1 )` in jeder Datei unter `src/`.
 - Quelltexte (Strings, Kommentare, Commits) auf Englisch, Textdomain `formwerk`. Deutsch kommt als Übersetzung
   in `languages/`.
 - Präfixe: Optionen, Hooks, Meta-Keys, Tabellen, REST-Namespace immer `formwerk`.
 - Jede Ausgabe escapen, jede Eingabe validieren und bereinigen, jede Admin-Aktion mit Capability-Check und Nonce.
+  Die Capability kommt immer aus `Plugin::capability()` (auf Multisite nur Netzwerk-Admins, weil die
+  Mail-Einstellungen auch Passwort-Reset-Mails umleiten können).
   Öffentliches Absenden nutzt das signierte Token statt Nonce (Seiten-Cache).
 - Die Version steht an drei Stellen: Header in `formwerk.php`, `Plugin::VERSION`, `package.json`.
   `VersionTest` schlägt fehl, wenn sie auseinanderlaufen.
@@ -45,5 +48,19 @@ Vor jedem Commit müssen `composer test`, `composer lint`, `npm run lint:js` und
 
 ## Lokal testen
 
-Das Plugin wird per Docker-Mount in ein lokales WordPress-Projekt eingebunden (http://localhost:8407),
-Mails landen in Mailpit (http://localhost:8025). Details in `PLAN.md` → „Lokale Entwicklung“.
+Die Testinstanz liegt außerhalb dieses Repos in `~/Repos/formwerk-dev` (eigener Docker-Stack, nicht versioniert):
+`bash ~/Repos/formwerk-dev/setup.sh` startet WordPress unter http://localhost:8480 und
+Mailpit unter http://localhost:8481. Dieses Repo ist dort als Plugin eingebunden. WP-CLI:
+`docker compose run --rm cli wp …` im Ordner `formwerk-dev`. Kein anderes WordPress-Projekt zum Testen benutzen.
+
+## Übersetzungen
+
+Nach Textänderungen erst `npm run build`, dann im Ordner `formwerk-dev` (`P=wp-content/plugins/formwerk`):
+
+1. `wp i18n make-pot $P $P/languages/formwerk.pot --exclude=vendor,node_modules,tests,assets/src`
+2. `wp i18n update-po $P/languages/formwerk.pot $P/languages`, danach neue Texte in `formwerk-de_DE.po` übersetzen
+3. `wp i18n make-mo $P/languages` und `wp i18n make-json $P/languages --no-purge`
+4. Die erzeugte JSON-Datei in `formwerk-de_DE-formwerk-admin.json` umbenennen (Name = Script-Handle; der
+   Hash-Name von `make-json` passt nicht zu `build/admin.js`).
+
+Deutsch ist die du-Form (`de_DE`), gendersensibel mit Stern.
