@@ -1,0 +1,211 @@
+// Layout only. Colours, type and controls come from WordPress (see DESIGN.md).
+// The one exception is the error red. It is the red of the WordPress notice,
+// so both match.
+$error: #cc1818;
+
+.formwerk-smtp {
+	max-width: 720px;
+	margin-top: 16px;
+}
+
+.formwerk-loading {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.formwerk-load-error {
+	margin: 16px 0 0;
+
+	p {
+		margin: 0 0 12px;
+	}
+}
+
+.formwerk-card {
+	margin-bottom: 24px;
+
+	h2 {
+		margin: 0;
+		font-size: 14px;
+	}
+}
+
+.formwerk-fields {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+
+	> .components-notice {
+		margin: 0;
+	}
+}
+
+.formwerk-intro,
+.formwerk-hint,
+.formwerk-state {
+	margin: 0;
+	max-width: 65ch;
+}
+
+.formwerk-state {
+	font-weight: 600;
+}
+
+.formwerk-row {
+	display: grid;
+	grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+	gap: 16px;
+	align-items: start;
+}
+
+.formwerk-inline-form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: flex-end;
+
+	> :first-child {
+		flex: 1 1 260px;
+	}
+}
+
+.formwerk-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	align-items: center;
+	margin-bottom: 16px;
+}
+
+.formwerk-notice {
+	margin-bottom: 32px;
+
+	// Receives focus after saving failed; show it like any other focused element.
+	&:focus-visible {
+		outline: 2px solid var(--wp-admin-theme-color, #3858e9);
+		outline-offset: 2px;
+	}
+
+	.components-notice {
+		margin: 0;
+	}
+
+	ul {
+		margin: 8px 0 0;
+		padding-left: 18px;
+		list-style: disc;
+	}
+}
+
+.formwerk-inline-notice {
+	margin: 0 0 16px;
+}
+
+// Errors: symbol, the word "Error:" and a border. Never colour alone.
+.formwerk-field-error {
+	display: inline-flex;
+	gap: 6px;
+	align-items: flex-start;
+	color: $error;
+	font-weight: 500;
+
+	svg {
+		flex: none;
+		margin-top: 1px;
+	}
+}
+
+// Fixed in wp-config.php: readable and focusable, but visibly not editable.
+.formwerk-is-locked .components-text-control__input {
+	background: #f0f0f0;
+	border-style: dashed;
+	cursor: default;
+}
+
+// Not while focused, so the WordPress focus ring stays visible.
+.formwerk-has-error {
+
+	.components-text-control__input:not(:focus),
+	.components-select-control__input:not(:focus) {
+		border-color: $error;
+		box-shadow: 0 0 0 1px $error;
+	}
+}
+
+.formwerk-debug {
+	margin-top: 8px;
+
+	summary {
+		cursor: pointer;
+	}
+
+	pre {
+		max-height: 320px;
+		margin: 8px 0 12px;
+		padding: 12px;
+		overflow: auto;
+		background: #fff;
+		border: 1px solid #c3c4c7;
+		font-size: 12px;
+		line-height: 1.5;
+		white-space: pre-wrap;
+		overflow-wrap: anywhere;
+	}
+
+	.formwerk-actions {
+		margin-bottom: 0;
+	}
+}
+
+// The table keeps a readable width and scrolls inside its wrapper on narrow
+// screens.
+.formwerk-table-wrap {
+	overflow-x: auto;
+}
+
+.formwerk-log {
+	min-width: 640px;
+
+	td {
+		vertical-align: top;
+		overflow-wrap: anywhere;
+	}
+
+	.formwerk-nowrap {
+		white-space: nowrap;
+		overflow-wrap: normal;
+	}
+}
+
+.formwerk-result {
+	font-weight: 600;
+
+	&.is-failed {
+		color: $error;
+	}
+}
+
+.formwerk-show-all {
+	margin-top: 12px;
+}
+
+.formwerk-modal-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	justify-content: flex-end;
+	margin-top: 24px;
+}
+
+@media (max-width: 600px) {
+
+	.formwerk-row {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+// Last, because these page-level notices are the most specific rule here.
+.formwerk-smtp > form > .components-notice {
+	margin: 0 0 16px;
+}
