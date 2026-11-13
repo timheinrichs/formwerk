@@ -13,6 +13,7 @@ use Formwerk\Forms\FormRepository;
 use Formwerk\Forms\Schema;
 use Formwerk\Forms\SpamGuard;
 use Formwerk\Forms\Validator;
+use Formwerk\I18n\Wpml;
 
 /**
  * The one path every submission takes, with or without JavaScript:
@@ -55,6 +56,13 @@ final class Handler {
 	private Notifier $notifier;
 
 	/**
+	 * Translations of the form texts.
+	 *
+	 * @var Wpml
+	 */
+	private Wpml $wpml;
+
+	/**
 	 * Counter for the limits.
 	 *
 	 * @var RateLimiter
@@ -68,12 +76,14 @@ final class Handler {
 	 * @param Store          $store    Submission storage.
 	 * @param Notifier       $notifier Mail sender.
 	 * @param RateLimiter    $limiter  Counter for the limits.
+	 * @param Wpml           $wpml     Translations of the form texts.
 	 */
-	public function __construct( FormRepository $forms, Store $store, Notifier $notifier, ?RateLimiter $limiter = null ) {
+	public function __construct( FormRepository $forms, Store $store, Notifier $notifier, ?RateLimiter $limiter = null, ?Wpml $wpml = null ) {
 		$this->forms    = $forms;
 		$this->store    = $store;
 		$this->notifier = $notifier;
 		$this->limiter  = $limiter ?? new RateLimiter();
+		$this->wpml     = $wpml ?? new Wpml();
 	}
 
 	/**
@@ -96,10 +106,31 @@ final class Handler {
 	 * @return array{status: string, http: int, message: string, errors: array<string, string>, values: array<string, mixed>, renew: bool}
 	 */
 	public function handle( int $form_id, array $request ): array {
+		// Answers to the visitor (errors, success) and the confirmation use the language of the page.
+		$language = Wpml::valid_language( $request['formwerk_lang'] ?? '' );
+
+		return Wpml::in_language(
+			$language,
+			fn(): array => $this->process( $form_id, $request, $language )
+		);
+	}
+
+	/**
+	 * Handles one submission in the visitor's language.
+	 *
+	 * @param int                  $form_id  Form ID.
+	 * @param array<string, mixed> $request  Unslashed request data.
+	 * @param string               $language WPML language code of the page, or ''.
+	 *
+	 * @return array{status: string, http: int, message: string, errors: array<string, string>, values: array<string, mixed>, renew: bool}
+	 */
+	private function process( int $form_id, array $request, string $language ): array {
 		$form = $this->forms->find( $form_id );
 		if ( null === $form ) {
 			return $this->result( self::FAILED, 404, __( 'This form no longer exists. Please reload the page.', 'formwerk' ) );
 		}
+		// What the visitor sees; $form itself stays in the default language for storing and the notification.
+		$shown  = $this->wpml->translate( $form );
 		$input  = isset( $request['fw'] ) && is_array( $request['fw'] ) ? $request['fw'] : array();
 		$result = Validator::validate( $form['fields'], $input );
 		$values = $result['values'];
@@ -140,7 +171,7 @@ final class Handler {
 		// it is stored already, so confirm it instead of storing it twice.
 		$attempt = $this->attempt_key( $form_id, $request['formwerk_sid'] ?? '' );
 		if ( '' !== $attempt && false !== get_transient( $attempt ) ) {
-			return $this->result( self::OK, 200, (string) $form['messages']['success'] );
+			return $this->result( self::OK, 200, (string) $shown['messages']['success'] );
 		}
 
 		$buckets = $this->take_rate_limits( $form_id, (string) $token );
@@ -171,7 +202,7 @@ final class Handler {
 				'values'     => $values,
 				'page'       => $page,
 			),
-			(string) apply_filters( 'formwerk_submission_language', determine_locale(), $form_id )
+			(string) apply_filters( 'formwerk_submission_language', '' !== $language ? Wpml::locale_of( $language ) : determine_locale(), $form_id )
 		);
 		if ( 0 === $id ) {
 			foreach ( $buckets as $bucket ) {
@@ -184,10 +215,14 @@ final class Handler {
 			set_transient( $attempt, $id, HOUR_IN_SECONDS );
 		}
 
-		$mail = $this->notifier->send( $form, $snapshot, $values, $page );
+		// The notification goes to the website, in its default language.
+		$mail = Wpml::in_language(
+			Wpml::default_language(),
+			fn(): array => $this->notifier->send( $form, $snapshot, $values, $page )
+		);
 		$this->store->set_mail_status( $id, $mail['sent'] ? Store::MAIL_SENT : Store::MAIL_FAILED, $mail['error'] );
 
-		$confirm = $this->notifier->confirm( $form, $snapshot, $values, $page );
+		$confirm = $this->notifier->confirm( $shown, self::relabel( $snapshot, $shown ), self::reword( $values, $shown ), $page );
 		if ( Notifier::CONFIRM_OFF !== $confirm['status'] ) {
 			$this->store->set_confirm_status( $id, $confirm['status'], $confirm['error'] );
 		}
@@ -202,7 +237,7 @@ final class Handler {
 		 */
 		do_action( 'formwerk_submission_stored', $id, $form, $values, $mail['sent'] );
 
-		return $this->result( self::OK, 200, (string) $form['messages']['success'] );
+		return $this->result( self::OK, 200, (string) $shown['messages']['success'] );
 	}
 
 	/**
@@ -228,7 +263,15 @@ final class Handler {
 		if ( 'confirmation' === $kind ) {
 			// Sent even if the confirmation was switched off since, because someone asked for it explicitly.
 			$form['confirm']['enabled'] = true;
-			$result                     = $this->notifier->confirm( $form, $submission['fields'], $submission['values'], $submission['page'], $received );
+			// In the language the person used when sending the form.
+			$result = Wpml::in_language(
+				Wpml::code_of( $submission['lang'] ),
+				function () use ( $form, $submission, $received ): array {
+					$shown = $this->wpml->translate( $form );
+
+					return $this->notifier->confirm( $shown, self::relabel( $submission['fields'], $shown ), self::reword( $submission['values'], $shown ), $submission['page'], $received );
+				}
+			);
 			$this->store->set_confirm_status( $id, $result['status'], $result['error'] );
 
 			return array(
@@ -237,10 +280,60 @@ final class Handler {
 			);
 		}
 
-		$mail = $this->notifier->send( $form, $submission['fields'], $submission['values'], $submission['page'], $received );
+		$mail = Wpml::in_language(
+			Wpml::default_language(),
+			fn(): array => $this->notifier->send( $form, $submission['fields'], $submission['values'], $submission['page'], $received )
+		);
 		$this->store->set_mail_status( $id, $mail['sent'] ? Store::MAIL_SENT : Store::MAIL_FAILED, $mail['error'] );
 
 		return $mail;
+	}
+
+	/**
+	 * A field snapshot with the labels of the translated form, for the confirmation.
+	 *
+	 * @param array<int, array<string, mixed>> $snapshot Stored field snapshot.
+	 * @param array<string, mixed>             $shown    Translated form.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	private static function relabel( array $snapshot, array $shown ): array {
+		$labels = array_column( $shown['fields'], 'label', 'name' );
+		foreach ( $snapshot as $index => $field ) {
+			if ( isset( $labels[ $field['name'] ] ) && '' !== $labels[ $field['name'] ] ) {
+				$snapshot[ $index ]['label'] = $labels[ $field['name'] ];
+			}
+		}
+
+		return $snapshot;
+	}
+
+	/**
+	 * Chosen options in the words of the translated form, for the confirmation.
+	 *
+	 * Stored values are always the original options; a person who chose "Basic course"
+	 * on the English page reads that, not the German original, in their confirmation.
+	 *
+	 * @param array<string, mixed> $values Stored values.
+	 * @param array<string, mixed> $shown  Translated form.
+	 *
+	 * @return array<string, mixed>
+	 */
+	private static function reword( array $values, array $shown ): array {
+		foreach ( $shown['fields'] as $field ) {
+			if ( empty( $field['option_labels'] ) || ! array_key_exists( $field['name'], $values ) ) {
+				continue;
+			}
+			$labels = array_combine( $field['options'], $field['option_labels'] );
+			$value  = $values[ $field['name'] ];
+			if ( is_array( $value ) ) {
+				$values[ $field['name'] ] = array_map( static fn( $option ) => is_string( $option ) ? ( $labels[ $option ] ?? $option ) : $option, $value );
+			} elseif ( is_string( $value ) ) {
+				$values[ $field['name'] ] = $labels[ $value ] ?? $value;
+			}
+		}
+
+		return $values;
 	}
 
 	/**

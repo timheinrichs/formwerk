@@ -16,6 +16,7 @@ use Formwerk\Admin\SubmissionsPage;
 use Formwerk\Forms\FormRepository;
 use Formwerk\Frontend\Controller as FrontendController;
 use Formwerk\Frontend\Renderer;
+use Formwerk\I18n\Wpml;
 use Formwerk\Rest\FormsController;
 use Formwerk\Rest\SubmitController;
 use Formwerk\Submissions\Handler;
@@ -91,6 +92,7 @@ final class Plugin {
 
 		$forms = new FormRepository();
 		$forms->register();
+		( new Wpml() )->register();
 
 		$store = new Store();
 		$store->maybe_install();

@@ -23,8 +23,9 @@ final class Renderer {
 	 * @param string               $token  Submission token.
 	 * @param array<string, mixed> $state  Result of an earlier attempt without JavaScript: 'status', 'message', 'errors', 'values'.
 	 * @param bool                 $styled Whether Formwerk's own look is switched on.
+	 * @param string               $lang   WPML language code of the page, or ''.
 	 */
-	public function render( array $form, string $dom_id, string $token, array $state = array(), bool $styled = false ): string {
+	public function render( array $form, string $dom_id, string $token, array $state = array(), bool $styled = false, string $lang = '' ): string {
 		$id      = (int) $form['id'];
 		$errors  = isset( $state['errors'] ) && is_array( $state['errors'] ) ? $state['errors'] : array();
 		$values  = isset( $state['values'] ) && is_array( $state['values'] ) ? $state['values'] : array();
@@ -59,6 +60,10 @@ final class Renderer {
 		// Filled by the script with a random ID, so a repeated attempt is not stored twice. Empty in the
 		// HTML on purpose: a cached page would otherwise give every visitor the same ID.
 		$html .= '<input type="hidden" name="formwerk_sid" value="">';
+		if ( '' !== $lang ) {
+			// Errors, success message and confirmation answer in the language of this page.
+			$html .= sprintf( '<input type="hidden" name="formwerk_lang" value="%s">', esc_attr( $lang ) );
+		}
 		// Honeypot: invisible to people, tempting for bots. A neutral name keeps browsers from filling it in.
 		$html .= sprintf(
 			'<div class="formwerk-form__hp" aria-hidden="true"><label for="%1$s-hp">%2$s</label><input type="text" id="%1$s-hp" name="formwerk_hp" value="" tabindex="-1" autocomplete="off"></div>',
@@ -176,7 +181,7 @@ final class Renderer {
 					( 'radio' === $type && $field['required'] ? ' required' : '' )
 						. ( 'checkboxes' === $type && '' !== $error ? ' aria-invalid="true"' : '' )
 						. ( 0 === $index ? $described : '' ),
-					self::e( $option )
+					self::e( (string) ( $field['option_labels'][ $index ] ?? $option ) )
 				);
 			}
 
@@ -223,8 +228,14 @@ final class Renderer {
 			$input = sprintf( '<textarea%s rows="6">%s</textarea>', $attributes, self::e( $value ) );
 		} elseif ( 'select' === $type ) {
 			$input = sprintf( '<select%s><option value="">%s</option>', $attributes, esc_html__( 'Please choose', 'formwerk' ) );
-			foreach ( $field['options'] as $option ) {
-				$input .= sprintf( '<option value="%1$s"%2$s>%1$s</option>', self::e( $option ), selected( $value, $option, false ) );
+			foreach ( $field['options'] as $index => $option ) {
+				// The value stays the original option; only what people read is translated.
+				$input .= sprintf(
+					'<option value="%1$s"%2$s>%3$s</option>',
+					self::e( $option ),
+					selected( $value, $option, false ),
+					self::e( (string) ( $field['option_labels'][ $index ] ?? $option ) )
+				);
 			}
 			$input .= '</select>';
 		} else {
@@ -236,7 +247,7 @@ final class Renderer {
 				self::e( $value ),
 				'number' === $type ? ' inputmode="decimal"' : ''
 			);
-		}
+		}//end if
 
 		return sprintf(
 			'<div class="%1$s"%2$s><label class="formwerk-field__label" for="%3$s">%4$s%5$s</label>%6$s%7$s%8$s</div>',

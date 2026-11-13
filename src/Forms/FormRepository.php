@@ -273,6 +273,13 @@ final class FormRepository {
 			);
 		}
 
+		/**
+		 * Fires after a form was saved completely.
+		 *
+		 * @param array<string, mixed> $form The saved form.
+		 */
+		do_action( 'formwerk_form_saved', $this->find( $saved ) );
+
 		return array(
 			'id'     => $saved,
 			'errors' => array(),
@@ -285,7 +292,17 @@ final class FormRepository {
 	 * @param int $id Form ID.
 	 */
 	public function delete( int $id ): bool {
-		return null !== $this->find( $id ) && (bool) wp_delete_post( $id, true );
+		if ( null === $this->find( $id ) || ! wp_delete_post( $id, true ) ) {
+			return false;
+		}
+		/**
+		 * Fires after a form was deleted.
+		 *
+		 * @param int $id Form ID.
+		 */
+		do_action( 'formwerk_form_deleted', $id );
+
+		return true;
 	}
 
 	/**

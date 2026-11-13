@@ -10,6 +10,7 @@ declare( strict_types=1 );
 namespace Formwerk\Frontend;
 
 use Formwerk\Forms\FormRepository;
+use Formwerk\I18n\Wpml;
 use Formwerk\Plugin;
 use Formwerk\Submissions\Handler;
 use Formwerk\Submissions\RateLimiter;
@@ -172,7 +173,7 @@ final class Controller {
 		$state  = isset( $flash['target'] ) && $flash['target'] === $dom_id ? $flash : array();
 		$styled = get_option( self::STYLE_OPTION ) === self::STYLE_OWN;
 
-		return $this->renderer->render( $form, $dom_id, $this->handler->token( $form_id ), $state, $styled );
+		return $this->renderer->render( ( new Wpml() )->translate( $form ), $dom_id, $this->handler->token( $form_id ), $state, $styled, Wpml::current_language() );
 	}
 
 	/**

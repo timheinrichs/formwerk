@@ -29,6 +29,8 @@
 		</properties>
 	</rule>
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<!-- WPML's public API is a set of hooks named wpml_*; calling them is the documented way to integrate. -->
+		<exclude-pattern>src/I18n/Wpml.php</exclude-pattern>
 		<properties>
 			<property name="prefixes" type="array">
 				<element value="formwerk"/>
