@@ -67,9 +67,10 @@ damit iOS beim Fokus nicht zoomt.
 ## Layout
 
 - **Backend, Builder:** eine Leiste oben („← All forms“ links, Status und „Save form“ rechts) bleibt beim Scrollen
-  unter der Admin-Leiste stehen. Darunter der Name, dann Tabs (Felder, Benachrichtigung, Meldungen und Spamschutz).
-  Im Tab Felder links die Feldliste, rechts eine mitlaufende Spalte, umschaltbar zwischen Feldeinstellungen und
-  Vorschau.
+  unter der Admin-Leiste stehen. Darunter der Name, dann Tabs (Felder, Benachrichtigung, Bestätigung, Meldungen
+  und Spamschutz). Der Builder nutzt die volle Breite wie andere wp-admin-Seiten; nur Hilfetexte bleiben für die
+  Lesbarkeit auf 80 Zeichen begrenzt. Im Tab Felder links die Feldliste, rechts eine mitlaufende Spalte,
+  umschaltbar zwischen Feldeinstellungen und Vorschau.
 - **Backend, Listen und Einstellungen:** Standardseiten von wp-admin (`.wrap`, Seitentitel, `WP_List_Table`).
 - **Backend, schmal:** Unter 782px rückt die Seitenspalte unter die Feldliste; die Auswahl eines Felds scrollt zu
   seinen Einstellungen. Tabellen werden zu gestapelten Karten mit Spaltennamen. Nichts scrollt horizontal, außer
