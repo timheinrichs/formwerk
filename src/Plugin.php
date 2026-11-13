@@ -31,7 +31,7 @@ use Formwerk\Smtp\TestMail;
  */
 final class Plugin {
 
-	public const VERSION = '0.2.0';
+	public const VERSION = '0.3.0-dev';
 
 	/**
 	 * Shared instance.
