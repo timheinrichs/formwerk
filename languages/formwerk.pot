@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Formwerk 0.2.0\n"
+"Project-Id-Version: Formwerk 0.3.0-dev\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/formwerk\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-12T19:04:47+00:00\n"
+"POT-Creation-Date: 2026-11-13T12:37:44+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: formwerk\n"
@@ -54,7 +54,6 @@ msgid "Email delivery"
 msgstr ""
 
 #: src/Admin/EmailPage.php:62
-#: src/Admin/SubmissionsTable.php:64
 msgid "Email"
 msgstr ""
 
@@ -63,38 +62,110 @@ msgid "Emails from this website are currently not sent through your mail server,
 msgstr ""
 
 #: src/Admin/EmailPage.php:84
-#: src/Admin/SubmissionsPage.php:368
+#: src/Admin/SubmissionsPage.php:455
+#: src/Admin/SubmissionsPage.php:476
 msgid "Check the email settings"
+msgstr ""
+
+#: src/Admin/Export.php:85
+msgid "You are not allowed to export submissions."
+msgstr ""
+
+#: src/Admin/Export.php:91
+msgid "This form no longer exists, so its submissions cannot be exported by form."
+msgstr ""
+
+#: src/Admin/Export.php:105
+#: src/Admin/SubmissionsPage.php:481
+#: src/Submissions/Notifier.php:142
+#: src/Submissions/Privacy.php:79
+msgid "Yes"
+msgstr ""
+
+#: src/Admin/Export.php:106
+#: src/Admin/SubmissionsPage.php:482
+#: src/Submissions/Notifier.php:143
+#: src/Submissions/Privacy.php:80
+msgid "No"
+msgstr ""
+
+#: src/Admin/Export.php:117
+#: src/Admin/SubmissionsTable.php:61
+#: src/Submissions/Privacy.php:89
+msgid "Received"
+msgstr ""
+
+#: src/Admin/Export.php:118
+#: src/Admin/SubmissionsPage.php:505
+msgid "Sent from"
+msgstr ""
+
+#: src/Admin/Export.php:119
+#: src/Admin/SubmissionsPage.php:507
+msgid "Language"
+msgstr ""
+
+#: src/Admin/Export.php:120
+#: src/Admin/SubmissionsPage.php:509
+msgid "Notification email"
+msgstr ""
+
+#: src/Admin/Export.php:121
+#: src/Admin/SubmissionsPage.php:513
+msgid "Confirmation email"
+msgstr ""
+
+#: src/Admin/Export.php:185
+#: src/Admin/SubmissionsTable.php:327
+#: src/Admin/SubmissionsTable.php:350
+#: build/admin.js:32
+msgid "Sent"
+msgstr ""
+
+#: src/Admin/Export.php:187
+#: src/Admin/SubmissionsTable.php:339
+msgid "Being sent"
+msgstr ""
+
+#: src/Admin/Export.php:189
+msgid "No address entered"
+msgstr ""
+
+#: src/Admin/Export.php:191
+#: src/Admin/SubmissionsTable.php:334
+#: src/Admin/SubmissionsTable.php:354
+#: src/Admin/SubmissionsTable.php:361
+msgid "Not sent"
 msgstr ""
 
 #: src/Admin/FormsPage.php:41
 #: src/Admin/FormsPage.php:49
-#: src/Admin/FormsPage.php:56
-#: src/Forms/FormRepository.php:40
-#: build/admin.js:11
+#: src/Admin/FormsPage.php:67
+#: src/Forms/FormRepository.php:41
+#: build/admin.js:22
 msgid "Forms"
 msgstr ""
 
-#: src/Admin/Screen.php:32
+#: src/Admin/Screen.php:33
 msgid "This page cannot be shown, because files of the Formwerk plugin are missing. If you do not maintain this website yourself, please contact the person who does."
 msgstr ""
 
-#: src/Admin/Screen.php:35
+#: src/Admin/Screen.php:36
 msgid "For developers: install the release ZIP from GitHub, or run \"npm run build\" in the plugin folder."
 msgstr ""
 
-#: src/Admin/Screen.php:42
+#: src/Admin/Screen.php:43
 msgid "This page needs JavaScript. Please enable it in your browser."
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:86
-#: src/Admin/SubmissionsPage.php:102
-#: src/Admin/SubmissionsPage.php:288
+#: src/Admin/SubmissionsPage.php:87
+#: src/Admin/SubmissionsPage.php:103
+#: src/Admin/SubmissionsPage.php:304
 msgid "Submissions"
 msgstr ""
 
 #. translators: %s: number of emails.
-#: src/Admin/SubmissionsPage.php:95
+#: src/Admin/SubmissionsPage.php:96
 #, php-format
 msgid "%s email not sent"
 msgid_plural "%s emails not sent"
@@ -102,165 +173,211 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: number of emails.
-#: src/Admin/SubmissionsPage.php:133
+#: src/Admin/SubmissionsPage.php:134
 #, php-format
-msgid "%s notification email could not be sent. The submission is saved."
-msgid_plural "%s notification emails could not be sent. The submissions are saved."
+msgid "%s email about a submission could not be sent. The submission is saved."
+msgid_plural "%s emails about submissions could not be sent. The submissions are saved."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Admin/SubmissionsPage.php:143
+#: src/Admin/SubmissionsPage.php:144
 msgid "View submission"
 msgid_plural "View submissions"
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: number of submissions.
-#: src/Admin/SubmissionsPage.php:298
+#: src/Admin/SubmissionsPage.php:317
 #, php-format
 msgid "%s submission deleted."
 msgid_plural "%s submissions deleted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Admin/SubmissionsPage.php:320
-#: src/Admin/SubmissionsPage.php:421
+#: src/Admin/SubmissionsPage.php:331
+msgid "Saved. Submissions are kept until you delete them."
+msgstr ""
+
+#. translators: %s: number of days.
+#: src/Admin/SubmissionsPage.php:333
+#, php-format
+msgid "Saved. Submissions are deleted automatically after %s day."
+msgid_plural "Saved. Submissions are deleted automatically after %s days."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: largest number of days.
+#: src/Admin/SubmissionsPage.php:342
+#, php-format
+msgid "Not saved. Enter a whole number of days between 0 and %d."
+msgstr ""
+
+#: src/Admin/SubmissionsPage.php:367
+msgid "Keeping submissions"
+msgstr ""
+
+#: src/Admin/SubmissionsPage.php:370
+msgid "Delete submissions automatically after"
+msgstr ""
+
+#: src/Admin/SubmissionsPage.php:371
+msgid "(number of days)"
+msgstr ""
+
+#: src/Admin/SubmissionsPage.php:374
+msgid "days"
+msgstr ""
+
+#: src/Admin/SubmissionsPage.php:378
+msgid "Keep personal data only as long as you need it. Submissions older than this are deleted once a day. Enter 0 to keep them until you delete them yourself. Export them as CSV first if you need to keep a copy."
+msgstr ""
+
+#: src/Admin/SubmissionsPage.php:380
+msgid "Save"
+msgstr ""
+
+#: src/Admin/SubmissionsPage.php:390
+#: src/Admin/SubmissionsPage.php:558
 msgid "All submissions"
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:322
+#: src/Admin/SubmissionsPage.php:392
 msgid "Submission not found"
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:322
+#: src/Admin/SubmissionsPage.php:392
 msgid "This submission does not exist any more. It may have been deleted."
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:327
-#: src/Admin/SubmissionsTable.php:214
-msgid "Send email again"
+#: src/Admin/SubmissionsPage.php:397
+#: src/Admin/SubmissionsTable.php:238
+msgid "Send notification again"
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:327
-#: src/Admin/SubmissionsTable.php:214
-msgid "Send email"
+#: src/Admin/SubmissionsPage.php:397
+#: src/Admin/SubmissionsTable.php:238
+msgid "Send notification"
 msgstr ""
 
 #. translators: %s: date and time.
-#: src/Admin/SubmissionsPage.php:334
+#: src/Admin/SubmissionsPage.php:404
 #, php-format
 msgid "Submission from %s"
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:347
-msgid "The email was sent."
+#. translators: %s: email address.
+#: src/Admin/SubmissionsPage.php:420
+#, php-format
+msgid "Confirmation sent to %s."
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:351
-msgid "The notification email for this submission was not sent. The submission itself is saved."
+#: src/Admin/SubmissionsPage.php:421
+msgid "Notification sent."
+msgstr ""
+
+#: src/Admin/SubmissionsPage.php:426
+msgid "The confirmation was not sent."
 msgstr ""
 
 #. translators: %s: error message.
-#: src/Admin/SubmissionsPage.php:358
+#: src/Admin/SubmissionsPage.php:430
+#: src/Admin/SubmissionsPage.php:445
+#: src/Admin/SubmissionsPage.php:466
 #, php-format
 msgid "Reason: %s"
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:373
-#: src/Submissions/Notifier.php:37
-msgid "Yes"
+#: src/Admin/SubmissionsPage.php:438
+msgid "The notification email for this submission was not sent. The submission itself is saved."
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:374
-#: src/Submissions/Notifier.php:38
-msgid "No"
+#: src/Admin/SubmissionsPage.php:459
+msgid "The confirmation to the person who sent this form was not sent. The submission itself is saved."
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:393
-#: build/admin.js:21
+#: src/Admin/SubmissionsPage.php:474
+#: src/Admin/SubmissionsPage.php:525
+msgid "Send confirmation"
+msgstr ""
+
+#: src/Admin/SubmissionsPage.php:501
+#: build/admin.js:32
 msgid "Details"
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:395
+#: src/Admin/SubmissionsPage.php:503
 #: src/Admin/SubmissionsTable.php:62
-#: build/admin.js:11
-#: build/admin.js:18
+#: src/Submissions/Privacy.php:85
+#: build/admin.js:22
+#: build/admin.js:29
 #: build/block.js:1
 msgid "Form"
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:397
-msgid "Sent from"
+#: src/Admin/SubmissionsPage.php:525
+msgid "Send confirmation again"
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:399
-msgid "Language"
-msgstr ""
-
-#: src/Admin/SubmissionsPage.php:401
-msgid "Notification email"
-msgstr ""
-
-#: src/Admin/SubmissionsPage.php:408
-#: src/Admin/SubmissionsPage.php:464
+#: src/Admin/SubmissionsPage.php:529
+#: src/Admin/SubmissionsPage.php:601
 msgid "Delete submission"
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:420
+#: src/Admin/SubmissionsPage.php:557
 msgid "Nothing to delete"
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:420
+#: src/Admin/SubmissionsPage.php:557
 msgid "These submissions do not exist any more."
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:431
+#: src/Admin/SubmissionsPage.php:568
 msgid "Delete this submission?"
 msgstr ""
 
 #. translators: %s: number of submissions.
-#: src/Admin/SubmissionsPage.php:433
+#: src/Admin/SubmissionsPage.php:570
 #, php-format
 msgid "Delete %s submissions?"
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:436
+#: src/Admin/SubmissionsPage.php:573
 msgid "This submission will be deleted permanently. This cannot be undone."
 msgid_plural "These submissions will be deleted permanently. This cannot be undone."
 msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: number of further submissions.
-#: src/Admin/SubmissionsPage.php:449
+#: src/Admin/SubmissionsPage.php:586
 #, php-format
 msgid "and %s more"
 msgstr ""
 
 #. translators: %s: number of submissions.
-#: src/Admin/SubmissionsPage.php:466
+#: src/Admin/SubmissionsPage.php:603
 #, php-format
 msgid "Delete %s submissions"
 msgstr ""
 
-#: src/Admin/SubmissionsPage.php:469
-#: build/admin.js:15
-#: build/admin.js:22
+#: src/Admin/SubmissionsPage.php:606
+#: build/admin.js:26
+#: build/admin.js:33
 msgid "Cancel"
 msgstr ""
 
 #. translators: %s: form name.
-#: src/Admin/SubmissionsPage.php:495
-#: src/Admin/SubmissionsTable.php:244
+#: src/Admin/SubmissionsPage.php:632
+#: src/Admin/SubmissionsTable.php:268
 #, php-format
 msgid "%s (form deleted)"
 msgstr ""
 
-#: src/Admin/SubmissionsTable.php:61
-msgid "Received"
-msgstr ""
-
 #: src/Admin/SubmissionsTable.php:63
 msgid "Content"
+msgstr ""
+
+#: src/Admin/SubmissionsTable.php:64
+msgid "Emails"
 msgstr ""
 
 #: src/Admin/SubmissionsTable.php:115
@@ -276,7 +393,7 @@ msgid "All"
 msgstr ""
 
 #: src/Admin/SubmissionsTable.php:143
-#: src/Admin/SubmissionsTable.php:225
+#: src/Admin/SubmissionsTable.php:249
 msgid "Email not sent"
 msgstr ""
 
@@ -289,7 +406,7 @@ msgid "Filter by form"
 msgstr ""
 
 #: src/Admin/SubmissionsTable.php:172
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "All forms"
 msgstr ""
 
@@ -297,45 +414,56 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
+#: src/Admin/SubmissionsTable.php:182
+msgid "Filter by a form to export its submissions as CSV."
+msgstr ""
+
+#: src/Admin/SubmissionsTable.php:199
+msgid "Export CSV"
+msgstr ""
+
+#: src/Admin/SubmissionsTable.php:200
+msgid "Export these as CSV"
+msgstr ""
+
 #. translators: %s: date and time.
-#: src/Admin/SubmissionsTable.php:193
+#: src/Admin/SubmissionsTable.php:217
 #, php-format
 msgid "Select submission from %s"
 msgstr ""
 
-#: src/Admin/SubmissionsTable.php:208
+#: src/Admin/SubmissionsTable.php:232
 msgid "View"
 msgstr ""
 
-#: src/Admin/SubmissionsTable.php:220
-#: build/admin.js:14
+#: src/Admin/SubmissionsTable.php:244
+#: build/admin.js:25
 msgid "Delete"
 msgstr ""
 
-#: src/Admin/SubmissionsTable.php:296
-#: build/admin.js:21
-msgid "Sent"
+#: src/Admin/SubmissionsTable.php:311
+msgid "Notification:"
 msgstr ""
 
-#: src/Admin/SubmissionsTable.php:299
+#: src/Admin/SubmissionsTable.php:314
+msgid "Confirmation:"
+msgstr ""
+
+#: src/Admin/SubmissionsTable.php:330
 msgid "Sending was interrupted."
 msgstr ""
 
-#: src/Admin/SubmissionsTable.php:303
-msgid "Not sent"
-msgstr ""
-
-#: src/Admin/SubmissionsTable.php:308
-msgid "Being sent"
+#: src/Admin/SubmissionsTable.php:359
+msgid "Not sent, because no email address was entered."
 msgstr ""
 
 #. translators: {form} is a placeholder and must stay as it is.
-#: src/Forms/FormRepository.php:302
+#: src/Forms/FormRepository.php:332
 msgid "New submission: {form}"
 msgstr ""
 
 #. translators: The words in braces are placeholders and must stay as they are.
-#: src/Forms/FormRepository.php:306
+#: src/Forms/FormRepository.php:336
 msgid ""
 "{all_fields}\n"
 "\n"
@@ -343,38 +471,116 @@ msgid ""
 "Sent with the form \"{form}\" on {page} ({date})."
 msgstr ""
 
-#: src/Forms/FormRepository.php:323
+#. translators: {form} is a placeholder and must stay as it is.
+#: src/Forms/FormRepository.php:354
+msgid "Your message to {site}"
+msgstr ""
+
+#. translators: The words in braces are placeholders and must stay as they are.
+#: src/Forms/FormRepository.php:358
+msgid ""
+"Thank you for your message. We have received it and will get back to you.\n"
+"\n"
+"Your entries:\n"
+"\n"
+"{all_fields}\n"
+"\n"
+"--\n"
+"{site}"
+msgstr ""
+
+#: src/Forms/FormRepository.php:422
 msgid "Send"
 msgstr ""
 
-#: src/Forms/FormRepository.php:324
+#: src/Forms/FormRepository.php:423
 msgid "Thank you. Your message has been sent."
 msgstr ""
 
 #. translators: %d: form ID.
-#: src/Frontend/Controller.php:158
+#: src/Frontend/Controller.php:159
 #, php-format
 msgid "Formwerk: the form with the ID %d does not exist. Only you can see this note."
 msgstr ""
 
-#: src/Frontend/Renderer.php:49
-#: build/admin.js:24
+#: src/Frontend/Renderer.php:50
+#: build/admin.js:35
 msgid "Sending…"
 msgstr ""
 
-#: src/Frontend/Renderer.php:66
+#: src/Frontend/Renderer.php:71
 msgid "Please leave this field empty"
 msgstr ""
 
-#: src/Frontend/Renderer.php:153
+#: src/Frontend/Renderer.php:158
 #: build/admin.js:2
-#: build/admin.js:16
+#: build/admin.js:27
 msgid "(required)"
 msgstr ""
 
-#: src/Frontend/Renderer.php:225
-#: build/admin.js:16
+#: src/Frontend/Renderer.php:230
+#: build/admin.js:27
 msgid "Please choose"
+msgstr ""
+
+#. translators: %s: field label.
+#: src/I18n/Wpml.php:263
+#, php-format
+msgid "Field “%s”: label"
+msgstr ""
+
+#. translators: %s: field label.
+#: src/I18n/Wpml.php:265
+#, php-format
+msgid "Field “%s”: help text"
+msgstr ""
+
+#. translators: %s: field label.
+#: src/I18n/Wpml.php:267
+#, php-format
+msgid "Field “%s”: example"
+msgstr ""
+
+#. translators: %s: field label.
+#: src/I18n/Wpml.php:269
+#, php-format
+msgid "Field “%s”: text"
+msgstr ""
+
+#. translators: %s: field label.
+#: src/I18n/Wpml.php:272
+#, php-format
+msgid "Field “%s”: option"
+msgstr ""
+
+#: src/I18n/Wpml.php:275
+msgid "Form name (in emails as {form})"
+msgstr ""
+
+#: src/I18n/Wpml.php:276
+#: build/admin.js:30
+msgid "Text on the send button"
+msgstr ""
+
+#: src/I18n/Wpml.php:277
+#: build/admin.js:30
+msgid "Message after sending"
+msgstr ""
+
+#: src/I18n/Wpml.php:279
+#: build/admin.js:29
+msgid "Confirmation: subject"
+msgstr ""
+
+#: src/I18n/Wpml.php:280
+#: build/admin.js:29
+msgid "Confirmation: text"
+msgstr ""
+
+#. translators: %s: form name.
+#: src/I18n/Wpml.php:298
+#, php-format
+msgid "Formwerk – %s"
 msgstr ""
 
 #: src/Rest/FormsController.php:164
@@ -386,7 +592,7 @@ msgid "The form was not saved. Please correct the points listed below."
 msgstr ""
 
 #: src/Rest/FormsController.php:204
-#: src/Rest/FormsController.php:243
+#: src/Rest/FormsController.php:251
 msgid "This form no longer exists. It may have been deleted in another tab."
 msgstr ""
 
@@ -431,16 +637,32 @@ msgid "Enter complete email addresses, separated by commas, for example info@exa
 msgstr ""
 
 #: src/Rest/FormsController.php:235
-msgid "Only fixed email addresses can be used here, no placeholders. A confirmation to the person who sent the form will follow in a later version."
+msgid "Only fixed email addresses can be used here, no placeholders. To send a copy to the person who filled in the form, switch on the confirmation in the “Confirmation” tab."
+msgstr ""
+
+#: src/Rest/FormsController.php:237
+msgid "The confirmation needs an email field in the form. Add one under “Fields”, or switch the confirmation off."
+msgstr ""
+
+#: src/Rest/FormsController.php:239
+msgid "Choose the email field whose address receives the confirmation."
+msgstr ""
+
+#: src/Rest/FormsController.php:241
+msgid "Enter a subject for the confirmation."
+msgstr ""
+
+#: src/Rest/FormsController.php:243
+msgid "The confirmation text is empty. Write a short thank-you, or switch the confirmation off."
 msgstr ""
 
 #. translators: %s: list of placeholders.
-#: src/Rest/FormsController.php:239
+#: src/Rest/FormsController.php:247
 #, php-format
 msgid "These placeholders do not match any field and would be sent as they are: %s. Remove them or insert a placeholder from the list."
 msgstr ""
 
-#: src/Rest/FormsController.php:245
+#: src/Rest/FormsController.php:253
 msgid "The form could not be saved. Please try again."
 msgstr ""
 
@@ -554,40 +776,52 @@ msgstr ""
 msgid "Test email handed to the web server (no mail server in use)."
 msgstr ""
 
-#: src/Submissions/Handler.php:101
+#: src/Submissions/Handler.php:133
 msgid "This form no longer exists. Please reload the page."
 msgstr ""
 
-#: src/Submissions/Handler.php:110
+#: src/Submissions/Handler.php:144
 msgid "The form was open for too long. Please send it again; your entries are still here."
 msgstr ""
 
-#: src/Submissions/Handler.php:122
+#: src/Submissions/Handler.php:156
 msgid "The form was not sent. Please check the marked fields."
 msgstr ""
 
-#: src/Submissions/Handler.php:126
+#: src/Submissions/Handler.php:160
 msgid "That was very quick. Please wait a few seconds and send the form again."
 msgstr ""
 
-#: src/Submissions/Handler.php:131
+#: src/Submissions/Handler.php:165
 msgid "The form was not sent, because it contains too many links. Please remove some and send it again."
 msgstr ""
 
-#: src/Submissions/Handler.php:136
+#: src/Submissions/Handler.php:170
 msgid "The form was not sent, because it looked like an automated message. Please reload the page and try again."
 msgstr ""
 
-#: src/Submissions/Handler.php:148
+#: src/Submissions/Handler.php:182
 msgid "Several messages were just sent from your network. Please wait about 10 minutes and send the form again; your entries stay here."
 msgstr ""
 
-#: src/Submissions/Handler.php:181
+#: src/Submissions/Handler.php:217
 msgid "Your message could not be saved. Please try again later or contact us another way."
 msgstr ""
 
-#: src/Submissions/Handler.php:216
+#: src/Submissions/Handler.php:262
 msgid "The form of this submission no longer exists, so its email cannot be sent again."
+msgstr ""
+
+#: src/Submissions/Handler.php:275
+msgid "This submission has no email field, so there is no address to send a confirmation to."
+msgstr ""
+
+#: src/Submissions/Handler.php:331
+msgid "Not sent, because the entries contain a web address."
+msgstr ""
+
+#: src/Submissions/Handler.php:337
+msgid "Not sent, because many confirmations went out to this address or from this form in the last hour."
 msgstr ""
 
 #: src/Submissions/Messages.php:29
@@ -632,22 +866,63 @@ msgstr ""
 msgid "Please check this field."
 msgstr ""
 
-#: src/Submissions/Notifier.php:53
+#: src/Submissions/Notifier.php:41
 msgid "The form has no valid recipient address."
 msgstr ""
 
+#: src/Submissions/Notifier.php:90
+msgid "No email address was entered."
+msgstr ""
+
 #. translators: %s: error message.
-#: src/Submissions/Notifier.php:86
+#: src/Submissions/Notifier.php:194
 #, php-format
 msgid "Sending stopped with an error: %s"
 msgstr ""
 
-#: src/Submissions/Notifier.php:93
+#: src/Submissions/Notifier.php:201
 msgid "The mail system gave no reason."
 msgstr ""
 
-#: src/Submissions/Store.php:102
-msgid "The database table for submissions could not be created, so forms cannot be sent. Please ask your web host whether the database user may create tables."
+#: src/Submissions/Privacy.php:46
+#: src/Submissions/Privacy.php:57
+msgid "Formwerk submissions"
+msgstr ""
+
+#: src/Submissions/Privacy.php:101
+msgid "Form submissions"
+msgstr ""
+
+#: src/Submissions/Privacy.php:132
+msgid "Some form submissions could not be deleted. Please try again or delete them under Formwerk → Submissions."
+msgstr ""
+
+#: src/Submissions/Privacy.php:145
+msgid "When you send a form on this website, we store your entries, the form, the page and the time, and send them to us by email. If the form offers it, you receive a confirmation by email. We use your entries only to answer your request."
+msgstr ""
+
+#: src/Submissions/Privacy.php:147
+msgid "Submissions are kept until we delete them."
+msgstr ""
+
+#. translators: %d: number of days.
+#: src/Submissions/Privacy.php:149
+#, php-format
+msgid "Submissions are deleted automatically after %d day."
+msgid_plural "Submissions are deleted automatically after %d days."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Submissions/Retention.php:66
+msgid "Formwerk can now delete old submissions automatically. On this website it is switched off, so all submissions are kept."
+msgstr ""
+
+#: src/Submissions/Retention.php:68
+msgid "Choose how long to keep submissions"
+msgstr ""
+
+#: src/Submissions/Store.php:114
+msgid "The database table for submissions could not be created or updated, so forms cannot be sent. Please ask your web host whether the database user may create and change tables."
 msgstr ""
 
 #: build/admin.js:1
@@ -723,7 +998,7 @@ msgid "I have read the privacy policy and agree."
 msgstr ""
 
 #: build/admin.js:1
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "Heading"
 msgstr ""
 
@@ -764,10 +1039,13 @@ msgid "Country"
 msgstr ""
 
 #: build/admin.js:1
-#: build/admin.js:6
-#: build/admin.js:17
-#: build/admin.js:18
-#: build/admin.js:20
+#: build/admin.js:9
+#: build/admin.js:13
+#: build/admin.js:27
+#: build/admin.js:28
+#: build/admin.js:29
+#: build/admin.js:30
+#: build/admin.js:31
 msgid "(no label)"
 msgstr ""
 
@@ -781,272 +1059,323 @@ msgstr ""
 msgid "Needs attention"
 msgstr ""
 
-#. translators: %s: field label.
+#. translators: %s: label of the other field in the row.
 #: build/admin.js:3
 #, js-format
-msgid "Move “%s” up"
+msgid "Shares a row with “%s”"
 msgstr ""
 
 #. translators: %s: field label.
 #: build/admin.js:4
 #, js-format
-msgid "Move “%s” down"
+msgid "Move “%s” up"
 msgstr ""
 
 #. translators: %s: field label.
 #: build/admin.js:5
 #, js-format
+msgid "Move “%s” down"
+msgstr ""
+
+#. translators: 1: label of the lower field, 2: label of the upper field.
+#: build/admin.js:6
+#, js-format
+msgid "Put “%1$s” next to “%2$s”"
+msgstr ""
+
+#. translators: %s: field label.
+#: build/admin.js:7
+#, js-format
 msgid "Remove “%s”"
 msgstr ""
 
 #. translators: 1: field label, 2: new position, 3: number of fields.
-#: build/admin.js:6
+#: build/admin.js:8
 #, js-format
 msgid "“%1$s” moved to position %2$d of %3$d."
 msgstr ""
 
+#. translators: 1, 2: field labels.
+#: build/admin.js:9
+#, js-format
+msgid "“%1$s” and “%2$s” no longer share a row."
+msgstr ""
+
 #. translators: 1: field label, 2: position, 3: number of fields.
-#: build/admin.js:7
+#: build/admin.js:10
 #, js-format
 msgid "Picked up “%1$s” at position %2$d of %3$d. Use the arrow keys to move it, Space to drop it, Escape to cancel."
 msgstr ""
 
 #. translators: 1: field label, 2: position, 3: number of fields.
-#: build/admin.js:8
+#: build/admin.js:11
 #, js-format
 msgid "“%1$s” is now at position %2$d of %3$d."
 msgstr ""
 
 #. translators: 1: field label, 2: position, 3: number of fields.
-#: build/admin.js:9
+#: build/admin.js:12
 #, js-format
 msgid "“%1$s” dropped at position %2$d of %3$d."
 msgstr ""
 
 #. translators: %s: field label.
-#: build/admin.js:10
+#: build/admin.js:13
 #, js-format
 msgid "Moving “%s” cancelled."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:13
 msgid "To move a field, press Space, use the arrow keys, then press Space again. Press Escape to cancel."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:13
 msgid "This form has no fields yet. Add the first one, for example a name or an email address."
 msgstr ""
 
-#: build/admin.js:10
+#. translators: 1: field label, 2: label of the field above.
+#: build/admin.js:14
+#: build/admin.js:16
+#, js-format
+msgid "“%1$s” is now next to “%2$s”."
+msgstr ""
+
+#. translators: %s: field label.
+#: build/admin.js:15
+#: build/admin.js:17
+#: build/admin.js:20
+#, js-format
+msgid "“%s” is now on its own row."
+msgstr ""
+
+#: build/admin.js:15
 msgid "Add field"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "Select a field in the list to change its settings."
 msgstr ""
 
-#: build/admin.js:10
 #: build/admin.js:15
-#: build/admin.js:19
-#: build/admin.js:22
+#: build/admin.js:26
+#: build/admin.js:30
+#: build/admin.js:33
 msgid "Error:"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "The form can only be sent when this field is filled in."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "The form can only be sent when the box is ticked."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "The form can only be sent when an option is chosen."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "The sentence visitors agree to, shown next to the checkbox."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "Shown as a heading between the fields. May stay empty if you only need the text below."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "Label"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "Text"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "Optional note for visitors, for example how to fill in the following fields."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "Options"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "One option per line."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "Required"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "Help text"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "Optional. Shown between label and field, for example what the answer is used for."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "Example in the empty field"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:15
 msgid "Optional. Disappears when someone starts typing, so do not put instructions here."
 msgstr ""
 
-#: build/admin.js:10
-msgid "Width"
+#: build/admin.js:15
+msgid "Layout"
 msgstr ""
 
-#: build/admin.js:10
-msgid "Full width"
+#: build/admin.js:17
+msgid "Own row"
 msgstr ""
 
-#: build/admin.js:10
-msgid "Half width (two fields side by side)"
+#. translators: %s: label of the field above.
+#: build/admin.js:18
+#, js-format
+msgid "Next to “%s”"
 msgstr ""
 
-#: build/admin.js:10
-msgid "On small screens every field uses the full width."
+#: build/admin.js:18
+msgid "the field above"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:18
+msgid "Two fields in one row share it half and half. On small screens they are shown one below the other."
+msgstr ""
+
+#. translators: %s: label of the field below.
+#: build/admin.js:19
+#, js-format
+msgid "Shares a row with “%s”."
+msgstr ""
+
+#. translators: %s: label of the field below.
+#: build/admin.js:21
+#, js-format
+msgid "Put “%s” on its own row"
+msgstr ""
+
+#: build/admin.js:21
 msgid "Browser suggestion"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:21
 msgid "Lets browsers fill in the field with saved details of the visitor."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:21
 msgid "To put this answer into the email text, use:"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:21
 msgid "The look of the forms could not be loaded."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:21
 msgid "Look of the forms"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:21
 msgid "Like the rest of the website"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:21
 msgid "Fields and buttons look the way your theme designs them. Choose this first."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:21
 msgid "Formwerk’s own look"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:21
 msgid "Fields and buttons get a plain, complete design. Choose this if the forms look unfinished with your theme."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:21
 msgid "Saved. The forms on your website now use this look."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:21
 msgid "The look was not changed."
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:21
 msgid "Save look"
 msgstr ""
 
-#: build/admin.js:10
+#: build/admin.js:21
 msgid "Shortcode copied"
 msgstr ""
 
 #. translators: %s: shortcode.
-#: build/admin.js:11
+#: build/admin.js:22
 #, js-format
 msgid "Copy shortcode %s"
 msgstr ""
 
-#: build/admin.js:11
+#: build/admin.js:22
 msgid "Copied"
 msgstr ""
 
-#: build/admin.js:11
+#: build/admin.js:22
 msgid "Copy"
 msgstr ""
 
-#: build/admin.js:11
+#: build/admin.js:22
 msgid "Shortcode copied."
 msgstr ""
 
-#: build/admin.js:11
+#: build/admin.js:22
 msgid "The forms could not be loaded."
 msgstr ""
 
-#: build/admin.js:11
-#: build/admin.js:16
+#: build/admin.js:22
+#: build/admin.js:27
 msgid "Add form"
 msgstr ""
 
-#: build/admin.js:11
-#: build/admin.js:16
-#: build/admin.js:21
-#: build/admin.js:25
+#: build/admin.js:22
+#: build/admin.js:27
+#: build/admin.js:32
+#: build/admin.js:36
 msgid "Try again"
 msgstr ""
 
-#: build/admin.js:11
+#: build/admin.js:22
 msgid "Loading forms…"
 msgstr ""
 
-#: build/admin.js:11
+#: build/admin.js:22
 msgid "No forms yet"
 msgstr ""
 
-#: build/admin.js:11
+#: build/admin.js:22
 msgid "A form collects messages from visitors, for example a contact request or a registration. Every message is saved here and sent to you by email."
 msgstr ""
 
-#: build/admin.js:11
-#: build/admin.js:12
+#: build/admin.js:22
+#: build/admin.js:23
 msgid "Shortcode"
 msgstr ""
 
-#: build/admin.js:11
-#: build/admin.js:12
+#: build/admin.js:22
+#: build/admin.js:23
 msgid "Fields to fill in"
 msgstr ""
 
-#: build/admin.js:11
-#: build/admin.js:12
+#: build/admin.js:22
+#: build/admin.js:23
 msgid "Last changed"
 msgstr ""
 
-#: build/admin.js:11
+#: build/admin.js:22
 msgid "Actions"
 msgstr ""
 
 #. translators: %d: number of rejected spam attempts.
-#: build/admin.js:12
+#: build/admin.js:23
 #, js-format
 msgid "%d spam attempt rejected"
 msgid_plural "%d spam attempts rejected"
@@ -1054,568 +1383,596 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: form name.
-#: build/admin.js:13
+#: build/admin.js:24
 #, js-format
 msgid "Edit “%s”"
 msgstr ""
 
-#: build/admin.js:13
+#: build/admin.js:24
 msgid "Edit"
 msgstr ""
 
 #. translators: %s: form name.
-#: build/admin.js:14
+#: build/admin.js:25
 #, js-format
 msgid "Delete “%s”"
 msgstr ""
 
-#: build/admin.js:14
+#: build/admin.js:25
 msgid "To show a form, paste its shortcode into a page, or add the “Formwerk form” block."
 msgstr ""
 
 #. translators: %s: form name.
-#: build/admin.js:15
+#: build/admin.js:26
 #, js-format
 msgid "Delete the form “%s”?"
 msgstr ""
 
-#: build/admin.js:15
+#: build/admin.js:26
 msgid "Pages that show this form will show nothing in its place. Submissions already received are kept. The form itself cannot be restored."
 msgstr ""
 
-#: build/admin.js:15
+#: build/admin.js:26
 msgid "The form was not deleted."
 msgstr ""
 
-#: build/admin.js:15
+#: build/admin.js:26
 msgid "Delete form"
 msgstr ""
 
-#: build/admin.js:15
-msgid "Every submission is saved under “Submissions” and also sent to you by email. If the visitor entered an email address, a reply to that email goes straight to them."
+#: build/admin.js:26
+msgid "Form name"
 msgstr ""
 
-#: build/admin.js:15
-#: build/admin.js:18
-msgid "Send to"
+#: build/admin.js:26
+msgid "Page address"
 msgstr ""
 
-#: build/admin.js:15
-msgid "One or more email addresses, separated by commas."
+#: build/admin.js:26
+msgid "Date and time"
 msgstr ""
 
-#: build/admin.js:15
-#: build/admin.js:18
-#: build/admin.js:21
-msgid "Subject"
+#: build/admin.js:26
+msgid "Website name"
 msgstr ""
 
-#: build/admin.js:15
-#: build/admin.js:18
-msgid "Email text"
-msgstr ""
-
-#: build/admin.js:15
-msgid "{all_fields} lists every field with its label. Keep it in the text and no answer can be missing from the email."
-msgstr ""
-
-#: build/admin.js:15
+#: build/admin.js:26
 msgid "Insert placeholder"
 msgstr ""
 
-#: build/admin.js:15
+#: build/admin.js:26
 msgid "Insert a placeholder into subject or text"
 msgstr ""
 
-#: build/admin.js:15
+#: build/admin.js:26
 msgid "All fields"
 msgstr ""
 
 #. translators: %s: field label.
-#: build/admin.js:16
+#: build/admin.js:27
 #, js-format
 msgid "Insert the answer to “%s”"
 msgstr ""
 
-#: build/admin.js:16
-msgid "Form name"
-msgstr ""
-
-#: build/admin.js:16
-msgid "Page address"
-msgstr ""
-
-#: build/admin.js:16
-msgid "Date and time"
-msgstr ""
-
-#: build/admin.js:16
-msgid "Website name"
-msgstr ""
-
-#: build/admin.js:16
+#: build/admin.js:27
 msgid "New fields get their own placeholder once the form is saved. “All fields” already includes them."
 msgstr ""
 
-#: build/admin.js:16
-#: build/admin.js:19
+#: build/admin.js:27
+msgid "After sending the form, the person who filled it in gets an email from you, for example to confirm a registration. Replies to it reach the addresses under “Notification”."
+msgstr ""
+
+#: build/admin.js:27
+msgid "Send a confirmation"
+msgstr ""
+
+#: build/admin.js:27
+msgid "The form has no email field yet. Add one under “Fields”, so the confirmation knows where to go."
+msgstr ""
+
+#: build/admin.js:27
+msgid "Email address from field"
+msgstr ""
+
+#: build/admin.js:27
+msgid "Choose an email field"
+msgstr ""
+
+#: build/admin.js:27
+msgid "This field is optional. When it is left empty, no confirmation is sent."
+msgstr ""
+
+#: build/admin.js:27
+#: build/admin.js:29
+#: build/admin.js:32
+msgid "Subject"
+msgstr ""
+
+#: build/admin.js:27
+#: build/admin.js:29
+msgid "Email text"
+msgstr ""
+
+#: build/admin.js:27
+msgid "“All fields” adds a copy of everything the person entered."
+msgstr ""
+
+#: build/admin.js:27
+msgid "Every submission is saved under “Submissions” and also sent to you by email. If the visitor entered an email address, a reply to that email goes straight to them."
+msgstr ""
+
+#: build/admin.js:27
+#: build/admin.js:29
+msgid "Send to"
+msgstr ""
+
+#: build/admin.js:27
+msgid "One or more email addresses, separated by commas."
+msgstr ""
+
+#: build/admin.js:27
+msgid "{all_fields} lists every field with its label. Keep it in the text and no answer can be missing from the email."
+msgstr ""
+
+#: build/admin.js:27
+#: build/admin.js:30
 msgid "Preview"
 msgstr ""
 
-#: build/admin.js:16
+#: build/admin.js:27
 msgid "Layout and wording as visitors see them. Fonts and colours follow your website. You can type here to try it; nothing is sent."
 msgstr ""
 
-#: build/admin.js:16
+#: build/admin.js:27
 msgid "The form could not be loaded."
 msgstr ""
 
-#: build/admin.js:16
+#: build/admin.js:27
 msgid "Edit form"
 msgstr ""
 
-#: build/admin.js:16
+#: build/admin.js:27
 msgid "Back to all forms"
 msgstr ""
 
-#: build/admin.js:16
+#: build/admin.js:27
 msgid "Loading form…"
 msgstr ""
 
-#: build/admin.js:16
+#: build/admin.js:27
 msgid "Option 1"
 msgstr ""
 
-#: build/admin.js:16
+#: build/admin.js:27
 msgid "Option 2"
 msgstr ""
 
 #. translators: %s: field label.
-#: build/admin.js:17
-#: build/admin.js:20
+#: build/admin.js:28
+#: build/admin.js:31
 #, js-format
 msgid "Field “%s” removed."
 msgstr ""
 
 #. translators: 1: field label, 2: field type.
-#: build/admin.js:18
+#: build/admin.js:29
 #, js-format
 msgid "Field “%1$s” (%2$s)"
 msgstr ""
 
-#: build/admin.js:18
-#: build/admin.js:19
+#: build/admin.js:29
+#: build/admin.js:30
 msgid "Name of the form"
 msgstr ""
 
-#: build/admin.js:18
-#: build/admin.js:19
+#: build/admin.js:29
+#: build/admin.js:30
 msgid "Fields"
 msgstr ""
 
+#: build/admin.js:29
+msgid "Confirmation: recipient"
+msgstr ""
+
 #. translators: %s: tab title.
-#: build/admin.js:19
+#: build/admin.js:30
 #, js-format
 msgid "%s (needs attention)"
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "Unsaved changes"
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "All changes saved"
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "Not saved yet"
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "Form saved. To show it on your website, add the “Formwerk form” block to a page, or paste this shortcode:"
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "Form saved."
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "The form was not saved. Your changes are still here."
 msgstr ""
 
-#: build/admin.js:19
-#: build/admin.js:24
+#: build/admin.js:30
+#: build/admin.js:35
 msgid "Saving…"
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "Save form"
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "For example “Contact” or “Course registration”"
 msgstr ""
 
-#: build/admin.js:19
-msgid "Only you see this name. It also appears in the notification email."
+#: build/admin.js:30
+msgid "Visitors do not see this name on the page. In emails it appears wherever {form} is used."
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "All points are corrected. Save the form now."
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "Notification"
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
+msgid "Confirmation"
+msgstr ""
+
+#: build/admin.js:30
 msgid "Messages and spam protection"
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "Show"
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "Field settings"
 msgstr ""
 
-#: build/admin.js:19
-msgid "Text on the send button"
-msgstr ""
-
-#: build/admin.js:19
-msgid "Message after sending"
-msgstr ""
-
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "Replaces the form once a submission was saved. Say what happens next, for example when you will reply."
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "Spam protection"
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "Links allowed per submission"
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "Spam often contains many links. Submissions with more links than this are rejected with a note to the sender. 0 means no limit."
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:30
 msgid "Undo"
 msgstr ""
 
 #. translators: 1: first email address, 2: number of further recipients.
-#: build/admin.js:21
+#: build/admin.js:32
 #, js-format
 msgid "%1$s and %2$d more"
 msgstr ""
 
-#: build/admin.js:21
+#: build/admin.js:32
 msgid "Show less"
 msgstr ""
 
-#: build/admin.js:21
+#: build/admin.js:32
 msgid "Show more"
 msgstr ""
 
-#: build/admin.js:21
+#: build/admin.js:32
 msgid "No failed emails so far. If an email from this website cannot be sent, it appears here with the reason. Test emails are listed too. Entries are removed after 30 days."
 msgstr ""
 
-#: build/admin.js:21
-#: build/admin.js:22
+#: build/admin.js:32
+#: build/admin.js:33
 msgid "Email log"
 msgstr ""
 
-#: build/admin.js:21
+#: build/admin.js:32
 msgid "Failed emails and test results, newest first"
 msgstr ""
 
-#: build/admin.js:21
+#: build/admin.js:32
 msgid "Time"
 msgstr ""
 
-#: build/admin.js:21
+#: build/admin.js:32
 msgid "Result"
 msgstr ""
 
-#: build/admin.js:21
+#: build/admin.js:32
 msgid "Recipient"
 msgstr ""
 
-#: build/admin.js:21
+#: build/admin.js:32
 msgid "Failed"
 msgstr ""
 
 #. translators: %d: number of log entries.
-#: build/admin.js:22
+#: build/admin.js:33
 #, js-format
 msgid "Show all %d entries"
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "Clear log"
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "Delete all log entries?"
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "This cannot be undone."
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "The log could not be cleared."
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "Delete entries"
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "Mail server (SMTP host)"
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "Encryption"
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "Port"
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "Server requires login"
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "Username"
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "Password"
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "Sender address"
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "Sender name"
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "Use this sender for every email"
 msgstr ""
 
-#: build/admin.js:22
+#: build/admin.js:33
 msgid "Fixed in wp-config.php."
 msgstr ""
 
 #. translators: %s: field label.
-#: build/admin.js:23
+#: build/admin.js:34
 #, js-format
 msgid "%s (required)"
 msgstr ""
 
 #. translators: %s: host name of the mail server.
-#: build/admin.js:24
+#: build/admin.js:35
 #, js-format
 msgid "Emails from this website are sent through %s."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Emails are currently not sent through the mail server, because the settings below are incomplete or invalid. The web server sends them instead, which often ends in spam folders."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "No mail server is set. Emails are sent by the web server, which often ends in spam folders."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Saved. Now send a test email below to check that the mail server accepts it."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Saved, but the mail server cannot be used yet. Emails are sent by the web server until this is corrected:"
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Saved. No mail server is set, so emails are sent by the web server."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "The settings were not saved. Your entries are still here."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Some settings are fixed by the person who maintains this website (in the file wp-config.php). They are shown here but cannot be changed."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "The saved mail password can no longer be read. This can happen after the website was moved. Enter the password again in the “Password” field and save."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Mail server"
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Emails sent through a real mailbox arrive more reliably and are less likely to land in spam. You get these details from your email provider."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "For example smtp.example.com. Leave empty to send email without a mail server."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "STARTTLS (usually port 587)"
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "SSL/TLS (usually port 465)"
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "None (not recommended)"
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Follows the encryption. Change it only if your provider names a different port."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Almost every mail server does."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Often the full email address of the mailbox."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "A password is saved. Leave empty to keep it."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Stored encrypted in the database."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Note for developers: this website has no security keys in wp-config.php, so the key that protects the password lies in the same database. Add the keys, or set the password with the constant FORMWERK_SMTP_PASSWORD."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Sender"
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Use the address of the mailbox above. Other addresses are often rejected or marked as spam."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Shown to recipients, for example the name of your website."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Also replaces senders that other plugins set. Switch this on if their emails are rejected."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Save settings"
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "You have unsaved changes."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Copy details"
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Copied."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "No mail server is set. The test is sent by the web server, the way WordPress sends email by default."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Sends a short email with the saved settings, so you can check that it arrives."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "The mail server settings above cannot be used yet. Until they are corrected, the test is sent by the web server and does not check the mail server."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Send a test email"
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Save your changes first. The test always uses the saved settings."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "The test could not be started."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Send test to"
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Send test email"
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Conversation with the mail server (technical details)"
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Passwords and the email text are hidden. You can send these details to your email provider or developer."
 msgstr ""
 
-#: build/admin.js:24
+#: build/admin.js:35
 msgid "Conversation with the mail server"
 msgstr ""
 
 #. translators: %s: raw error message.
-#: build/admin.js:25
+#: build/admin.js:36
 #, js-format
 msgid "Error: %s"
 msgstr ""
 
-#: build/admin.js:25
+#: build/admin.js:36
 msgid "Leave without saving?"
 msgstr ""
 
-#: build/admin.js:25
+#: build/admin.js:36
 msgid "Your changes to this form have not been saved and will be lost."
 msgstr ""
 
-#: build/admin.js:25
+#: build/admin.js:36
 msgid "Discard changes"
 msgstr ""
 
-#: build/admin.js:25
+#: build/admin.js:36
 msgid "Keep editing"
 msgstr ""
 
-#: build/admin.js:25
+#: build/admin.js:36
 msgid "The settings could not be loaded."
 msgstr ""
 
-#: build/admin.js:25
+#: build/admin.js:36
 msgid "The log could not be loaded."
 msgstr ""
 
-#: build/admin.js:25
+#: build/admin.js:36
 msgid "Loading settings…"
 msgstr ""
 
