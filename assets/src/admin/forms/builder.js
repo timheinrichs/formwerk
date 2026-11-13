@@ -18,6 +18,7 @@ import { describeError } from '../smtp/errors';
 import FieldList from './field-list';
 import FieldSettings from './field-settings';
 import { Shortcode } from './form-list';
+import ConfirmationTab from './confirmation-tab';
 import MailTab from './mail-tab';
 import Preview from './preview';
 import { createField, typeLabel } from './types';
@@ -34,6 +35,9 @@ const tabOf = ( path ) => {
 	if ( path.startsWith( 'mail' ) ) {
 		return 'mail';
 	}
+	if ( path.startsWith( 'confirm' ) ) {
+		return 'confirm';
+	}
 	return path.startsWith( 'fields' ) ? 'fields' : null;
 };
 
@@ -44,6 +48,9 @@ const PATH_ORDER = [
 	'mail.to',
 	'mail.subject',
 	'mail.body',
+	'confirm.to_field',
+	'confirm.subject',
+	'confirm.body',
 	'form',
 ];
 const sortErrors = ( list, fields ) =>
@@ -191,6 +198,9 @@ export default function Builder( {
 		'mail.to': errorAt( 'mail.to' ),
 		'mail.subject': errorAt( 'mail.subject' ),
 		'mail.body': errorAt( 'mail.body' ),
+		'confirm.to_field': errorAt( 'confirm.to_field' ),
+		'confirm.subject': errorAt( 'confirm.subject' ),
+		'confirm.body': errorAt( 'confirm.body' ),
 	};
 	const tabHasError = ( name ) =>
 		errors.some( ( error ) => tabOf( error.path ) === name );
@@ -208,6 +218,15 @@ export default function Builder( {
 		[ 'to', 'subject', 'body' ].forEach( ( key ) => {
 			if ( next.mail[ key ] !== form.mail[ key ] ) {
 				dropErrors( ( error ) => error.path === `mail.${ key }` );
+			}
+		} );
+		[ 'enabled', 'to_field', 'subject', 'body' ].forEach( ( key ) => {
+			if ( next.confirm[ key ] !== form.confirm[ key ] ) {
+				dropErrors( ( error ) =>
+					key === 'enabled'
+						? error.path.startsWith( 'confirm.' )
+						: error.path === `confirm.${ key }`
+				);
 			}
 		} );
 		setForm( next );
@@ -310,6 +329,8 @@ export default function Builder( {
 			target = 'formwerk-add-field';
 		} else if ( error.path.startsWith( 'mail.' ) ) {
 			target = `formwerk-mail-${ error.path.slice( 5 ) }`;
+		} else if ( error.path.startsWith( 'confirm.' ) ) {
+			target = `formwerk-confirm-${ error.path.slice( 8 ) }`;
 		}
 		focusById( target, 120 );
 	};
@@ -333,6 +354,9 @@ export default function Builder( {
 				'mail.to': __( 'Send to', 'formwerk' ),
 				'mail.subject': __( 'Subject', 'formwerk' ),
 				'mail.body': __( 'Email text', 'formwerk' ),
+				'confirm.to_field': __( 'Confirmation: recipient', 'formwerk' ),
+				'confirm.subject': __( 'Confirmation: subject', 'formwerk' ),
+				'confirm.body': __( 'Confirmation: text', 'formwerk' ),
 			}[ error.path ] || __( 'Form', 'formwerk' )
 		);
 	};
@@ -361,6 +385,7 @@ export default function Builder( {
 						.filter( Boolean ),
 				} ) ),
 				mail: form.mail,
+				confirm: form.confirm,
 				messages: form.messages,
 				settings: form.settings,
 			},
@@ -566,6 +591,13 @@ export default function Builder( {
 						title: mark( __( 'Notification', 'formwerk' ), 'mail' ),
 					},
 					{
+						name: 'confirm',
+						title: mark(
+							__( 'Confirmation', 'formwerk' ),
+							'confirm'
+						),
+					},
+					{
 						name: 'messages',
 						title: __( 'Messages and spam protection', 'formwerk' ),
 					},
@@ -672,6 +704,13 @@ export default function Builder( {
 							) }
 							{ current.name === 'mail' && (
 								<MailTab
+									form={ form }
+									errors={ mailErrors }
+									onChange={ updateForm }
+								/>
+							) }
+							{ current.name === 'confirm' && (
+								<ConfirmationTab
 									form={ form }
 									errors={ mailErrors }
 									onChange={ updateForm }

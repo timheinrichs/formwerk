@@ -187,6 +187,11 @@ final class Handler {
 		$mail = $this->notifier->send( $form, $snapshot, $values, $page );
 		$this->store->set_mail_status( $id, $mail['sent'] ? Store::MAIL_SENT : Store::MAIL_FAILED, $mail['error'] );
 
+		$confirm = $this->notifier->confirm( $form, $snapshot, $values, $page );
+		if ( Notifier::CONFIRM_OFF !== $confirm['status'] ) {
+			$this->store->set_confirm_status( $id, $confirm['status'], $confirm['error'] );
+		}
+
 		/**
 		 * Fires after a submission was stored and its mail was attempted.
 		 *
@@ -201,13 +206,14 @@ final class Handler {
 	}
 
 	/**
-	 * Sends the notification of a stored submission again.
+	 * Sends an email of a stored submission again.
 	 *
-	 * @param int $id Submission ID.
+	 * @param int    $id   Submission ID.
+	 * @param string $kind 'notification' (to the website) or 'confirmation' (to the person who sent the form).
 	 *
 	 * @return array{sent: bool, error: string}
 	 */
-	public function resend( int $id ): array {
+	public function resend( int $id, string $kind = 'notification' ): array {
 		$submission = $this->store->find( $id );
 		$form       = $submission ? $this->forms->find( $submission['form_id'] ) : null;
 		if ( null === $submission || null === $form ) {
@@ -217,7 +223,21 @@ final class Handler {
 			);
 		}
 		$received = strtotime( $submission['created_at'] . ' UTC' );
-		$mail     = $this->notifier->send( $form, $submission['fields'], $submission['values'], $submission['page'], false === $received ? null : $received );
+		$received = false === $received ? null : $received;
+
+		if ( 'confirmation' === $kind ) {
+			// Sent even if the confirmation was switched off since, because someone asked for it explicitly.
+			$form['confirm']['enabled'] = true;
+			$result                     = $this->notifier->confirm( $form, $submission['fields'], $submission['values'], $submission['page'], $received );
+			$this->store->set_confirm_status( $id, $result['status'], $result['error'] );
+
+			return array(
+				'sent'  => Store::MAIL_SENT === $result['status'],
+				'error' => $result['error'],
+			);
+		}
+
+		$mail = $this->notifier->send( $form, $submission['fields'], $submission['values'], $submission['page'], $received );
 		$this->store->set_mail_status( $id, $mail['sent'] ? Store::MAIL_SENT : Store::MAIL_FAILED, $mail['error'] );
 
 		return $mail;

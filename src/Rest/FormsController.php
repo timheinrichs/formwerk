@@ -233,6 +233,14 @@ final class FormsController {
 				return __( 'Enter complete email addresses, separated by commas, for example info@example.com.', 'formwerk' );
 			case 'mail_to_placeholder':
 				return __( 'Only fixed email addresses can be used here, no placeholders. A confirmation to the person who sent the form will follow in a later version.', 'formwerk' );
+			case 'confirm_no_email_field':
+				return __( 'The confirmation needs an email field in the form. Add one under “Fields”, or switch the confirmation off.', 'formwerk' );
+			case 'confirm_to_required':
+				return __( 'Choose the email field whose address receives the confirmation.', 'formwerk' );
+			case 'confirm_subject_required':
+				return __( 'Enter a subject for the confirmation.', 'formwerk' );
+			case 'confirm_body_required':
+				return __( 'The confirmation text is empty. Write a short thank-you, or switch the confirmation off.', 'formwerk' );
 			case 'placeholder_unknown':
 				return sprintf(
 					/* translators: %s: list of placeholders. */

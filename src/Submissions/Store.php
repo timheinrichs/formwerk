@@ -20,7 +20,7 @@ final class Store {
 	public const MAIL_FAILED  = 'failed';
 	public const MAIL_UNSENT  = 'unsent';
 
-	private const DB_VERSION        = '1';
+	private const DB_VERSION        = '2';
 	private const DB_VERSION_OPTION = 'formwerk_db_version';
 
 	/**
@@ -54,6 +54,8 @@ final class Store {
 				data longtext NOT NULL,
 				mail_status varchar(20) NOT NULL DEFAULT 'pending',
 				mail_error text NOT NULL,
+				confirm_status varchar(20) NOT NULL DEFAULT 'off',
+				confirm_error text NOT NULL,
 				PRIMARY KEY  (id),
 				KEY form_created (form_id, created_at),
 				KEY created_at (created_at)
@@ -123,14 +125,16 @@ final class Store {
 		$written = $wpdb->insert(
 			self::table(),
 			array(
-				'form_id'     => $form_id,
-				'created_at'  => gmdate( 'Y-m-d H:i:s' ),
-				'lang'        => substr( $lang, 0, 20 ),
-				'data'        => $json,
-				'mail_status' => self::MAIL_PENDING,
-				'mail_error'  => '',
+				'form_id'        => $form_id,
+				'created_at'     => gmdate( 'Y-m-d H:i:s' ),
+				'lang'           => substr( $lang, 0, 20 ),
+				'data'           => $json,
+				'mail_status'    => self::MAIL_PENDING,
+				'mail_error'     => '',
+				'confirm_status' => 'off',
+				'confirm_error'  => '',
 			),
-			array( '%d', '%s', '%s', '%s', '%s', '%s' )
+			array( '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
 		);
 
 		return 1 === $written ? (int) $wpdb->insert_id : 0;
@@ -152,6 +156,29 @@ final class Store {
 			array(
 				'mail_status' => $status,
 				'mail_error'  => mb_substr( $error, 0, 1000 ),
+			),
+			array( 'id' => $id ),
+			array( '%s', '%s' ),
+			array( '%d' )
+		);
+	}
+
+	/**
+	 * Records the result of the confirmation to the person who sent the form.
+	 *
+	 * @param int    $id     Submission ID.
+	 * @param string $status MAIL_SENT, MAIL_FAILED, or one of the Notifier::CONFIRM_* values.
+	 * @param string $error  Error message or reason.
+	 */
+	public function set_confirm_status( int $id, string $status, string $error = '' ): void {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Own table.
+		$wpdb->update(
+			self::table(),
+			array(
+				'confirm_status' => substr( $status, 0, 20 ),
+				'confirm_error'  => mb_substr( $error, 0, 1000 ),
 			),
 			array( 'id' => $id ),
 			array( '%s', '%s' ),
@@ -284,16 +311,19 @@ final class Store {
 		$data = is_array( $data ) ? $data : array();
 
 		return array(
-			'id'          => (int) $row['id'],
-			'form_id'     => (int) $row['form_id'],
-			'created_at'  => (string) $row['created_at'],
-			'lang'        => (string) $row['lang'],
-			'fields'      => isset( $data['fields'] ) && is_array( $data['fields'] ) ? $data['fields'] : array(),
-			'values'      => isset( $data['values'] ) && is_array( $data['values'] ) ? $data['values'] : array(),
-			'page'        => isset( $data['page'] ) && is_string( $data['page'] ) ? $data['page'] : '',
-			'form_title'  => isset( $data['form_title'] ) && is_string( $data['form_title'] ) ? $data['form_title'] : '',
-			'mail_status' => (string) $row['mail_status'],
-			'mail_error'  => (string) $row['mail_error'],
+			'id'             => (int) $row['id'],
+			'form_id'        => (int) $row['form_id'],
+			'created_at'     => (string) $row['created_at'],
+			'lang'           => (string) $row['lang'],
+			'fields'         => isset( $data['fields'] ) && is_array( $data['fields'] ) ? $data['fields'] : array(),
+			'values'         => isset( $data['values'] ) && is_array( $data['values'] ) ? $data['values'] : array(),
+			'page'           => isset( $data['page'] ) && is_string( $data['page'] ) ? $data['page'] : '',
+			'form_title'     => isset( $data['form_title'] ) && is_string( $data['form_title'] ) ? $data['form_title'] : '',
+			'mail_status'    => (string) $row['mail_status'],
+			'mail_error'     => (string) $row['mail_error'],
+			// Rows from before the confirmation existed have no such columns until the table is updated.
+			'confirm_status' => (string) ( $row['confirm_status'] ?? 'off' ),
+			'confirm_error'  => (string) ( $row['confirm_error'] ?? '' ),
 		);
 	}
 }

@@ -24,6 +24,7 @@ final class FormRepository {
 	private const META_FIELDS   = '_formwerk_fields';
 	private const META_MAIL     = '_formwerk_mail';
 	private const META_MESSAGES = '_formwerk_messages';
+	private const META_CONFIRM  = '_formwerk_confirmation';
 	private const META_SETTINGS = '_formwerk_settings';
 	private const META_SPAM     = '_formwerk_spam_count';
 
@@ -79,6 +80,7 @@ final class FormRepository {
 			'modified' => $post->post_modified_gmt,
 			'fields'   => $fields,
 			'mail'     => $this->mail( $this->meta( $id, self::META_MAIL ) ),
+			'confirm'  => $this->confirmation( $this->meta( $id, self::META_CONFIRM ) ),
 			'messages' => $this->messages( $this->meta( $id, self::META_MESSAGES ) ),
 			'settings' => $this->settings( $this->meta( $id, self::META_SETTINGS ) ),
 			'spam'     => (int) get_post_meta( $id, self::META_SPAM, true ),
@@ -129,6 +131,7 @@ final class FormRepository {
 			'modified' => '',
 			'fields'   => array(),
 			'mail'     => $this->mail( array() ),
+			'confirm'  => $this->confirmation( array() ),
 			'messages' => $this->messages( array() ),
 			'settings' => $this->settings( array() ),
 			'spam'     => 0,
@@ -191,6 +194,15 @@ final class FormRepository {
 				);
 			}
 		}
+		$confirm = $this->confirmation( $input['confirm'] ?? array() );
+		// The builder may point at a new email field by its ID, because new fields get their name only now.
+		foreach ( $schema['fields'] as $field ) {
+			if ( 'email' === $field['type'] && $field['id'] === $confirm['to_field'] ) {
+				$confirm['to_field'] = $field['name'];
+			}
+		}
+		$errors = array_merge( $errors, $this->confirmation_errors( $confirm, $schema['fields'] ) );
+
 		if ( ! $this->recipients_are_valid( $mail['to'] ) ) {
 			$errors[] = array(
 				'path' => 'mail.to',
@@ -242,6 +254,7 @@ final class FormRepository {
 
 		$written = $this->store( $saved, self::META_FIELDS, $schema['fields'] )
 			&& $this->store( $saved, self::META_MAIL, $mail )
+			&& $this->store( $saved, self::META_CONFIRM, $confirm )
 			&& $this->store( $saved, self::META_MESSAGES, $messages )
 			&& $this->store( $saved, self::META_SETTINGS, $settings );
 		if ( ! $written ) {
@@ -305,6 +318,75 @@ final class FormRepository {
 				/* translators: The words in braces are placeholders and must stay as they are. */
 				: __( "{all_fields}\n\n--\nSent with the form \"{form}\" on {page} ({date}).", 'formwerk' ),
 		);
+	}
+
+	/**
+	 * Confirmation to the person who sent the form, with defaults. Off until switched on.
+	 *
+	 * @param mixed $raw Stored or submitted value.
+	 *
+	 * @return array{enabled:bool, to_field:string, subject:string, body:string}
+	 */
+	private function confirmation( $raw ): array {
+		$raw = is_array( $raw ) ? $raw : array();
+
+		return array(
+			'enabled'  => ! empty( $raw['enabled'] ),
+			'to_field' => isset( $raw['to_field'] ) && is_string( $raw['to_field'] ) ? (string) preg_replace( '/[^a-z0-9_-]/', '', $raw['to_field'] ) : '',
+			/* translators: {form} is a placeholder and must stay as it is. */
+			'subject'  => isset( $raw['subject'] ) && is_string( $raw['subject'] ) ? self::line( $raw['subject'], 300 ) : __( 'Your message: {form}', 'formwerk' ),
+			'body'     => isset( $raw['body'] ) && is_string( $raw['body'] )
+				? self::lines( $raw['body'], 20000 )
+				/* translators: The words in braces are placeholders and must stay as they are. */
+				: __( "Thank you for your message. We have received it and will get back to you.\n\nYour entries:\n\n{all_fields}\n\n--\n{site}", 'formwerk' ),
+		);
+	}
+
+	/**
+	 * What blocks saving a confirmation that is switched on.
+	 *
+	 * @param array{enabled:bool, to_field:string, subject:string, body:string} $confirm Confirmation settings.
+	 * @param array<int, array<string, mixed>>                                  $fields  Normalised fields.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function confirmation_errors( array $confirm, array $fields ): array {
+		if ( ! $confirm['enabled'] ) {
+			return array();
+		}
+		$errors       = array();
+		$email_fields = array_column( array_filter( $fields, static fn( array $field ): bool => 'email' === $field['type'] ), 'name' );
+
+		if ( array() === $email_fields ) {
+			$errors[] = array(
+				'path' => 'confirm.to_field',
+				'code' => 'confirm_no_email_field',
+			);
+		} elseif ( ! in_array( $confirm['to_field'], $email_fields, true ) ) {
+			$errors[] = array(
+				'path' => 'confirm.to_field',
+				'code' => 'confirm_to_required',
+			);
+		}
+		foreach ( array( 'subject', 'body' ) as $part ) {
+			if ( '' === trim( $confirm[ $part ] ) ) {
+				$errors[] = array(
+					'path' => 'confirm.' . $part,
+					'code' => 'confirm_' . $part . '_required',
+				);
+				continue;
+			}
+			$unknown = Placeholders::unknown( $confirm[ $part ], Schema::names( $fields ) );
+			if ( array() !== $unknown ) {
+				$errors[] = array(
+					'path'         => 'confirm.' . $part,
+					'code'         => 'placeholder_unknown',
+					'placeholders' => $unknown,
+				);
+			}
+		}
+
+		return $errors;
 	}
 
 	/**

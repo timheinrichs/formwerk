@@ -309,6 +309,28 @@ final class SubmissionsTable extends WP_List_Table {
 	}
 
 	/**
+	 * Status of the confirmation to the person who sent the form, in words.
+	 *
+	 * @param array<string, mixed> $item Submission.
+	 */
+	public static function confirm_status( array $item ): string {
+		switch ( $item['confirm_status'] ) {
+			case Store::MAIL_SENT:
+				return esc_html__( 'Sent', 'formwerk' );
+			case Store::MAIL_FAILED:
+				return sprintf(
+					'<strong class="formwerk-result is-failed">%s</strong><br><span class="description">%s</span>',
+					esc_html__( 'Not sent', 'formwerk' ),
+					esc_html( $item['confirm_error'] )
+				);
+			case 'skipped':
+				return esc_html__( 'Not sent, because no email address was entered.', 'formwerk' );
+			default:
+				return esc_html__( 'Not sent', 'formwerk' );
+		}
+	}
+
+	/**
 	 * Date of a submission in the site's time zone and format.
 	 *
 	 * @param array<string, mixed> $item Submission.

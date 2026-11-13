@@ -154,19 +154,21 @@ final class SubmissionsPage {
 	}
 
 	/**
-	 * Address that sends the notification of one submission. The nonce only fits this action and this submission.
+	 * Address that sends an email of one submission. The nonce only fits this action, email and submission.
 	 *
-	 * @param int $id Submission ID.
+	 * @param int    $id   Submission ID.
+	 * @param string $kind 'notification' or 'confirmation'.
 	 */
-	public static function resend_url( int $id ): string {
+	public static function resend_url( int $id, string $kind = 'notification' ): string {
 		return wp_nonce_url(
 			self::url(
 				array(
 					'formwerk_action' => 'resend',
+					'formwerk_kind'   => $kind,
 					'submission'      => $id,
 				)
 			),
-			'formwerk_resend_' . $id
+			'formwerk_resend_' . $kind . '_' . $id
 		);
 	}
 
@@ -206,8 +208,10 @@ final class SubmissionsPage {
 		}
 
 		if ( 'resend' === $action && array() !== $ids ) {
-			check_admin_referer( 'formwerk_resend_' . $ids[0] );
-			$result = $this->handler->resend( $ids[0] );
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- The nonce is checked on the next line and covers the kind.
+			$kind = isset( $_GET['formwerk_kind'] ) && 'confirmation' === $_GET['formwerk_kind'] ? 'confirmation' : 'notification';
+			check_admin_referer( 'formwerk_resend_' . $kind . '_' . $ids[0] );
+			$result = $this->handler->resend( $ids[0], $kind );
 			set_transient( 'formwerk_resend_' . get_current_user_id(), $result, 60 );
 			wp_safe_redirect(
 				self::url(
@@ -399,11 +403,23 @@ final class SubmissionsPage {
 		printf( '<tr><th scope="row">%s</th><td>%s</td></tr>', esc_html__( 'Language', 'formwerk' ), esc_html( self::language( $item['lang'] ) ) );
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in SubmissionsTable::mail_status().
 		printf( '<tr><th scope="row">%s</th><td>%s</td></tr>', esc_html__( 'Notification email', 'formwerk' ), SubmissionsTable::mail_status( $item ) );
+		$has_confirm = 'off' !== $item['confirm_status'];
+		if ( $has_confirm ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in SubmissionsTable::confirm_status().
+			printf( '<tr><th scope="row">%s</th><td>%s</td></tr>', esc_html__( 'Confirmation email', 'formwerk' ), SubmissionsTable::confirm_status( $item ) );
+		}
 		echo '</tbody></table>';
 
 		echo '<p class="formwerk-detail-actions">';
 		if ( $form_exists ) {
 			printf( '<a class="button" href="%s">%s</a> ', esc_url( self::resend_url( (int) $item['id'] ) ), esc_html( $send_label ) );
+			if ( $has_confirm && 'skipped' !== $item['confirm_status'] ) {
+				printf(
+					'<a class="button" href="%s">%s</a> ',
+					esc_url( self::resend_url( (int) $item['id'], 'confirmation' ) ),
+					esc_html( Store::MAIL_SENT === $item['confirm_status'] ? __( 'Send confirmation again', 'formwerk' ) : __( 'Send confirmation', 'formwerk' ) )
+				);
+			}
 		}
 		printf( '<a class="button button-link-delete" href="%s">%s</a>', esc_url( self::confirm_url( array( (int) $item['id'] ) ) ), esc_html__( 'Delete submission', 'formwerk' ) );
 		echo '</p>';
