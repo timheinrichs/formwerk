@@ -25,6 +25,7 @@ final class Screen {
 	public static function render( string $title, string $screen ): void {
 		?>
 		<div class="wrap">
+			<?php self::brand(); ?>
 			<h1><?php echo esc_html( $title ); ?></h1>
 			<?php if ( ! self::has_build() ) : ?>
 				<div class="notice notice-error inline">
@@ -46,6 +47,16 @@ final class Screen {
 			<?php endif; ?>
 		</div>
 		<?php
+	}
+
+	/**
+	 * The Formwerk logo above the page title. Decoration only: the title says where you are.
+	 */
+	public static function brand(): void {
+		printf(
+			'<div class="formwerk-brand"><img src="%s" alt="" width="105" height="24"></div>',
+			esc_url( plugins_url( 'assets/logo/formwerk-logo.svg', FORMWERK_FILE ) )
+		);
 	}
 
 	/**

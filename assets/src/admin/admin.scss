@@ -616,6 +616,16 @@ $error: #cc1818;
 	}
 }
 
+.formwerk-brand {
+	margin: 12px 0 4px;
+	line-height: 0;
+
+	img {
+		width: auto;
+		height: 24px;
+	}
+}
+
 // Last, because these page-level notices are the most specific rule here.
 .formwerk-smtp > form > .components-notice {
 	margin: 0 0 16px;

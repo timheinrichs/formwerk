@@ -282,6 +282,7 @@ final class SubmissionsPage {
 		// phpcs:enable
 
 		echo '<div class="wrap formwerk-submissions">';
+		Screen::brand();
 		if ( array() !== $confirm ) {
 			$this->render_confirm( $confirm );
 		} elseif ( $detail > 0 ) {
