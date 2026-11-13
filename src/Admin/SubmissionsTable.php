@@ -176,6 +176,23 @@ final class SubmissionsTable extends WP_List_Table {
 		echo '</select>';
 		submit_button( __( 'Filter', 'formwerk' ), '', 'filter_action', false );
 		echo '</div>';
+
+		// The columns of a CSV file depend on the form, so an export is always for one form.
+		echo '<div class="alignleft actions formwerk-export">';
+		if ( isset( $this->forms[ self::filter_form() ] ) && $this->has_items() ) {
+			printf(
+				'<a class="button" href="%s">%s</a>',
+				esc_url( Export::url( self::filter_form(), self::filter_status() ) ),
+				esc_html(
+					'' === self::filter_status()
+						? __( 'Export CSV', 'formwerk' )
+						: __( 'Export these as CSV', 'formwerk' )
+				)
+			);
+		} else {
+			printf( '<span class="description">%s</span>', esc_html__( 'Filter by a form to export its submissions as CSV.', 'formwerk' ) );
+		}
+		echo '</div>';
 	}
 
 	/**

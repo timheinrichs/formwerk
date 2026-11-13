@@ -10,6 +10,7 @@ declare( strict_types=1 );
 namespace Formwerk;
 
 use Formwerk\Admin\EmailPage;
+use Formwerk\Admin\Export;
 use Formwerk\Admin\FormsPage;
 use Formwerk\Admin\SubmissionsPage;
 use Formwerk\Forms\FormRepository;
@@ -96,6 +97,7 @@ final class Plugin {
 		if ( is_admin() ) {
 			( new FormsPage() )->register();
 			( new SubmissionsPage( $store, $forms, $handler ) )->register();
+			( new Export( $store, $forms ) )->register();
 			( new EmailPage( $settings ) )->register();
 		}
 	}
