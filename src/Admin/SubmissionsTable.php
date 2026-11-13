@@ -61,7 +61,7 @@ final class SubmissionsTable extends WP_List_Table {
 			'created' => __( 'Received', 'formwerk' ),
 			'form'    => __( 'Form', 'formwerk' ),
 			'summary' => __( 'Content', 'formwerk' ),
-			'mail'    => __( 'Email', 'formwerk' ),
+			'mail'    => __( 'Emails', 'formwerk' ),
 		);
 	}
 
@@ -178,21 +178,28 @@ final class SubmissionsTable extends WP_List_Table {
 		echo '</div>';
 
 		// The columns of a CSV file depend on the form, so an export is always for one form.
-		echo '<div class="alignleft actions formwerk-export">';
-		if ( isset( $this->forms[ self::filter_form() ] ) && $this->has_items() ) {
-			printf(
-				'<a class="button" href="%s">%s</a>',
-				esc_url( Export::url( self::filter_form(), self::filter_status() ) ),
-				esc_html(
-					'' === self::filter_status()
-						? __( 'Export CSV', 'formwerk' )
-						: __( 'Export these as CSV', 'formwerk' )
-				)
-			);
-		} else {
-			printf( '<span class="description">%s</span>', esc_html__( 'Filter by a form to export its submissions as CSV.', 'formwerk' ) );
+		if ( '' === $this->export_link() ) {
+			printf( '<div class="alignleft formwerk-export"><span class="description">%s</span></div>', esc_html__( 'Filter by a form to export its submissions as CSV.', 'formwerk' ) );
 		}
-		echo '</div>';
+	}
+
+	/**
+	 * Button that exports the submissions shown, next to the page title; '' when no single form is shown.
+	 */
+	public function export_link(): string {
+		if ( ! isset( $this->forms[ self::filter_form() ] ) || ! $this->has_items() ) {
+			return '';
+		}
+
+		return sprintf(
+			'<a class="page-title-action" href="%s">%s</a>',
+			esc_url( Export::url( self::filter_form(), self::filter_status() ) ),
+			esc_html(
+				'' === self::filter_status()
+					? __( 'Export CSV', 'formwerk' )
+					: __( 'Export these as CSV', 'formwerk' )
+			)
+		);
 	}
 
 	/**
@@ -228,7 +235,7 @@ final class SubmissionsTable extends WP_List_Table {
 			$actions['resend'] = sprintf(
 				'<a href="%s">%s</a>',
 				esc_url( SubmissionsPage::resend_url( (int) $item['id'] ) ),
-				esc_html( Store::MAIL_SENT === $item['mail_status'] ? __( 'Send email again', 'formwerk' ) : __( 'Send email', 'formwerk' ) )
+				esc_html( Store::MAIL_SENT === $item['mail_status'] ? __( 'Send notification again', 'formwerk' ) : __( 'Send notification', 'formwerk' ) )
 			);
 		}
 		$actions['delete'] = sprintf(
@@ -300,7 +307,14 @@ final class SubmissionsTable extends WP_List_Table {
 	 * @param array<string, mixed> $item Submission.
 	 */
 	protected function column_mail( $item ) {
-		return self::mail_status( $item );
+		$lines = array(
+			sprintf( '<span class="formwerk-mail-kind">%s</span> %s', esc_html__( 'Notification:', 'formwerk' ), self::mail_status( $item ) ),
+		);
+		if ( 'off' !== $item['confirm_status'] ) {
+			$lines[] = sprintf( '<span class="formwerk-mail-kind">%s</span> %s', esc_html__( 'Confirmation:', 'formwerk' ), self::confirm_status( $item ) );
+		}
+
+		return implode( '<br>', $lines );
 	}
 
 	/**
@@ -312,7 +326,7 @@ final class SubmissionsTable extends WP_List_Table {
 		if ( Store::MAIL_SENT === $item['mail_status'] ) {
 			return esc_html__( 'Sent', 'formwerk' );
 		}
-		if ( Store::is_unsent( $item ) ) {
+		if ( Store::notification_unsent( $item ) ) {
 			$reason = '' !== $item['mail_error'] ? $item['mail_error'] : __( 'Sending was interrupted.', 'formwerk' );
 
 			return sprintf(
@@ -341,7 +355,8 @@ final class SubmissionsTable extends WP_List_Table {
 					esc_html( $item['confirm_error'] )
 				);
 			case 'skipped':
-				return esc_html__( 'Not sent, because no email address was entered.', 'formwerk' );
+				// The reason says why: no address, web addresses in the entries, or too many in a short time.
+				return esc_html( '' !== $item['confirm_error'] ? $item['confirm_error'] : __( 'Not sent, because no email address was entered.', 'formwerk' ) );
 			default:
 				return esc_html__( 'Not sent', 'formwerk' );
 		}

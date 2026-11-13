@@ -132,8 +132,8 @@ final class SubmissionsPage {
 				sprintf(
 					/* translators: %s: number of emails. */
 					_n(
-						'%s notification email could not be sent. The submission is saved.',
-						'%s notification emails could not be sent. The submissions are saved.',
+						'%s email about a submission could not be sent. The submission is saved.',
+						'%s emails about submissions could not be sent. The submissions are saved.',
 						$unsent,
 						'formwerk'
 					),
@@ -221,7 +221,8 @@ final class SubmissionsPage {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- The nonce is checked on the next line and covers the kind.
 			$kind = isset( $_GET['formwerk_kind'] ) && 'confirmation' === $_GET['formwerk_kind'] ? 'confirmation' : 'notification';
 			check_admin_referer( 'formwerk_resend_' . $kind . '_' . $ids[0] );
-			$result = $this->handler->resend( $ids[0], $kind );
+			$result         = $this->handler->resend( $ids[0], $kind );
+			$result['kind'] = $kind;
 			set_transient( 'formwerk_resend_' . get_current_user_id(), $result, 60 );
 			wp_safe_redirect(
 				self::url(
@@ -300,7 +301,10 @@ final class SubmissionsPage {
 		if ( null === $this->table ) {
 			return;
 		}
-		printf( '<h1>%s</h1>', esc_html__( 'Submissions', 'formwerk' ) );
+		printf( '<h1 class="wp-heading-inline">%s</h1>', esc_html__( 'Submissions', 'formwerk' ) );
+		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in SubmissionsTable::export_link().
+		echo $this->table->export_link();
+		echo '<hr class="wp-header-end">';
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only notice.
 		if ( isset( $_GET['deleted'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only notice.
@@ -319,7 +323,16 @@ final class SubmissionsPage {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only notice.
 		$retention = isset( $_GET['retention'] ) ? sanitize_key( wp_unslash( $_GET['retention'] ) ) : '';
 		if ( 'saved' === $retention ) {
-			printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html__( 'Saved.', 'formwerk' ) );
+			$days = Retention::days();
+			printf(
+				'<div class="notice notice-success is-dismissible"><p>%s</p></div>',
+				esc_html(
+					0 === $days
+						? __( 'Saved. Submissions are kept until you delete them.', 'formwerk' )
+						/* translators: %s: number of days. */
+						: sprintf( _n( 'Saved. Submissions are deleted automatically after %s day.', 'Saved. Submissions are deleted automatically after %s days.', $days, 'formwerk' ), number_format_i18n( $days ) )
+				)
+			);
 		} elseif ( 'invalid' === $retention ) {
 			printf(
 				'<div class="notice notice-error"><p>%s</p></div>',
@@ -331,7 +344,7 @@ final class SubmissionsPage {
 					)
 				)
 			);
-		}
+		}//end if
 		$this->table->views();
 		echo '<form method="get">';
 		printf( '<input type="hidden" name="page" value="%s">', esc_attr( self::SLUG ) );
@@ -348,13 +361,14 @@ final class SubmissionsPage {
 	 */
 	private function render_retention(): void {
 		$days = Retention::days();
-		printf( '<form method="post" action="%s" class="formwerk-retention">', esc_url( self::url() ) );
+		printf( '<form method="post" action="%s" class="formwerk-retention" id="formwerk-retention">', esc_url( self::url() ) );
 		wp_nonce_field( 'formwerk_retention' );
 		echo '<input type="hidden" name="formwerk_action" value="retention">';
 		printf( '<h2>%s</h2>', esc_html__( 'Keeping submissions', 'formwerk' ) );
 		printf(
-			'<p><label for="formwerk-retention-days">%s</label> <input type="number" min="0" max="%d" step="1" id="formwerk-retention-days" name="formwerk_retention_days" value="%d" class="small-text" aria-describedby="formwerk-retention-help"> %s</p>',
+			'<p><label for="formwerk-retention-days">%1$s<span class="screen-reader-text"> %2$s</span></label> <input type="number" min="0" max="%3$d" step="1" id="formwerk-retention-days" name="formwerk_retention_days" value="%4$d" class="small-text" aria-describedby="formwerk-retention-help"> <span aria-hidden="true">%5$s</span></p>',
 			esc_html__( 'Delete submissions automatically after', 'formwerk' ),
+			esc_html__( '(number of days)', 'formwerk' ),
 			(int) Retention::MAX,
 			(int) $days,
 			esc_html__( 'days', 'formwerk' )
@@ -380,7 +394,7 @@ final class SubmissionsPage {
 		}
 		$titles      = $this->form_titles();
 		$form_exists = isset( $titles[ $item['form_id'] ] );
-		$send_label  = Store::MAIL_SENT === $item['mail_status'] ? __( 'Send email again', 'formwerk' ) : __( 'Send email', 'formwerk' );
+		$send_label  = Store::MAIL_SENT === $item['mail_status'] ? __( 'Send notification again', 'formwerk' ) : __( 'Send notification', 'formwerk' );
 
 		printf(
 			'<h1>%s</h1>',
@@ -399,9 +413,26 @@ final class SubmissionsPage {
 			$result = get_transient( 'formwerk_resend_' . get_current_user_id() );
 			delete_transient( 'formwerk_resend_' . get_current_user_id() );
 		}
+		$resent_confirmation = is_array( $result ) && 'confirmation' === ( $result['kind'] ?? '' );
 		if ( is_array( $result ) && $result['sent'] ) {
-			printf( '<div class="notice notice-success"><p>%s</p></div>', esc_html__( 'The email was sent.', 'formwerk' ) );
-		} elseif ( Store::is_unsent( $item ) ) {
+			$message = $resent_confirmation && '' !== ( $result['to'] ?? '' )
+				/* translators: %s: email address. */
+				? sprintf( __( 'Confirmation sent to %s.', 'formwerk' ), $result['to'] )
+				: __( 'Notification sent.', 'formwerk' );
+			printf( '<div class="notice notice-success"><p>%s</p></div>', esc_html( $message ) );
+		} elseif ( is_array( $result ) && $resent_confirmation ) {
+			printf(
+				'<div class="notice notice-error"><p><strong>%s</strong></p><p>%s</p></div>',
+				esc_html__( 'The confirmation was not sent.', 'formwerk' ),
+				esc_html(
+					sprintf(
+						/* translators: %s: error message. */
+						__( 'Reason: %s', 'formwerk' ),
+						self::sentence( (string) $result['error'] )
+					)
+				)
+			);
+		} elseif ( Store::notification_unsent( $item ) ) {
 			// The most important fact about this submission goes first.
 			echo '<div class="notice notice-error formwerk-unsent">';
 			printf( '<p><strong>%s</strong></p>', esc_html__( 'The notification email for this submission was not sent. The submission itself is saved.', 'formwerk' ) );
@@ -420,6 +451,27 @@ final class SubmissionsPage {
 			echo '<p>';
 			if ( $form_exists ) {
 				printf( '<a class="button button-primary" href="%s">%s</a> ', esc_url( self::resend_url( (int) $item['id'] ) ), esc_html( $send_label ) );
+			}
+			printf( '<a class="button" href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=' . EmailPage::SLUG ) ), esc_html__( 'Check the email settings', 'formwerk' ) );
+			echo '</p></div>';
+		} elseif ( Store::MAIL_FAILED === $item['confirm_status'] ) {
+			echo '<div class="notice notice-error formwerk-unsent">';
+			printf( '<p><strong>%s</strong></p>', esc_html__( 'The confirmation to the person who sent this form was not sent. The submission itself is saved.', 'formwerk' ) );
+			if ( '' !== $item['confirm_error'] ) {
+				printf(
+					'<p>%s</p>',
+					esc_html(
+						sprintf(
+							/* translators: %s: error message. */
+							__( 'Reason: %s', 'formwerk' ),
+							self::sentence( $item['confirm_error'] )
+						)
+					)
+				);
+			}
+			echo '<p>';
+			if ( $form_exists ) {
+				printf( '<a class="button button-primary" href="%s">%s</a> ', esc_url( self::resend_url( (int) $item['id'], 'confirmation' ) ), esc_html__( 'Send confirmation', 'formwerk' ) );
 			}
 			printf( '<a class="button" href="%s">%s</a>', esc_url( admin_url( 'admin.php?page=' . EmailPage::SLUG ) ), esc_html__( 'Check the email settings', 'formwerk' ) );
 			echo '</p></div>';
@@ -465,7 +517,8 @@ final class SubmissionsPage {
 		echo '<p class="formwerk-detail-actions">';
 		if ( $form_exists ) {
 			printf( '<a class="button" href="%s">%s</a> ', esc_url( self::resend_url( (int) $item['id'] ) ), esc_html( $send_label ) );
-			if ( $has_confirm && 'skipped' !== $item['confirm_status'] ) {
+			// A skipped confirmation (links, limits) can still be sent by hand, if there is an address.
+			if ( $has_confirm && ( 'skipped' !== $item['confirm_status'] || self::has_address( $item ) ) ) {
 				printf(
 					'<a class="button" href="%s">%s</a> ',
 					esc_url( self::resend_url( (int) $item['id'], 'confirmation' ) ),
@@ -475,6 +528,22 @@ final class SubmissionsPage {
 		}
 		printf( '<a class="button button-link-delete" href="%s">%s</a>', esc_url( self::confirm_url( array( (int) $item['id'] ) ) ), esc_html__( 'Delete submission', 'formwerk' ) );
 		echo '</p>';
+	}
+
+	/**
+	 * Whether a submission has a valid email address in one of its email fields.
+	 *
+	 * @param array<string, mixed> $item Submission.
+	 */
+	private static function has_address( array $item ): bool {
+		foreach ( $item['fields'] as $field ) {
+			$value = $item['values'][ $field['name'] ] ?? '';
+			if ( 'email' === ( $field['type'] ?? '' ) && is_string( $value ) && is_email( $value ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

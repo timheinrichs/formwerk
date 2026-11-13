@@ -54,7 +54,7 @@ final class Screen {
 	 */
 	public static function brand(): void {
 		printf(
-			'<div class="formwerk-brand"><img src="%s" alt="" width="105" height="24"></div>',
+			'<div class="formwerk-brand"><img src="%s" alt="" width="88" height="20"></div>',
 			esc_url( plugins_url( 'assets/logo/formwerk-logo.svg', FORMWERK_FILE ) )
 		);
 	}

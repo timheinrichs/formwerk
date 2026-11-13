@@ -232,7 +232,7 @@ final class FormsController {
 			case 'mail_to_invalid':
 				return __( 'Enter complete email addresses, separated by commas, for example info@example.com.', 'formwerk' );
 			case 'mail_to_placeholder':
-				return __( 'Only fixed email addresses can be used here, no placeholders. A confirmation to the person who sent the form will follow in a later version.', 'formwerk' );
+				return __( 'Only fixed email addresses can be used here, no placeholders. To send a copy to the person who filled in the form, switch on the confirmation in the “Confirmation” tab.', 'formwerk' );
 			case 'confirm_no_email_field':
 				return __( 'The confirmation needs an email field in the form. Add one under “Fields”, or switch the confirmation off.', 'formwerk' );
 			case 'confirm_to_required':

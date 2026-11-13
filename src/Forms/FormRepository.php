@@ -351,7 +351,7 @@ final class FormRepository {
 			'enabled'  => ! empty( $raw['enabled'] ),
 			'to_field' => isset( $raw['to_field'] ) && is_string( $raw['to_field'] ) ? (string) preg_replace( '/[^a-z0-9_-]/', '', $raw['to_field'] ) : '',
 			/* translators: {form} is a placeholder and must stay as it is. */
-			'subject'  => isset( $raw['subject'] ) && is_string( $raw['subject'] ) ? self::line( $raw['subject'], 300 ) : __( 'Your message: {form}', 'formwerk' ),
+			'subject'  => isset( $raw['subject'] ) && is_string( $raw['subject'] ) ? self::line( $raw['subject'], 300 ) : __( 'Your message to {site}', 'formwerk' ),
 			'body'     => isset( $raw['body'] ) && is_string( $raw['body'] )
 				? self::lines( $raw['body'], 20000 )
 				/* translators: The words in braces are placeholders and must stay as they are. */
