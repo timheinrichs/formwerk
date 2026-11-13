@@ -19,6 +19,8 @@ final class Retention {
 	public const MAX     = 3650;
 	public const HOOK    = 'formwerk_cleanup';
 
+	public const NOTICE_OPTION = 'formwerk_retention_notice';
+
 	/**
 	 * Submission storage.
 	 *
@@ -40,6 +42,7 @@ final class Retention {
 	 */
 	public function register(): void {
 		add_action( self::HOOK, array( $this, 'clean_up' ) );
+		add_action( 'admin_notices', array( $this, 'explain_after_update' ) );
 		add_action(
 			'init',
 			static function (): void {
@@ -47,6 +50,22 @@ final class Retention {
 					wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', self::HOOK );
 				}
 			}
+		);
+	}
+
+	/**
+	 * After an update: say once that automatic deletion exists and is off, until a period is chosen.
+	 */
+	public function explain_after_update(): void {
+		$screen = get_current_screen();
+		if ( ! get_option( self::NOTICE_OPTION ) || ! $screen || ! str_contains( (string) $screen->id, 'formwerk' ) || ! current_user_can( \Formwerk\Plugin::capability() ) ) {
+			return;
+		}
+		printf(
+			'<div class="notice notice-info"><p>%s <a href="%s">%s</a></p></div>',
+			esc_html__( 'Formwerk can now delete old submissions automatically. On this website it is switched off, so all submissions are kept.', 'formwerk' ),
+			esc_url( admin_url( 'admin.php?page=formwerk-submissions#formwerk-retention' ) ),
+			esc_html__( 'Choose how long to keep submissions', 'formwerk' )
 		);
 	}
 
@@ -72,6 +91,7 @@ final class Retention {
 			return false;
 		}
 		update_option( self::OPTION, (int) $text, false );
+		delete_option( self::NOTICE_OPTION );
 
 		return true;
 	}

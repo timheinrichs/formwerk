@@ -96,17 +96,44 @@ final class SpamGuard {
 		if ( null !== $honeypot && '' !== $honeypot ) {
 			return self::HONEYPOT;
 		}
-		if ( $max_links > 0 ) {
-			$text = '';
-			foreach ( $values as $value ) {
-				$text .= ' ' . ( is_array( $value ) ? implode( ' ', array_filter( $value, 'is_scalar' ) ) : ( is_scalar( $value ) ? (string) $value : '' ) );
-			}
-			if ( preg_match_all( '~https?://|\bwww\.~i', $text ) > $max_links ) {
-				return self::LINKS;
-			}
+		if ( $max_links > 0 && preg_match_all( '~https?://|(?<![:/\w])//[a-z0-9]|\bwww\.~i', self::text( $values ) ) > $max_links ) {
+			return self::LINKS;
 		}
 
 		return self::OK;
+	}
+
+	/**
+	 * Whether any value looks like a web address, including the forms mail programs turn into
+	 * links on their own ("www.example.com", "//example.com", "example.com/login").
+	 *
+	 * Used for the confirmation: an email to an address a stranger typed in must not carry
+	 * their links in the name of the website.
+	 *
+	 * @param array<string, mixed> $values Validated values.
+	 */
+	public static function contains_link( array $values ): bool {
+		$tlds = 'com|net|org|info|biz|io|co|de|at|ch|eu|uk|nl|fr|it|es|pl|ru|cn|xyz|top|link|click|online|site|shop|app|me|ly|gl|cc|tk|ml|ga|cf|gq|live|icu|vip|club|work';
+
+		return 1 === preg_match(
+			'~https?://|(?<![:/\w])//[a-z0-9]|\bwww\.|\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)*\.(?:' . $tlds . ')\b(?!@)~i',
+			// Email addresses are not links; they are taken out before looking.
+			(string) preg_replace( '/[^\s@<>]+@[^\s@<>]+/', ' ', self::text( $values ) )
+		);
+	}
+
+	/**
+	 * All text values joined, for searching.
+	 *
+	 * @param array<string, mixed> $values Validated values.
+	 */
+	private static function text( array $values ): string {
+		$text = '';
+		foreach ( $values as $value ) {
+			$text .= ' ' . ( is_array( $value ) ? implode( ' ', array_filter( $value, 'is_scalar' ) ) : ( is_scalar( $value ) ? (string) $value : '' ) );
+		}
+
+		return $text;
 	}
 
 	/**

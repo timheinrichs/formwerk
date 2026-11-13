@@ -82,8 +82,8 @@ final class Notifier {
 			);
 		}
 
-		$address = $values[ (string) $confirm['to_field'] ] ?? '';
-		if ( ! is_string( $address ) || false === filter_var( $address, FILTER_VALIDATE_EMAIL ) ) {
+		$address = self::confirm_address( $form, $values );
+		if ( '' === $address ) {
 			// An optional email field left empty: nothing to send, and nothing went wrong.
 			return array(
 				'status' => self::CONFIRM_SKIPPED,
@@ -110,6 +110,18 @@ final class Notifier {
 			'status' => $result['sent'] ? Store::MAIL_SENT : Store::MAIL_FAILED,
 			'error'  => $result['error'],
 		);
+	}
+
+	/**
+	 * The address the confirmation goes to: the value of the chosen email field, if it is a valid address.
+	 *
+	 * @param array<string, mixed> $form   Form.
+	 * @param array<string, mixed> $values Values.
+	 */
+	public static function confirm_address( array $form, array $values ): string {
+		$address = $values[ (string) ( $form['confirm']['to_field'] ?? '' ) ] ?? '';
+
+		return is_string( $address ) && false !== filter_var( $address, FILTER_VALIDATE_EMAIL ) ? $address : '';
 	}
 
 	/**
@@ -163,8 +175,10 @@ final class Notifier {
 	 * @return array{sent: bool, error: string}
 	 */
 	private static function mail( array $to, string $subject, string $body, array $headers ): array {
-		$error   = '';
-		$capture = static function ( $wp_error ) use ( &$error ): void {
+		// Placeholders put raw entries into the text; as plain text no mail program reads them as HTML.
+		$headers[] = 'Content-Type: text/plain; charset=UTF-8';
+		$error     = '';
+		$capture   = static function ( $wp_error ) use ( &$error ): void {
 			if ( $wp_error instanceof WP_Error ) {
 				$error = $wp_error->get_error_message();
 			}

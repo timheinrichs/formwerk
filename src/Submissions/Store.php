@@ -61,10 +61,20 @@ final class Store {
 				KEY created_at (created_at)
 			) {$charset};"
 		);
-		// Only remember the version once the table really exists, so a failed attempt is repeated.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Schema check.
-		if ( $table === $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) ) ) {
-			update_option( self::DB_VERSION_OPTION, self::DB_VERSION, true );
+		// Only remember the version once the newest column exists: an existing table counts as
+		// "there" even when adding columns failed, and then every new submission would fail.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Schema check of the plugin's own table.
+		if ( null === $wpdb->get_var( "SHOW COLUMNS FROM {$table} LIKE 'confirm_status'" ) ) {
+			return;
+		}
+		$previous = get_option( self::DB_VERSION_OPTION );
+		update_option( self::DB_VERSION_OPTION, self::DB_VERSION, true );
+
+		// Sites updating from 0.2.0 already have submissions. Automatic deletion is new: it stays
+		// off until someone chooses a period, so an update never deletes anything on its own.
+		if ( false !== $previous && false === get_option( Retention::OPTION ) ) {
+			add_option( Retention::OPTION, 0, '', false );
+			add_option( Retention::NOTICE_OPTION, 1, '', false );
 		}
 	}
 
@@ -101,7 +111,7 @@ final class Store {
 		}
 		printf(
 			'<div class="notice notice-error"><p><strong>Formwerk:</strong> %s</p></div>',
-			esc_html__( 'The database table for submissions could not be created, so forms cannot be sent. Please ask your web host whether the database user may create tables.', 'formwerk' )
+			esc_html__( 'The database table for submissions could not be created or updated, so forms cannot be sent. Please ask your web host whether the database user may create and change tables.', 'formwerk' )
 		);
 	}
 
@@ -219,10 +229,11 @@ final class Store {
 			$values[] = (int) $args['form_id'];
 		}
 		if ( self::MAIL_UNSENT === ( $args['mail_status'] ?? '' ) ) {
-			$where[]  = '(mail_status = %s OR (mail_status = %s AND created_at < %s))';
+			$where[]  = '(mail_status = %s OR (mail_status = %s AND created_at < %s) OR confirm_status = %s)';
 			$values[] = self::MAIL_FAILED;
 			$values[] = self::MAIL_PENDING;
 			$values[] = self::stale_before();
+			$values[] = self::MAIL_FAILED;
 		} elseif ( ! empty( $args['mail_status'] ) ) {
 			$where[]  = 'mail_status = %s';
 			$values[] = (string) $args['mail_status'];
@@ -230,6 +241,18 @@ final class Store {
 		$per_page = max( 1, min( 500, (int) ( $args['per_page'] ?? 20 ) ) );
 		$offset   = ( max( 1, (int) ( $args['page'] ?? 1 ) ) - 1 ) * $per_page;
 		$sql      = ' FROM ' . self::table() . ' WHERE ' . implode( ' AND ', $where );
+
+		// Reading everything in order (export): continue after the last ID, which stays fast and
+		// misses nothing when submissions arrive or are deleted in between. No total needed.
+		if ( isset( $args['after_id'] ) ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Own table; fixed fragments and placeholders only.
+			$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT *' . $sql . ' AND id > %d ORDER BY id ASC LIMIT %d', array_merge( $values, array( (int) $args['after_id'], $per_page ) ) ), ARRAY_A );
+
+			return array(
+				'items' => array_map( array( $this, 'hydrate' ), is_array( $rows ) ? $rows : array() ),
+				'total' => -1,
+			);
+		}
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Own table; the SQL consists of fixed fragments and placeholders only.
 		$total = (int) $wpdb->get_var( array() === $values ? 'SELECT COUNT(*)' . $sql : $wpdb->prepare( 'SELECT COUNT(*)' . $sql, $values ) );
@@ -269,6 +292,15 @@ final class Store {
 	 * @param array<string, mixed> $item Submission.
 	 */
 	public static function is_unsent( array $item ): bool {
+		return self::notification_unsent( $item ) || self::MAIL_FAILED === ( $item['confirm_status'] ?? '' );
+	}
+
+	/**
+	 * Whether the notification to the website did not go out.
+	 *
+	 * @param array<string, mixed> $item Submission.
+	 */
+	public static function notification_unsent( array $item ): bool {
 		return self::MAIL_FAILED === $item['mail_status']
 			|| ( self::MAIL_PENDING === $item['mail_status'] && $item['created_at'] < self::stale_before() );
 	}
@@ -372,6 +404,7 @@ final class Store {
 			'values'         => isset( $data['values'] ) && is_array( $data['values'] ) ? $data['values'] : array(),
 			'page'           => isset( $data['page'] ) && is_string( $data['page'] ) ? $data['page'] : '',
 			'form_title'     => isset( $data['form_title'] ) && is_string( $data['form_title'] ) ? $data['form_title'] : '',
+			'confirm_to'     => isset( $data['confirm_to'] ) && is_string( $data['confirm_to'] ) ? $data['confirm_to'] : '',
 			'mail_status'    => (string) $row['mail_status'],
 			'mail_error'     => (string) $row['mail_error'],
 			// Rows from before the confirmation existed have no such columns until the table is updated.

@@ -34,6 +34,9 @@ final class Handler {
 	private const LIMIT_TOKEN   = 3;
 	private const RATE_WINDOW   = 600;
 
+	private const LIMIT_CONFIRM_RECIPIENT = 2;
+	private const LIMIT_CONFIRM_FORM      = 20;
+
 	/**
 	 * Form storage.
 	 *
@@ -201,6 +204,8 @@ final class Handler {
 				'fields'     => $snapshot,
 				'values'     => $values,
 				'page'       => $page,
+				// Which field the confirmation went to, so it can be sent again after the form changed.
+				'confirm_to' => (string) ( $form['confirm']['to_field'] ?? '' ),
 			),
 			(string) apply_filters( 'formwerk_submission_language', '' !== $language ? Wpml::locale_of( $language ) : determine_locale(), $form_id )
 		);
@@ -222,7 +227,7 @@ final class Handler {
 		);
 		$this->store->set_mail_status( $id, $mail['sent'] ? Store::MAIL_SENT : Store::MAIL_FAILED, $mail['error'] );
 
-		$confirm = $this->notifier->confirm( $shown, self::relabel( $snapshot, $shown ), self::reword( $values, $shown ), $page );
+		$confirm = $this->confirm( $shown, $snapshot, $values, $page );
 		if ( Notifier::CONFIRM_OFF !== $confirm['status'] ) {
 			$this->store->set_confirm_status( $id, $confirm['status'], $confirm['error'] );
 		}
@@ -246,7 +251,7 @@ final class Handler {
 	 * @param int    $id   Submission ID.
 	 * @param string $kind 'notification' (to the website) or 'confirmation' (to the person who sent the form).
 	 *
-	 * @return array{sent: bool, error: string}
+	 * @return array{sent: bool, error: string, to?: string}
 	 */
 	public function resend( int $id, string $kind = 'notification' ): array {
 		$submission = $this->store->find( $id );
@@ -262,7 +267,14 @@ final class Handler {
 
 		if ( 'confirmation' === $kind ) {
 			// Sent even if the confirmation was switched off since, because someone asked for it explicitly.
-			$form['confirm']['enabled'] = true;
+			$form['confirm']['enabled']  = true;
+			$form['confirm']['to_field'] = self::confirm_field( $submission );
+			if ( '' === $form['confirm']['to_field'] ) {
+				return array(
+					'sent'  => false,
+					'error' => __( 'This submission has no email field, so there is no address to send a confirmation to.', 'formwerk' ),
+				);
+			}
 			// In the language the person used when sending the form.
 			$result = Wpml::in_language(
 				Wpml::code_of( $submission['lang'] ),
@@ -277,8 +289,9 @@ final class Handler {
 			return array(
 				'sent'  => Store::MAIL_SENT === $result['status'],
 				'error' => $result['error'],
+				'to'    => Notifier::confirm_address( $form, $submission['values'] ),
 			);
-		}
+		}//end if
 
 		$mail = Wpml::in_language(
 			Wpml::default_language(),
@@ -287,6 +300,129 @@ final class Handler {
 		$this->store->set_mail_status( $id, $mail['sent'] ? Store::MAIL_SENT : Store::MAIL_FAILED, $mail['error'] );
 
 		return $mail;
+	}
+
+	/**
+	 * Sends the confirmation of a new submission, unless it could be misused.
+	 *
+	 * The confirmation goes to an address anyone can type in, in the name of the website. So it
+	 * is not sent when the entries contain web addresses (they would arrive as links from this
+	 * site), and only a few go to the same address or from the same form per hour.
+	 *
+	 * @param array<string, mixed>             $shown    Form in the visitor's language.
+	 * @param array<int, array<string, mixed>> $snapshot Field snapshot.
+	 * @param array<string, mixed>             $values   Validated values.
+	 * @param string                           $page     Page URL.
+	 *
+	 * @return array{status: string, error: string}
+	 */
+	private function confirm( array $shown, array $snapshot, array $values, string $page ): array {
+		$address = empty( $shown['confirm']['enabled'] ) ? '' : Notifier::confirm_address( $shown, $values );
+		if ( '' !== $address ) {
+			$texts = array();
+			foreach ( $snapshot as $field ) {
+				if ( 'email' !== $field['type'] && isset( $values[ $field['name'] ] ) ) {
+					$texts[ $field['name'] ] = $values[ $field['name'] ];
+				}
+			}
+			if ( SpamGuard::contains_link( $texts ) ) {
+				return array(
+					'status' => Notifier::CONFIRM_SKIPPED,
+					'error'  => __( 'Not sent, because the entries contain a web address.', 'formwerk' ),
+				);
+			}
+			if ( ! $this->take_confirm_limits( (int) $shown['id'], $address ) ) {
+				return array(
+					'status' => Notifier::CONFIRM_SKIPPED,
+					'error'  => __( 'Not sent, because many confirmations went out to this address or from this form in the last hour.', 'formwerk' ),
+				);
+			}
+		}
+
+		return $this->notifier->confirm( $shown, self::relabel( $snapshot, $shown ), self::reword( $values, $shown ), $page );
+	}
+
+	/**
+	 * Counts a confirmation against the limits per recipient and per form (one hour each).
+	 *
+	 * @param int    $form_id Form ID.
+	 * @param string $address Recipient.
+	 *
+	 * @return bool Whether it may be sent.
+	 */
+	private function take_confirm_limits( int $form_id, string $address ): bool {
+		/**
+		 * Filters the limits for confirmations: how many per hour go to one address and from one form.
+		 *
+		 * @param array{recipient: int, form: int} $limits  Limits.
+		 * @param int                              $form_id Form ID.
+		 */
+		$limits = (array) apply_filters(
+			'formwerk_confirmation_limits',
+			array(
+				'recipient' => self::LIMIT_CONFIRM_RECIPIENT,
+				'form'      => self::LIMIT_CONFIRM_FORM,
+			),
+			$form_id
+		);
+		$checks = array(
+			array( 'confirm-to|' . hash_hmac( 'sha256', strtolower( $address ), wp_salt( 'nonce' ) ), (int) ( $limits['recipient'] ?? self::LIMIT_CONFIRM_RECIPIENT ) ),
+			array( 'confirm-form|' . $form_id, (int) ( $limits['form'] ?? self::LIMIT_CONFIRM_FORM ) ),
+		);
+		$taken  = array();
+		foreach ( $checks as $check ) {
+			if ( $check[1] <= 0 ) {
+				continue;
+			}
+			$taken[] = $check[0];
+			if ( $this->limiter->hit( $check[0], HOUR_IN_SECONDS ) > $check[1] ) {
+				foreach ( $taken as $bucket ) {
+					$this->limiter->release( $bucket, HOUR_IN_SECONDS );
+				}
+
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * The field a confirmation of a stored submission goes to: the one it went to when the
+	 * form was sent, or else the first email field of the submission. '' when there is none.
+	 *
+	 * @param array<string, mixed> $submission Stored submission.
+	 */
+	private static function confirm_field( array $submission ): string {
+		$names = array();
+		foreach ( $submission['fields'] as $field ) {
+			if ( 'email' === ( $field['type'] ?? '' ) ) {
+				$names[] = (string) $field['name'];
+			}
+		}
+		if ( in_array( $submission['confirm_to'], $names, true ) ) {
+			return $submission['confirm_to'];
+		}
+
+		return $names[0] ?? '';
+	}
+
+	/**
+	 * The part of an address that identifies a connection: the whole IPv4 address, or the /64
+	 * network of an IPv6 address (one connection usually has a whole /64 to choose from).
+	 *
+	 * @param string $address IP address.
+	 */
+	public static function network_of( string $address ): string {
+		if ( false === filter_var( $address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
+			return $address;
+		}
+		$packed = inet_pton( $address );
+		if ( false === $packed ) {
+			return $address;
+		}
+
+		return (string) inet_ntop( substr( $packed, 0, 8 ) . str_repeat( "\0", 8 ) ) . '/64';
 	}
 
 	/**
@@ -384,7 +520,7 @@ final class Handler {
 			array( 'token|' . $token, SpamGuard::MAX_SECONDS, (int) ( $limits['token'] ?? self::LIMIT_TOKEN ) ),
 		);
 		if ( '' !== $address ) {
-			array_unshift( $checks, array( 'address|' . hash_hmac( 'sha256', $address, wp_salt( 'nonce' ) ), $window, (int) ( $limits['address'] ?? self::LIMIT_ADDRESS ) ) );
+			array_unshift( $checks, array( 'address|' . hash_hmac( 'sha256', self::network_of( $address ), wp_salt( 'nonce' ) ), $window, (int) ( $limits['address'] ?? self::LIMIT_ADDRESS ) ) );
 		}
 
 		$taken = array();

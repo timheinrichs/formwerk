@@ -19,6 +19,8 @@ function formwerk_uninstall_site() {
 	delete_option( 'formwerk_db_version' );
 	delete_option( 'formwerk_frontend_style' );
 	delete_option( 'formwerk_retention_days' );
+	delete_option( 'formwerk_retention_notice' );
+	delete_option( 'formwerk_wpml_synced' );
 	wp_clear_scheduled_hook( 'formwerk_cleanup' );
 
 	global $wpdb;

@@ -8,6 +8,7 @@ declare( strict_types=1 );
 namespace Formwerk\Tests\Unit\Forms;
 
 use Formwerk\Forms\SpamGuard;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class SpamGuardTest extends TestCase {
@@ -75,5 +76,30 @@ final class SpamGuardTest extends TestCase {
 		$this->assertSame( SpamGuard::LINKS, SpamGuard::inspect( '', $values, 2 ) );
 		$this->assertSame( SpamGuard::OK, SpamGuard::inspect( '', $values, 3 ) );
 		$this->assertSame( SpamGuard::OK, SpamGuard::inspect( '', $values, 0 ) );
+	}
+
+	public function test_protocol_relative_links_count_too(): void {
+		$this->assertSame( SpamGuard::LINKS, SpamGuard::inspect( '', array( 'm' => 'see //evil.example/x and //b.example' ), 1 ) );
+	}
+
+	/**
+	 * @return array<string, array{0: string, 1: bool}>
+	 */
+	public static function link_texts(): array {
+		return array(
+			'plain text'        => array( 'Ich komme mit zwei Personen.', false ),
+			'email address'     => array( 'Schreibt mir an anna@example.de', false ),
+			'sentence end'      => array( 'Bis bald.Danke', false ),
+			'https'             => array( 'https://evil.example', true ),
+			'protocol relative' => array( 'go //evil.example/x', true ),
+			'www'               => array( 'www.evil.example', true ),
+			'bare domain'       => array( 'verify at evil-bank.com/login', true ),
+			'bare domain de'    => array( 'mehr auf beispiel.de', true ),
+		);
+	}
+
+	#[DataProvider( 'link_texts' )]
+	public function test_links_are_found_for_the_confirmation( string $text, bool $expected ): void {
+		$this->assertSame( $expected, SpamGuard::contains_link( array( 'nachricht' => $text ) ) );
 	}
 }

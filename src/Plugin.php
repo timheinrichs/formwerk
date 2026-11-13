@@ -70,8 +70,22 @@ final class Plugin {
 		add_action( 'init', array( $this, 'load_textdomain' ) );
 		register_deactivation_hook(
 			FORMWERK_FILE,
-			static function (): void {
-				wp_clear_scheduled_hook( Retention::HOOK );
+			static function ( $network_wide = false ): void {
+				if ( ! $network_wide || ! is_multisite() ) {
+					wp_clear_scheduled_hook( Retention::HOOK );
+					return;
+				}
+				// Deactivated for the whole network: every site has its own clean-up event.
+				foreach ( get_sites(
+					array(
+						'fields' => 'ids',
+						'number' => 0,
+					)
+				) as $site_id ) {
+					switch_to_blog( (int) $site_id );
+					wp_clear_scheduled_hook( Retention::HOOK );
+					restore_current_blog();
+				}
 			}
 		);
 		add_action( 'plugins_loaded', array( $this, 'register_modules' ) );

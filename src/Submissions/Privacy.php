@@ -123,11 +123,14 @@ final class Privacy {
 		$items   = $this->store->find_by_email( (string) $email, 1, self::PER_PAGE );
 		$removed = $this->store->delete( array_map( static fn( array $item ): int => (int) $item['id'], $items ) );
 
+		// Found but not deleted: report it and stop, instead of reading the same page forever.
+		$retained = count( $items ) > $removed;
+
 		return array(
 			'items_removed'  => $removed > 0,
-			'items_retained' => false,
-			'messages'       => array(),
-			'done'           => count( $items ) < self::PER_PAGE,
+			'items_retained' => $retained,
+			'messages'       => $retained ? array( __( 'Some form submissions could not be deleted. Please try again or delete them under Formwerk → Submissions.', 'formwerk' ) ) : array(),
+			'done'           => $retained || count( $items ) < self::PER_PAGE,
 		);
 	}
 
