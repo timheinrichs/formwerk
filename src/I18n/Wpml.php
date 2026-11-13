@@ -10,6 +10,7 @@ declare( strict_types=1 );
 namespace Formwerk\I18n;
 
 use Formwerk\Admin\FormsPage;
+use Formwerk\Forms\FormRepository;
 
 /**
  * Makes the texts of each form translatable with WPML String Translation and uses the
@@ -26,10 +27,23 @@ final class Wpml {
 	public const KIND = 'Formwerk';
 
 	/**
-	 * Whether WPML with String Translation is running.
+	 * Remembers that the forms that existed before WPML came were registered.
+	 */
+	public const SYNCED_OPTION = 'formwerk_wpml_synced';
+
+	/**
+	 * Whether WPML with String Translation is running, so form texts can be translated.
 	 */
 	public static function active(): bool {
-		return defined( 'ICL_SITEPRESS_VERSION' ) && has_filter( 'wpml_translate_string' ) && has_action( 'wpml_register_string' );
+		return self::languages_active() && has_filter( 'wpml_translate_string' ) && has_action( 'wpml_register_string' );
+	}
+
+	/**
+	 * Whether WPML itself is running. Languages can be switched (for Formwerk's own texts) even
+	 * without String Translation.
+	 */
+	public static function languages_active(): bool {
+		return defined( 'ICL_SITEPRESS_VERSION' );
 	}
 
 	/**
@@ -38,6 +52,25 @@ final class Wpml {
 	public function register(): void {
 		add_action( 'formwerk_form_saved', array( $this, 'register_strings' ) );
 		add_action( 'formwerk_form_deleted', array( $this, 'delete_strings' ) );
+		add_action( 'admin_init', array( $this, 'register_existing' ) );
+	}
+
+	/**
+	 * Registers the texts of all forms once, when String Translation is running for the first time.
+	 * Forms created before WPML was installed would otherwise only show up after their next save.
+	 */
+	public function register_existing(): void {
+		if ( ! self::active() || get_option( self::SYNCED_OPTION ) ) {
+			return;
+		}
+		update_option( self::SYNCED_OPTION, 1, false );
+		$forms = new FormRepository();
+		foreach ( $forms->all() as $summary ) {
+			$form = $forms->find( (int) $summary['id'] );
+			if ( null !== $form ) {
+				$this->register_strings( $form );
+			}
+		}
 	}
 
 	/**
@@ -102,6 +135,7 @@ final class Wpml {
 			}
 			$form['fields'][ $index ]['option_labels'] = $labels;
 		}
+		$form['title']               = $t( (string) $form['title'], 'form-title' );
 		$form['messages']['submit']  = $t( (string) $form['messages']['submit'], 'message-submit' );
 		$form['messages']['success'] = $t( (string) $form['messages']['success'], 'message-success' );
 		if ( isset( $form['confirm'] ) ) {
@@ -116,7 +150,7 @@ final class Wpml {
 	 * Language of the page being shown, as a WPML language code; '' without WPML.
 	 */
 	public static function current_language(): string {
-		if ( ! self::active() ) {
+		if ( ! self::languages_active() ) {
 			return '';
 		}
 		$code = apply_filters( 'wpml_current_language', null );
@@ -130,7 +164,7 @@ final class Wpml {
 	 * @param mixed $code Submitted code.
 	 */
 	public static function valid_language( $code ): string {
-		if ( ! self::active() || ! is_string( $code ) || '' === $code ) {
+		if ( ! self::languages_active() || ! is_string( $code ) || '' === $code ) {
 			return '';
 		}
 		$languages = apply_filters( 'wpml_active_languages', null, array( 'skip_missing' => 0 ) );
@@ -144,7 +178,7 @@ final class Wpml {
 	 * @param string $code Language code.
 	 */
 	public static function locale_of( string $code ): string {
-		$languages = self::active() ? apply_filters( 'wpml_active_languages', null, array( 'skip_missing' => 0 ) ) : null;
+		$languages = self::languages_active() ? apply_filters( 'wpml_active_languages', null, array( 'skip_missing' => 0 ) ) : null;
 		$locale    = is_array( $languages ) ? ( $languages[ $code ]['default_locale'] ?? '' ) : '';
 
 		return is_string( $locale ) ? $locale : '';
@@ -156,7 +190,7 @@ final class Wpml {
 	 * @param string $locale Locale, e.g. "de_DE".
 	 */
 	public static function code_of( string $locale ): string {
-		$languages = self::active() ? apply_filters( 'wpml_active_languages', null, array( 'skip_missing' => 0 ) ) : null;
+		$languages = self::languages_active() ? apply_filters( 'wpml_active_languages', null, array( 'skip_missing' => 0 ) ) : null;
 		foreach ( is_array( $languages ) ? $languages : array() as $code => $language ) {
 			if ( ( $language['default_locale'] ?? '' ) === $locale ) {
 				return (string) $code;
@@ -170,7 +204,7 @@ final class Wpml {
 	 * The site's default language code; '' without WPML.
 	 */
 	public static function default_language(): string {
-		$code = self::active() ? apply_filters( 'wpml_default_language', null ) : null;
+		$code = self::languages_active() ? apply_filters( 'wpml_default_language', null ) : null;
 
 		return is_string( $code ) ? $code : '';
 	}
@@ -184,7 +218,7 @@ final class Wpml {
 	 * @return mixed What the callback returns.
 	 */
 	public static function in_language( string $code, callable $callback ) {
-		if ( '' === $code || ! self::active() ) {
+		if ( '' === $code || ! self::languages_active() ) {
 			return $callback();
 		}
 		$previous = self::current_language();
@@ -238,6 +272,7 @@ final class Wpml {
 				$add( self::option_name( $field, (string) $option ), $option, sprintf( __( 'Field “%s”: option', 'formwerk' ), $name ) );
 			}
 		}
+		$add( 'form-title', $form['title'] ?? '', __( 'Form name (in emails as {form})', 'formwerk' ) );
 		$add( 'message-submit', $form['messages']['submit'] ?? '', __( 'Text on the send button', 'formwerk' ) );
 		$add( 'message-success', $form['messages']['success'] ?? '', __( 'Message after sending', 'formwerk' ), 'AREA' );
 		if ( ! empty( $form['confirm']['enabled'] ) ) {
