@@ -103,7 +103,8 @@ final class CsvExport {
 		if ( '' !== $value && 1 === preg_match( '/^[=+\-@\t\r]/', $value ) ) {
 			$value = "'" . $value;
 		}
-		if ( 1 === preg_match( '/[",\r\n]|^\s|\s$/', $value ) ) {
+		// Semicolons and tabs too: spreadsheet programs that guess the separator then still read one cell.
+		if ( 1 === preg_match( '/[",;\t\r\n]|^\s|\s$/', $value ) ) {
 			$value = '"' . str_replace( '"', '""', $value ) . '"';
 		}
 

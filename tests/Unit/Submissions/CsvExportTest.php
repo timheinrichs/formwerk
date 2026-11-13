@@ -122,4 +122,9 @@ final class CsvExportTest extends TestCase {
 
 		$this->assertSame( array( 'Anna', 'Mo, Di', 'Ja', '' ), CsvExport::answers( $submission, $columns, self::WORDS ) );
 	}
+
+	public function test_cells_with_semicolons_or_tabs_are_quoted(): void {
+		$this->assertSame( '"a;b"', CsvExport::cell( 'a;b' ) );
+		$this->assertSame( "\"a\tb\"", CsvExport::cell( "a\tb" ) );
+	}
 }

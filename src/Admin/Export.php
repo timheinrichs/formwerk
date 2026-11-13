@@ -91,24 +91,17 @@ final class Export {
 			wp_die( esc_html__( 'This form no longer exists, so its submissions cannot be exported by form.', 'formwerk' ), '', array( 'response' => 404 ) );
 		}
 
-		// All snapshots first: the columns must be known before the first line is written.
-		$submissions = array();
-		for ( $page = 1; ; $page++ ) {
-			$batch       = $this->store->query(
-				array(
-					'form_id'     => $form_id,
-					'mail_status' => $mail_status,
-					'per_page'    => self::BATCH,
-					'page'        => $page,
-				)
-			)['items'];
-			$submissions = array_merge( $submissions, $batch );
-			if ( count( $batch ) < self::BATCH ) {
-				break;
+		// First pass, field lists only: the columns must be known before the first line is written.
+		$snapshots = array();
+		foreach ( $this->batches( $form_id, $mail_status ) as $batch ) {
+			foreach ( $batch as $submission ) {
+				// Most submissions share the same field list; keep each one once.
+				$snapshots[ md5( (string) wp_json_encode( $submission['fields'] ) ) ] = array( 'fields' => $submission['fields'] );
 			}
 		}
-		$columns = CsvExport::field_columns( $form['fields'], $submissions );
-		$words   = array(
+		$columns = CsvExport::field_columns( $form['fields'], array_values( $snapshots ) );
+		unset( $snapshots );
+		$words = array(
 			'yes' => __( 'Yes', 'formwerk' ),
 			'no'  => __( 'No', 'formwerk' ),
 		);
@@ -131,23 +124,54 @@ final class Export {
 		);
 		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- CSV, not HTML; every cell is encoded by CsvExport.
 		echo CsvExport::line( $header );
-		foreach ( $submissions as $submission ) {
-			$time = strtotime( $submission['created_at'] . ' UTC' );
-			echo CsvExport::line(
-				array_merge(
-					array(
-						false === $time ? $submission['created_at'] : wp_date( 'Y-m-d H:i', $time ),
-						$submission['page'],
-						$submission['lang'],
-						self::status( $submission['mail_status'] ),
-						'off' === $submission['confirm_status'] ? '' : self::status( $submission['confirm_status'] ),
-					),
-					CsvExport::answers( $submission, $columns, $words )
-				)
-			);
+		// Second pass: one batch at a time, written out right away.
+		foreach ( $this->batches( $form_id, $mail_status ) as $batch ) {
+			foreach ( $batch as $submission ) {
+				$time = strtotime( $submission['created_at'] . ' UTC' );
+				echo CsvExport::line(
+					array_merge(
+						array(
+							false === $time ? $submission['created_at'] : wp_date( 'Y-m-d H:i', $time ),
+							$submission['page'],
+							$submission['lang'],
+							self::status( $submission['mail_status'] ),
+							'off' === $submission['confirm_status'] ? '' : self::status( $submission['confirm_status'] ),
+						),
+						CsvExport::answers( $submission, $columns, $words )
+					)
+				);
+			}
+			flush();
 		}
 		// phpcs:enable
 		exit;
+	}
+
+	/**
+	 * The submissions of a form in batches, oldest first.
+	 *
+	 * @param int    $form_id     Form ID.
+	 * @param string $mail_status Status filter.
+	 *
+	 * @return \Generator<int, array<int, array<string, mixed>>>
+	 */
+	private function batches( int $form_id, string $mail_status ): \Generator {
+		$after = 0;
+		do {
+			$batch = $this->store->query(
+				array(
+					'form_id'     => $form_id,
+					'mail_status' => $mail_status,
+					'per_page'    => self::BATCH,
+					'after_id'    => $after,
+				)
+			)['items'];
+			$full  = count( $batch ) === self::BATCH;
+			if ( array() !== $batch ) {
+				$after = (int) end( $batch )['id'];
+				yield $batch;
+			}
+		} while ( $full );
 	}
 
 	/**
