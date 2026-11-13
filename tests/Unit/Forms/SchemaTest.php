@@ -349,4 +349,24 @@ final class SchemaTest extends TestCase {
 		// Pairs 1+2 and 5+6; the third and the last half field had no partner and use the whole row.
 		$this->assertSame( array( 'half', 'half', 'full', 'full', 'half', 'half', 'full' ), $this->widths( $items ) );
 	}
+
+	public function test_long_text_and_consent_keep_their_own_row(): void {
+		$items = array(
+			array(
+				'type'  => 'text',
+				'label' => 'Name',
+			),
+			array(
+				'type'   => 'textarea',
+				'label'  => 'Message',
+				'beside' => true,
+			),
+			array(
+				'type'   => 'consent',
+				'label'  => 'Privacy',
+				'beside' => true,
+			),
+		);
+		$this->assertSame( array( false, false, false ), array_column( Schema::normalize( $items )['fields'], 'beside' ) );
+	}
 }

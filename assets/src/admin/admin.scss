@@ -291,6 +291,9 @@ $error: #cc1818;
 }
 
 .formwerk-tabs .components-tab-panel__tabs {
+	// Five tabs do not fit next to each other on a phone;
+	// they wrap instead of scrolling away.
+	flex-wrap: wrap;
 	margin-bottom: 16px;
 	border-bottom: 1px solid #c3c4c7;
 }
@@ -305,6 +308,10 @@ $error: #cc1818;
 	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 	gap: 32px;
 	align-items: start;
+}
+
+.formwerk-field-list {
+	container-type: inline-size;
 }
 
 .formwerk-field-rows {
@@ -412,6 +419,32 @@ $error: #cc1818;
 
 .formwerk-field-row.is-half {
 	grid-column: auto;
+
+	// Handle and name stay on one line; the buttons move below them.
+	.formwerk-field-row__main {
+		flex-basis: calc(100% - 40px);
+	}
+}
+
+// Too narrow for two cards side by side: one column,
+// the row is named on the card.
+@container (max-width: 480px) {
+
+	.formwerk-field-row.is-half {
+		grid-column: 1 / -1;
+	}
+}
+
+// Pressed is a state, not an action:
+// a quiet tint instead of the full primary fill.
+.formwerk-field-row__pair.components-button.is-pressed {
+	color: var(--wp-admin-theme-color, #2271b1);
+	background: rgba(34, 113, 177, 0.1);
+
+	&:hover:not(:disabled) {
+		color: var(--wp-admin-theme-color-darker-10, #135e96);
+		background: rgba(34, 113, 177, 0.16);
+	}
 }
 
 // Removing sits apart from moving, so a slip of the finger does not
@@ -617,13 +650,18 @@ $error: #cc1818;
 }
 
 .formwerk-brand {
-	margin: 12px 0 4px;
+	// A quiet signature above the title, not a second headline.
+	margin: 10px 0 0;
 	line-height: 0;
 
 	img {
 		width: auto;
-		height: 24px;
+		height: 20px;
 	}
+}
+
+.formwerk-layout-info p {
+	margin: 0 0 8px;
 }
 
 // Last, because these page-level notices are the most specific rule here.

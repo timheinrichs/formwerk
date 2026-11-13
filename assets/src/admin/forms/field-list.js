@@ -8,7 +8,6 @@ import {
 } from '@dnd-kit/core';
 import {
 	SortableContext,
-	arrayMove,
 	rectSortingStrategy,
 	sortableKeyboardCoordinates,
 	useSortable,
@@ -23,7 +22,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 
-import { canBeBeside, detach, isHalf, normalizeRows } from './layout';
+import { canBeBeside, isHalf, moveField, normalizeRows } from './layout';
 import { FIELD_TYPES, typeLabel } from './types';
 
 function Row( {
@@ -33,7 +32,7 @@ function Row( {
 	isSelected,
 	hasError,
 	half,
-	previousLabel,
+	pair,
 	onSelect,
 	onMove,
 	onToggleBeside,
@@ -120,6 +119,13 @@ function Row( {
 						</strong>
 					) }
 					{ typeLabel( field.type ) }
+					{ pair?.pressed &&
+						' · ' +
+							sprintf(
+								/* translators: %s: label of the other field in the row. */
+								__( 'Shares a row with “%s”', 'formwerk' ),
+								pair.partner
+							) }
 				</span>
 			</button>
 			<span className="formwerk-field-row__actions">
@@ -147,31 +153,19 @@ function Row( {
 					accessibleWhenDisabled
 					onClick={ () => onMove( index, index + 1 ) }
 				/>
-				{ ( field.beside || previousLabel ) && (
+				{ pair && (
+					// The same label in both states; aria-pressed tells whether the two share a row.
 					<Button
+						className="formwerk-field-row__pair"
 						size="small"
-						icon={ field.beside ? 'editor-justify' : 'columns' }
-						isPressed={ Boolean( field.beside ) }
-						label={
-							field.beside
-								? sprintf(
-										/* translators: %s: field label. */
-										__(
-											'Put “%s” on its own row',
-											'formwerk'
-										),
-										name
-								  )
-								: sprintf(
-										/* translators: 1: field label, 2: label of the field above. */
-										__(
-											'Put “%1$s” next to “%2$s”',
-											'formwerk'
-										),
-										name,
-										previousLabel
-								  )
-						}
+						icon="columns"
+						isPressed={ pair.pressed }
+						label={ sprintf(
+							/* translators: 1: label of the lower field, 2: label of the upper field. */
+							__( 'Put “%1$s” next to “%2$s”', 'formwerk' ),
+							pair.lower,
+							pair.upper
+						) }
 						onClick={ onToggleBeside }
 					/>
 				) }
@@ -213,18 +207,29 @@ export default function FieldList( {
 			return;
 		}
 		// A field that moves leaves its row; the one that sat next to it stays where it is.
-		onChange(
-			normalizeRows( arrayMove( detach( fields, from ), from, to ) )
-		);
-		speak(
+		const result = moveField( fields, from, to );
+		onChange( result.fields );
+		const messages = [
 			sprintf(
 				/* translators: 1: field label, 2: new position, 3: number of fields. */
 				__( '“%1$s” moved to position %2$d of %3$d.', 'formwerk' ),
 				fields[ from ].label,
 				to + 1,
 				fields.length
-			)
-		);
+			),
+			...result.separated.map( ( [ first, second ] ) =>
+				sprintf(
+					/* translators: 1, 2: field labels. */
+					__(
+						'“%1$s” and “%2$s” no longer share a row.',
+						'formwerk'
+					),
+					first.label,
+					second.label
+				)
+			),
+		];
+		speak( messages.join( ' ' ) );
 	};
 
 	// What screen readers hear while a field is moved with the keyboard: names and positions,
@@ -284,6 +289,33 @@ export default function FieldList( {
 			'To move a field, press Space, use the arrow keys, then press Space again. Press Escape to cancel.',
 			'formwerk'
 		),
+	};
+
+	const labelAt = ( index ) =>
+		fields[ index ]?.label || __( '(no label)', 'formwerk' );
+
+	// The row button of a field: on the lower field it pairs it with the one above, on the
+	// upper field of a pair it is the same switch, so either half can split the row.
+	const pairOf = ( index ) => {
+		if ( fields[ index + 1 ]?.beside ) {
+			return {
+				target: index + 1,
+				pressed: true,
+				lower: labelAt( index + 1 ),
+				upper: labelAt( index ),
+				partner: labelAt( index + 1 ),
+			};
+		}
+		if ( canBeBeside( fields, index ) ) {
+			return {
+				target: index,
+				pressed: Boolean( fields[ index ].beside ),
+				lower: labelAt( index ),
+				upper: labelAt( index - 1 ),
+				partner: labelAt( index - 1 ),
+			};
+		}
+		return null;
 	};
 
 	const toggleBeside = ( index ) => {
@@ -354,16 +386,11 @@ export default function FieldList( {
 									isSelected={ field.id === selectedId }
 									hasError={ errorIds.includes( field.id ) }
 									half={ isHalf( fields, index ) }
-									previousLabel={
-										canBeBeside( fields, index )
-											? fields[ index - 1 ].label ||
-											  __( '(no label)', 'formwerk' )
-											: ''
-									}
+									pair={ pairOf( index ) }
 									onSelect={ () => onSelect( field.id ) }
 									onMove={ move }
 									onToggleBeside={ () =>
-										toggleBeside( index )
+										toggleBeside( pairOf( index ).target )
 									}
 									onRemove={ () => onRemove( field.id ) }
 								/>

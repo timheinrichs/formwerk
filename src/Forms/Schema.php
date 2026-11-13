@@ -21,6 +21,11 @@ final class Schema {
 
 	public const TYPES = array( 'text', 'email', 'tel', 'number', 'date', 'textarea', 'select', 'radio', 'checkboxes', 'consent', 'heading' );
 
+	/**
+	 * Types that always take a whole row: headings, long text, and consent (its text needs the width).
+	 */
+	public const OWN_ROW_TYPES = array( 'heading', 'textarea', 'consent' );
+
 	public const MAX_FIELDS = 100;
 
 	private const CHOICE_TYPES = array( 'select', 'radio', 'checkboxes' );
@@ -44,6 +49,15 @@ final class Schema {
 		'ú' => 'u',
 		'í' => 'i',
 	);
+
+	/**
+	 * Whether a field of this type may sit next to another one.
+	 *
+	 * @param string $type Field type.
+	 */
+	public static function can_share_row( string $type ): bool {
+		return ! in_array( $type, self::OWN_ROW_TYPES, true );
+	}
 
 	/**
 	 * Whether fields of this type collect a value.
@@ -144,13 +158,13 @@ final class Schema {
 			$legacy[] = ! array_key_exists( 'beside', $item );
 		}//end foreach
 
-		// A field next to the previous one shares a row with it: at most two per row, never a heading.
+		// A field next to the previous one shares a row with it: at most two per row, and only short fields.
 		foreach ( $fields as $index => $field ) {
 			$previous = $fields[ $index - 1 ] ?? null;
 			$wants    = $legacy[ $index ]
 				? $beside[ $index ] && $index > 0 && $beside[ $index - 1 ] && ! ( $previous['beside'] ?? false )
 				: $beside[ $index ];
-			if ( $wants && null !== $previous && 'heading' !== $field['type'] && 'heading' !== $previous['type'] && ! $previous['beside'] ) {
+			if ( $wants && null !== $previous && self::can_share_row( $field['type'] ) && self::can_share_row( $previous['type'] ) && ! $previous['beside'] ) {
 				$fields[ $index ]['beside']    = true;
 				$fields[ $index ]['width']     = 'half';
 				$fields[ $index - 1 ]['width'] = 'half';

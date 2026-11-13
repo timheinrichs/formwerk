@@ -51,6 +51,9 @@ export default function ConfirmationTab( { form, errors, onChange } ) {
 	)
 		? confirm.to_field
 		: '';
+	const chosenField = emailFields.find(
+		( field ) => ( field.name || field.id ) === chosen
+	);
 
 	return (
 		<div className="formwerk-fields formwerk-mail">
@@ -104,7 +107,7 @@ export default function ConfirmationTab( { form, errors, onChange } ) {
 							{ ...errorState( errors[ 'confirm.to_field' ] ) }
 							id="formwerk-confirm-to_field"
 							label={ __(
-								'Send to the address entered in',
+								'Email address from field',
 								'formwerk'
 							) }
 							value={ chosen }
@@ -122,10 +125,12 @@ export default function ConfirmationTab( { form, errors, onChange } ) {
 							] }
 							help={ helpOrError(
 								errors[ 'confirm.to_field' ],
-								__(
-									'If the field is optional and left empty, no confirmation is sent.',
-									'formwerk'
-								)
+								chosenField && ! chosenField.required
+									? __(
+											'This field is optional. When it is left empty, no confirmation is sent.',
+											'formwerk'
+									  )
+									: undefined
 							) }
 						/>
 					) }
@@ -151,7 +156,7 @@ export default function ConfirmationTab( { form, errors, onChange } ) {
 						help={ helpOrError(
 							errors[ 'confirm.body' ],
 							__(
-								'{all_fields} gives the person a copy of their entries.',
+								'“All fields” adds a copy of everything the person entered.',
 								'formwerk'
 							)
 						) }

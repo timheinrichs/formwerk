@@ -263,6 +263,21 @@ export default function Builder( {
 	const addField = ( type ) => {
 		const field = createField( type );
 		setFields( [ ...form.fields, field ] );
+		// The confirmation is on but has no email field to go to yet: this one is it.
+		if (
+			type === 'email' &&
+			form.confirm?.enabled &&
+			! form.fields.some(
+				( item ) =>
+					item.type === 'email' &&
+					( item.name || item.id ) === form.confirm.to_field
+			)
+		) {
+			setForm( ( current ) => ( {
+				...current,
+				confirm: { ...current.confirm, to_field: field.id },
+			} ) );
+		}
 		selectField( field.id );
 		dropErrors( ( error ) => error.code === 'fields_required' );
 		// Put the cursor into the label, so the default can be overwritten at once.
@@ -284,7 +299,7 @@ export default function Builder( {
 		);
 		setFields( fields );
 		dropErrors( ( error ) => error.field === id );
-		setRemoved( { field, index } );
+		setRemoved( { field, index, before: form.fields } );
 		const next = fields[ index ] || fields[ index - 1 ];
 		if ( selectedId === id ) {
 			setSelectedId( next?.id || null );
@@ -305,7 +320,17 @@ export default function Builder( {
 		}
 		const fields = [ ...form.fields ];
 		fields.splice( removed.index, 0, removed.field );
-		setFields( fields );
+		// Rows as they were before the removal; other changes made since stay.
+		const besideBefore = new Map(
+			removed.before.map( ( item ) => [ item.id, item.beside ] )
+		);
+		setFields(
+			fields.map( ( item ) =>
+				besideBefore.has( item.id )
+					? { ...item, beside: besideBefore.get( item.id ) }
+					: item
+			)
+		);
 		selectField( removed.field.id );
 		focusById( `formwerk-row-${ removed.field.id }` );
 		setRemoved( null );
@@ -536,7 +561,7 @@ export default function Builder( {
 						</span>
 					) : (
 						__(
-							'Only you see this name. It also appears in the notification email.',
+							'Visitors do not see this name on the page. In emails it appears wherever {form} is used.',
 							'formwerk'
 						)
 					)
@@ -699,6 +724,29 @@ export default function Builder( {
 													previousLabel={ previousLabelOf(
 														selectedIndex
 													) }
+													nextLabel={
+														form.fields[
+															selectedIndex + 1
+														]?.beside
+															? form.fields[
+																	selectedIndex +
+																		1
+															  ].label ||
+															  __(
+																	'(no label)',
+																	'formwerk'
+															  )
+															: ''
+													}
+													onSplitRow={ () =>
+														updateField( {
+															...form.fields[
+																selectedIndex +
+																	1
+															],
+															beside: false,
+														} )
+													}
 													error={
 														selected &&
 														fieldError(

@@ -1,4 +1,6 @@
+import { speak } from '@wordpress/a11y';
 import {
+	Button,
 	SelectControl,
 	TextControl,
 	TextareaControl,
@@ -17,6 +19,8 @@ export default function FieldSettings( {
 	field,
 	error,
 	previousLabel,
+	nextLabel,
+	onSplitRow,
 	onChange,
 } ) {
 	if ( ! field ) {
@@ -173,9 +177,29 @@ export default function FieldSettings( {
 					{ ...controlProps }
 					label={ __( 'Layout', 'formwerk' ) }
 					value={ field.beside ? 'beside' : 'own' }
-					onChange={ ( value ) =>
-						onChange( { ...field, beside: value === 'beside' } )
-					}
+					onChange={ ( value ) => {
+						onChange( { ...field, beside: value === 'beside' } );
+						speak(
+							value === 'beside'
+								? sprintf(
+										/* translators: 1: field label, 2: label of the field above. */
+										__(
+											'“%1$s” is now next to “%2$s”.',
+											'formwerk'
+										),
+										field.label,
+										previousLabel
+								  )
+								: sprintf(
+										/* translators: %s: field label. */
+										__(
+											'“%s” is now on its own row.',
+											'formwerk'
+										),
+										field.label
+								  )
+						);
+					} }
 					options={ [
 						{ value: 'own', label: __( 'Own row', 'formwerk' ) },
 						{
@@ -193,6 +217,41 @@ export default function FieldSettings( {
 						'formwerk'
 					) }
 				/>
+			) }
+
+			{ nextLabel && (
+				<div className="formwerk-layout-info">
+					<p>
+						{ sprintf(
+							/* translators: %s: label of the field below. */
+							__( 'Shares a row with “%s”.', 'formwerk' ),
+							nextLabel
+						) }
+					</p>
+					<Button
+						variant="secondary"
+						size="compact"
+						onClick={ () => {
+							onSplitRow();
+							speak(
+								sprintf(
+									/* translators: %s: field label. */
+									__(
+										'“%s” is now on its own row.',
+										'formwerk'
+									),
+									nextLabel
+								)
+							);
+						} }
+					>
+						{ sprintf(
+							/* translators: %s: label of the field below. */
+							__( 'Put “%s” on its own row', 'formwerk' ),
+							nextLabel
+						) }
+					</Button>
+				</div>
 			) }
 
 			{ [ 'text', 'email', 'tel' ].includes( field.type ) && (
