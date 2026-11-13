@@ -13,7 +13,7 @@ folder, and lets you build forms that cannot lose a submission.
 | | Status |
 | --- | --- |
 | SMTP delivery, test email, email log | Available since 0.1.0 |
-| Form builder, submissions, spam protection | Coming with 0.2.0 |
+| Form builder, submissions, spam protection | Available since 0.2.0 |
 | Confirmation email, CSV export, retention, WPML | Planned for 0.3.0 |
 | Updates from within WordPress | Planned for 1.0.0 |
 
