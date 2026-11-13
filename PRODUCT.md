@@ -80,7 +80,9 @@ formwerk macht Datenverlust durch Fehlkonfiguration unmöglich, statt davor zu w
 ## Brand Commitments
 
 - Name: **formwerk** (im Fließtext klein, im WordPress-Menü „Formwerk“).
-- Kein eigenes Logo, keine eigene Markenfarbe im Backend. formwerk tritt als Teil von WordPress auf.
+- Keine eigene Markenfarbe im Backend. formwerk tritt als Teil von WordPress auf. Bewusste Ausnahme (seit 0.3.0):
+  das Zeichen als einfarbiges Menü-Icon und das Logo klein über dem Seitentitel, damit Kund*innen das Plugin
+  wiederfinden. Logo-Dateien liegen in `assets/logo/`.
 - Ton: ruhig, konkret, ohne Fachjargon. Eine Meldung sagt, was passiert ist und was als Nächstes zu tun ist.
 
 ## Evidence on Hand

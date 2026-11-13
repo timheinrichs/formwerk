@@ -22,7 +22,9 @@ Vor jedem Commit müssen `composer test`, `composer lint`, `npm run lint:js` und
   Einstiegspunkte stehen in `webpack.config.js`, Ausgabe nach `build/` (nicht versioniert).
 - `src/Forms/`: reine Logik (Schema, Validator, Placeholders, SpamGuard) plus FormRepository (Post-Type
   `formwerk_form`, JSON in Post-Meta). `src/Submissions/`: Store (eigene Tabelle), Handler (einziger Weg jeder
-  Einsendung: Token → Validierung → Spam → Dedupe → Limits → speichern → Mail), Notifier, RateLimiter.
+  Einsendung: Token → Validierung → Spam → Dedupe → Limits → speichern → Benachrichtigung → Bestätigung mit
+  eigener Link-Prüfung und Grenzen), Notifier, RateLimiter, Retention (Cron), Privacy, CsvExport.
+  `src/I18n/Wpml.php`: String-Pakete pro Formular, ohne WPML ein No-op.
   `src/Frontend/`: Renderer (HTML, ohne JS lauffähig) und Controller (Shortcode, Block, Weg ohne JS).
   Platzhalter heißen englisch: `{all_fields}`, `{field:name}`, `{form}`, `{page}`, `{date}`, `{site}`.
 - `tests/Unit/`: PHPUnit ohne WordPress. Die wenigen benötigten WP-Funktionen sind in `tests/stubs.php` nachgebaut

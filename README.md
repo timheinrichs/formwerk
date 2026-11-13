@@ -14,7 +14,7 @@ folder, and lets you build forms that cannot lose a submission.
 | --- | --- |
 | SMTP delivery, test email, email log | Available since 0.1.0 |
 | Form builder, submissions, spam protection | Available since 0.2.0 |
-| Confirmation email, CSV export, retention, WPML | Planned for 0.3.0 |
+| Confirmation email, fields side by side, CSV export, retention, WPML | Available since 0.3.0 |
 | Updates from within WordPress | Planned for 1.0.0 |
 
 ## Requirements
@@ -65,15 +65,21 @@ without the plugin.
 
 ## Building a form
 
-1. Open **Formwerk → Forms** and choose **Add form**. Give it a name only you see, for example "Course registration".
-2. **Fields.** Add fields with **Add field**. Select a field to change its label, help text, options and width.
+1. Open **Formwerk → Forms** and choose **Add form**. Give it a name, for example "Course registration". Visitors do
+   not see it; emails show it where `{form}` is used.
+2. **Fields.** Add fields with **Add field**. Select a field to change its label, help text and options.
    Move fields by dragging the handle, with the arrow buttons, or with the keyboard (Space, arrow keys, Space).
+   Two short fields can share a row: use the row button on the card or **Layout** in the field settings. Headings,
+   long text and consent always take a whole row, and on small screens the two fields are shown one below the other.
+   Moving a field takes it out of its row; it never joins a new one by itself.
    **Preview** shows the form the way visitors see it.
 3. **Notification.** Enter who receives the submissions. The email text starts with `{all_fields}`, which lists
    every field with its label; keep it, and no answer can be missing from the email. Replies to the email go to the
    address the visitor entered.
-4. **Messages and spam protection.** Change the text on the button and the message shown after sending.
-5. **Save form**, then add the block **Formwerk form** to a page, or paste the shortcode `[formwerk id="…"]`.
+4. **Confirmation.** Optionally send the person who filled in the form an email, for example to confirm a
+   registration. Choose the email field it goes to; replies reach the first address under **Notification**.
+5. **Messages and spam protection.** Change the text on the button and the message shown after sending.
+6. **Save form**, then add the block **Formwerk form** to a page, or paste the shortcode `[formwerk id="…"]`.
 
 Saving is blocked while something would break the form: a missing name or recipient, a field without label or
 options, or a placeholder that matches no field. The message names each point and takes you to it.
@@ -101,15 +107,36 @@ you rename or reorder fields.
 
 ### Submissions
 
-Every submission is stored before its email is sent. **Formwerk → Submissions** lists them by form, shows each one
-in full, and marks those whose email did not go out. You can send that email again from there. If emails fail, a
-notice on the Formwerk pages and a number next to **Submissions** say so.
+Every submission is stored before its emails are sent. **Formwerk → Submissions** lists them by form, shows each one
+in full, and marks those whose notification or confirmation did not go out. You can send either again from there. If
+emails fail, a notice on the Formwerk pages and a number next to **Submissions** say so.
+
+- **CSV export.** Filter the list by a form and choose **Export CSV**. The file has one column per field, including
+  fields that only older submissions have. Cells that a spreadsheet would read as a formula start with `'`.
+- **Keeping submissions.** Below the list you set after how many days submissions are deleted automatically
+  (default 180, `0` keeps them). Sites that update from 0.2 start with `0`, so nothing is deleted without asking;
+  a notice points to the setting.
+
+### Confirmation email
+
+The confirmation goes to an address anyone can type in, in the name of your website. So Formwerk sends it as plain
+text, and does not send it when the entries contain a web address, or when two confirmations already went to the
+same address or twenty from the same form in the last hour. The submission is stored either way and the list says
+why no confirmation went out; you can still send it by hand. Change the limits with `formwerk_confirmation_limits`.
+
+### Multilingual sites (WPML)
+
+With WPML and String Translation, every form appears as a package "Formwerk – <name>" under **WPML → String
+Translation**: name, labels, help texts, examples, options, button, success message and the confirmation. Forms show
+up there after their next save, or all at once the first time String Translation runs. Visitors see the form in the
+language of the page and get their confirmation in it; the notification to you stays in the default language, and
+options are stored in their original wording.
 
 ### Spam protection
 
 There is no captcha. Formwerk rejects submissions that arrive within three seconds of loading the page, fill in a
 hidden field, or contain more links than you allow, and it limits how many messages come from one connection
-(10 per 10 minutes) and per form (60 per 10 minutes). Visitors who are rejected see why and keep their entries.
+(10 per 10 minutes; for IPv6 one /64 network) and per form (60 per 10 minutes). Visitors who are rejected see why and keep their entries.
 
 Behind a proxy or CDN every visitor may share one address. Return the visitor's real address with the filter
 `formwerk_client_address`; the limits can be changed with `formwerk_rate_limits`.
@@ -145,9 +172,10 @@ define( 'FORMWERK_SMTP_PASSWORD', '…' );
 - **Password.** Stored encrypted in the database. The key is derived from the security keys in `wp-config.php`, so
   a database dump alone does not reveal it. The password is never sent back to the browser.
 - **Submissions.** All answers, the form's name, the page address and the language are stored in the table
-  `{prefix}formwerk_submissions` until you delete them. Deleting a form keeps its submissions. Connection addresses
-  are not stored; for the rate limit they are kept as salted hashes for ten minutes. A retention period and export
-  per person will follow in 0.3.0.
+  `{prefix}formwerk_submissions` until the retention period ends or you delete them. Deleting a form keeps its
+  submissions. Connection and confirmation addresses are not stored for the limits; they are counted as salted
+  hashes for at most an hour. Submissions take part in the WordPress tools "Export Personal Data" and "Erase
+  Personal Data" (found by the address in an email field), and Formwerk suggests a paragraph for the privacy policy.
 - **Email log.** Keeps failed emails and test results: time, recipient addresses, subject and error message. At most
   50 entries, for at most 30 days. The log takes part in the WordPress tool "Erase Personal Data", and it can be
   cleared on the settings page.
