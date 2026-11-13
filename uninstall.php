@@ -18,6 +18,8 @@ function formwerk_uninstall_site() {
 	delete_transient( 'formwerk_smtp_broken_logged' );
 	delete_option( 'formwerk_db_version' );
 	delete_option( 'formwerk_frontend_style' );
+	delete_option( 'formwerk_retention_days' );
+	wp_clear_scheduled_hook( 'formwerk_cleanup' );
 
 	global $wpdb;
 	// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Dropping the plugin's own table; the name is built from the table prefix.

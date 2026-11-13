@@ -13,6 +13,7 @@ use Formwerk\Forms\FormRepository;
 use Formwerk\Forms\Placeholders;
 use Formwerk\Plugin;
 use Formwerk\Submissions\Handler;
+use Formwerk\Submissions\Retention;
 use Formwerk\Submissions\Store;
 
 /**
@@ -200,6 +201,15 @@ final class SubmissionsPage {
 		$filtering = isset( $_REQUEST['filter_action'] );
 		// phpcs:enable
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Checked right here.
+		if ( 'retention' === $action && isset( $_SERVER['REQUEST_METHOD'] ) && 'POST' === $_SERVER['REQUEST_METHOD'] ) {
+			check_admin_referer( 'formwerk_retention' );
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Checked above.
+			$saved = Retention::save( isset( $_POST['formwerk_retention_days'] ) ? sanitize_text_field( wp_unslash( $_POST['formwerk_retention_days'] ) ) : '' );
+			wp_safe_redirect( self::url( array( 'retention' => $saved ? 'saved' : 'invalid' ) ) );
+			exit;
+		}
+
 		// Bulk delete: never at once, always via the page that asks first.
 		if ( '' === $action && 'delete' === $bulk && ! $filtering && array() !== $ids ) {
 			check_admin_referer( 'bulk-submissions' );
@@ -305,6 +315,22 @@ final class SubmissionsPage {
 				)
 			);
 		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only notice.
+		$retention = isset( $_GET['retention'] ) ? sanitize_key( wp_unslash( $_GET['retention'] ) ) : '';
+		if ( 'saved' === $retention ) {
+			printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html__( 'Saved.', 'formwerk' ) );
+		} elseif ( 'invalid' === $retention ) {
+			printf(
+				'<div class="notice notice-error"><p>%s</p></div>',
+				esc_html(
+					sprintf(
+						/* translators: %d: largest number of days. */
+						__( 'Not saved. Enter a whole number of days between 0 and %d.', 'formwerk' ),
+						Retention::MAX
+					)
+				)
+			);
+		}
 		$this->table->views();
 		echo '<form method="get">';
 		printf( '<input type="hidden" name="page" value="%s">', esc_attr( self::SLUG ) );
@@ -312,6 +338,31 @@ final class SubmissionsPage {
 			printf( '<input type="hidden" name="mail_status" value="%s">', esc_attr( SubmissionsTable::filter_status() ) );
 		}
 		$this->table->display();
+		echo '</form>';
+		$this->render_retention();
+	}
+
+	/**
+	 * Setting: how long submissions are kept.
+	 */
+	private function render_retention(): void {
+		$days = Retention::days();
+		printf( '<form method="post" action="%s" class="formwerk-retention">', esc_url( self::url() ) );
+		wp_nonce_field( 'formwerk_retention' );
+		echo '<input type="hidden" name="formwerk_action" value="retention">';
+		printf( '<h2>%s</h2>', esc_html__( 'Keeping submissions', 'formwerk' ) );
+		printf(
+			'<p><label for="formwerk-retention-days">%s</label> <input type="number" min="0" max="%d" step="1" id="formwerk-retention-days" name="formwerk_retention_days" value="%d" class="small-text" aria-describedby="formwerk-retention-help"> %s</p>',
+			esc_html__( 'Delete submissions automatically after', 'formwerk' ),
+			(int) Retention::MAX,
+			(int) $days,
+			esc_html__( 'days', 'formwerk' )
+		);
+		printf(
+			'<p class="description" id="formwerk-retention-help">%s</p>',
+			esc_html__( 'Keep personal data only as long as you need it. Submissions older than this are deleted once a day. Enter 0 to keep them until you delete them yourself. Export them as CSV first if you need to keep a copy.', 'formwerk' )
+		);
+		submit_button( __( 'Save', 'formwerk' ), 'secondary', 'submit', false );
 		echo '</form>';
 	}
 

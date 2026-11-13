@@ -281,6 +281,59 @@ final class Store {
 	}
 
 	/**
+	 * Deletes submissions that arrived more than a number of days ago.
+	 *
+	 * @param int $days Age in days; 0 or less deletes nothing.
+	 *
+	 * @return int Number of deleted rows.
+	 */
+	public function delete_older_than( int $days ): int {
+		if ( $days <= 0 || ! $this->is_ready() ) {
+			return 0;
+		}
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Own table; the table name is not user input.
+		$deleted = $wpdb->query( $wpdb->prepare( 'DELETE FROM ' . self::table() . ' WHERE created_at < %s', gmdate( 'Y-m-d H:i:s', time() - $days * DAY_IN_SECONDS ) ) );
+
+		return (int) $deleted;
+	}
+
+	/**
+	 * Submissions in which a person entered an email address, for the privacy tools.
+	 *
+	 * @param string $email    Email address.
+	 * @param int    $page     Page, starting at 1.
+	 * @param int    $per_page Rows per page.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	public function find_by_email( string $email, int $page = 1, int $per_page = 50 ): array {
+		$email = strtolower( trim( $email ) );
+		if ( '' === $email || ! $this->is_ready() ) {
+			return array();
+		}
+		global $wpdb;
+
+		// The JSON holds the address as "address"; the database narrows down, PHP checks exactly.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Own table; the table name is not user input.
+		$rows  = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . self::table() . ' WHERE data LIKE %s ORDER BY id ASC', '%' . $wpdb->esc_like( '"' . $email . '"' ) . '%' ), ARRAY_A );
+		$found = array();
+		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
+			$item = $this->hydrate( $row );
+			foreach ( $item['fields'] as $field ) {
+				$value = $item['values'][ $field['name'] ] ?? '';
+				if ( 'email' === ( $field['type'] ?? '' ) && is_string( $value ) && strtolower( trim( $value ) ) === $email ) {
+					$found[] = $item;
+					break;
+				}
+			}
+		}
+
+		return array_slice( $found, ( max( 1, $page ) - 1 ) * $per_page, $per_page );
+	}
+
+	/**
 	 * Deletes submissions.
 	 *
 	 * @param int[] $ids Submission IDs.

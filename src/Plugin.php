@@ -20,6 +20,8 @@ use Formwerk\Rest\FormsController;
 use Formwerk\Rest\SubmitController;
 use Formwerk\Submissions\Handler;
 use Formwerk\Submissions\Notifier;
+use Formwerk\Submissions\Privacy;
+use Formwerk\Submissions\Retention;
 use Formwerk\Submissions\Store;
 use Formwerk\Rest\SmtpController;
 use Formwerk\Smtp\Log;
@@ -65,6 +67,12 @@ final class Plugin {
 		$this->booted = true;
 
 		add_action( 'init', array( $this, 'load_textdomain' ) );
+		register_deactivation_hook(
+			FORMWERK_FILE,
+			static function (): void {
+				wp_clear_scheduled_hook( Retention::HOOK );
+			}
+		);
 		add_action( 'plugins_loaded', array( $this, 'register_modules' ) );
 	}
 
@@ -87,6 +95,8 @@ final class Plugin {
 		$store = new Store();
 		$store->maybe_install();
 		$store->register();
+		( new Retention( $store ) )->register();
+		( new Privacy( $store ) )->register();
 
 		$handler = new Handler( $forms, $store, new Notifier() );
 		( new FrontendController( $forms, $handler, new Renderer() ) )->register();
