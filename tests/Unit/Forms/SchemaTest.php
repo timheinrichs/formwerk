@@ -267,4 +267,86 @@ final class SchemaTest extends TestCase {
 		$this->assertCount( Schema::MAX_FIELDS, $result['fields'] );
 		$this->assertSame( 'too_many_fields', $result['errors'][0]['code'] );
 	}
+
+	/**
+	 * @param array<int, array<string, mixed>> $items Fields as sent.
+	 *
+	 * @return array<int, string> Width per field, as 'full' or 'half'.
+	 */
+	private function widths( array $items ): array {
+		return array_column( Schema::normalize( $items )['fields'], 'width' );
+	}
+
+	public function test_a_field_can_sit_next_to_the_previous_one(): void {
+		$items = array(
+			array(
+				'type'  => 'text',
+				'label' => 'Vorname',
+			),
+			array(
+				'type'   => 'text',
+				'label'  => 'Nachname',
+				'beside' => true,
+			),
+			array(
+				'type'  => 'email',
+				'label' => 'E-Mail',
+			),
+		);
+
+		$this->assertSame( array( 'half', 'half', 'full' ), $this->widths( $items ) );
+		$this->assertSame( array( false, true, false ), array_column( Schema::normalize( $items )['fields'], 'beside' ) );
+	}
+
+	public function test_rows_hold_two_fields_and_no_headings(): void {
+		$items = array(
+			array(
+				'type'   => 'text',
+				'label'  => 'Erstes',
+				'beside' => true,
+			),
+			array(
+				'type'   => 'text',
+				'label'  => 'Zweites',
+				'beside' => true,
+			),
+			array(
+				'type'   => 'text',
+				'label'  => 'Drittes',
+				'beside' => true,
+			),
+			array(
+				'type'  => 'heading',
+				'label' => 'Abschnitt',
+			),
+			array(
+				'type'   => 'text',
+				'label'  => 'Nach Überschrift',
+				'beside' => true,
+			),
+			array(
+				'type'   => 'heading',
+				'label'  => 'Überschrift daneben',
+				'beside' => true,
+			),
+		);
+
+		$this->assertSame( array( 'half', 'half', 'full', 'full', 'full', 'full' ), $this->widths( $items ) );
+	}
+
+	public function test_half_width_from_older_forms_becomes_pairs_without_gaps(): void {
+		$half  = array(
+			'type'  => 'text',
+			'label' => 'Halb',
+			'width' => 'half',
+		);
+		$full  = array(
+			'type'  => 'text',
+			'label' => 'Voll',
+		);
+		$items = array( $half, $half, $half, $full, $half, $half, $half );
+
+		// Pairs 1+2 and 5+6; the third and the last half field had no partner and use the whole row.
+		$this->assertSame( array( 'half', 'half', 'full', 'full', 'half', 'half', 'full' ), $this->widths( $items ) );
+	}
 }

@@ -4,7 +4,7 @@ import {
 	TextareaControl,
 	ToggleControl,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { AUTOCOMPLETE_OPTIONS, hasOptions, hasValue, typeLabel } from './types';
 
@@ -13,7 +13,12 @@ const controlProps = {
 	__next40pxDefaultSize: true,
 };
 
-export default function FieldSettings( { field, error, onChange } ) {
+export default function FieldSettings( {
+	field,
+	error,
+	previousLabel,
+	onChange,
+} ) {
 	if ( ! field ) {
 		return (
 			<p className="formwerk-intro">
@@ -163,26 +168,32 @@ export default function FieldSettings( { field, error, onChange } ) {
 				/>
 			) }
 
-			<SelectControl
-				{ ...controlProps }
-				label={ __( 'Width', 'formwerk' ) }
-				value={ field.width }
-				onChange={ set( 'width' ) }
-				options={ [
-					{ value: 'full', label: __( 'Full width', 'formwerk' ) },
-					{
-						value: 'half',
-						label: __(
-							'Half width (two fields side by side)',
-							'formwerk'
-						),
-					},
-				] }
-				help={ __(
-					'On small screens every field uses the full width.',
-					'formwerk'
-				) }
-			/>
+			{ ( field.beside || previousLabel ) && (
+				<SelectControl
+					{ ...controlProps }
+					label={ __( 'Layout', 'formwerk' ) }
+					value={ field.beside ? 'beside' : 'own' }
+					onChange={ ( value ) =>
+						onChange( { ...field, beside: value === 'beside' } )
+					}
+					options={ [
+						{ value: 'own', label: __( 'Own row', 'formwerk' ) },
+						{
+							value: 'beside',
+							label: sprintf(
+								/* translators: %s: label of the field above. */
+								__( 'Next to “%s”', 'formwerk' ),
+								previousLabel ||
+									__( 'the field above', 'formwerk' )
+							),
+						},
+					] }
+					help={ __(
+						'Two fields in one row share it half and half. On small screens they are shown one below the other.',
+						'formwerk'
+					) }
+				/>
+			) }
 
 			{ [ 'text', 'email', 'tel' ].includes( field.type ) && (
 				<SelectControl

@@ -1,9 +1,12 @@
 import { __ } from '@wordpress/i18n';
 
+import { isHalf } from './layout';
 import { hasOptions } from './types';
 
-function Field( { field } ) {
-	const classes = `formwerk-field formwerk-field--${ field.type } formwerk-field--${ field.width }`;
+function Field( { field, half } ) {
+	const classes = `formwerk-field formwerk-field--${
+		field.type
+	} formwerk-field--${ half ? 'half' : 'full' }`;
 	const id = `formwerk-preview-${ field.id }`;
 	const required = field.required && (
 		<span className="formwerk-field__required">
@@ -132,8 +135,12 @@ export default function Preview( { fields, submitLabel } ) {
 			</p>
 			<div className="formwerk-form formwerk-preview__form">
 				<div className="formwerk-form__fields">
-					{ fields.map( ( field ) => (
-						<Field key={ field.id } field={ field } />
+					{ fields.map( ( field, index ) => (
+						<Field
+							key={ field.id }
+							field={ field }
+							half={ isHalf( fields, index ) }
+						/>
 					) ) }
 				</div>
 				<div className="formwerk-form__actions">

@@ -21,6 +21,7 @@ import { Shortcode } from './form-list';
 import ConfirmationTab from './confirmation-tab';
 import MailTab from './mail-tab';
 import Preview from './preview';
+import { canBeBeside, detach, normalizeRows } from './layout';
 import { createField, typeLabel } from './types';
 
 const controlProps = {
@@ -233,7 +234,10 @@ export default function Builder( {
 	};
 
 	const setFields = ( fields ) =>
-		setForm( ( current ) => ( { ...current, fields } ) );
+		setForm( ( current ) => ( {
+			...current,
+			fields: normalizeRows( fields ),
+		} ) );
 
 	const showTab = ( name ) =>
 		setTab( ( current ) => ( { name, key: current.key + 1 } ) );
@@ -274,7 +278,10 @@ export default function Builder( {
 	const removeField = ( id ) => {
 		const index = form.fields.findIndex( ( field ) => field.id === id );
 		const field = form.fields[ index ];
-		const fields = form.fields.filter( ( item ) => item.id !== id );
+		// The field next to it, if any, keeps its place but gets a row of its own.
+		const fields = detach( form.fields, index ).filter(
+			( item ) => item.id !== id
+		);
 		setFields( fields );
 		dropErrors( ( error ) => error.field === id );
 		setRemoved( { field, index } );
@@ -450,7 +457,14 @@ export default function Builder( {
 			.finally( () => setIsSaving( false ) );
 	};
 
-	const selected = form.fields.find( ( field ) => field.id === selectedId );
+	const selectedIndex = form.fields.findIndex(
+		( field ) => field.id === selectedId
+	);
+	const selected = form.fields[ selectedIndex ];
+	const previousLabelOf = ( index ) =>
+		canBeBeside( form.fields, index )
+			? form.fields[ index - 1 ].label || __( '(no label)', 'formwerk' )
+			: '';
 	const mark = ( title, name ) =>
 		tabHasError( name )
 			? sprintf(
@@ -682,6 +696,9 @@ export default function Builder( {
 												</h2>
 												<FieldSettings
 													field={ selected }
+													previousLabel={ previousLabelOf(
+														selectedIndex
+													) }
 													error={
 														selected &&
 														fieldError(

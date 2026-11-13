@@ -9,9 +9,9 @@ import {
 import {
 	SortableContext,
 	arrayMove,
+	rectSortingStrategy,
 	sortableKeyboardCoordinates,
 	useSortable,
-	verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { speak } from '@wordpress/a11y';
@@ -23,6 +23,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 
+import { canBeBeside, detach, isHalf, normalizeRows } from './layout';
 import { FIELD_TYPES, typeLabel } from './types';
 
 function Row( {
@@ -31,8 +32,11 @@ function Row( {
 	count,
 	isSelected,
 	hasError,
+	half,
+	previousLabel,
 	onSelect,
 	onMove,
+	onToggleBeside,
 	onRemove,
 } ) {
 	const {
@@ -51,6 +55,7 @@ function Row( {
 		isSelected && 'is-selected',
 		isDragging && 'is-dragging',
 		hasError && 'has-error',
+		half && 'is-half',
 	]
 		.filter( Boolean )
 		.join( ' ' );
@@ -142,6 +147,34 @@ function Row( {
 					accessibleWhenDisabled
 					onClick={ () => onMove( index, index + 1 ) }
 				/>
+				{ ( field.beside || previousLabel ) && (
+					<Button
+						size="small"
+						icon={ field.beside ? 'editor-justify' : 'columns' }
+						isPressed={ Boolean( field.beside ) }
+						label={
+							field.beside
+								? sprintf(
+										/* translators: %s: field label. */
+										__(
+											'Put “%s” on its own row',
+											'formwerk'
+										),
+										name
+								  )
+								: sprintf(
+										/* translators: 1: field label, 2: label of the field above. */
+										__(
+											'Put “%1$s” next to “%2$s”',
+											'formwerk'
+										),
+										name,
+										previousLabel
+								  )
+						}
+						onClick={ onToggleBeside }
+					/>
+				) }
 				<Button
 					className="formwerk-field-row__remove"
 					size="small"
@@ -179,7 +212,10 @@ export default function FieldList( {
 		if ( to < 0 || to >= fields.length || from === to ) {
 			return;
 		}
-		onChange( arrayMove( fields, from, to ) );
+		// A field that moves leaves its row; the one that sat next to it stays where it is.
+		onChange(
+			normalizeRows( arrayMove( detach( fields, from ), from, to ) )
+		);
 		speak(
 			sprintf(
 				/* translators: 1: field label, 2: new position, 3: number of fields. */
@@ -250,6 +286,32 @@ export default function FieldList( {
 		),
 	};
 
+	const toggleBeside = ( index ) => {
+		const field = fields[ index ];
+		const beside = ! field.beside;
+		onChange(
+			normalizeRows(
+				fields.map( ( item, position ) =>
+					position === index ? { ...item, beside } : item
+				)
+			)
+		);
+		speak(
+			beside
+				? sprintf(
+						/* translators: 1: field label, 2: label of the field above. */
+						__( '“%1$s” is now next to “%2$s”.', 'formwerk' ),
+						field.label,
+						fields[ index - 1 ]?.label
+				  )
+				: sprintf(
+						/* translators: %s: field label. */
+						__( '“%s” is now on its own row.', 'formwerk' ),
+						field.label
+				  )
+		);
+	};
+
 	const onDragEnd = ( { active, over } ) => {
 		if ( over && active.id !== over.id ) {
 			move(
@@ -280,7 +342,7 @@ export default function FieldList( {
 				>
 					<SortableContext
 						items={ fields.map( ( field ) => field.id ) }
-						strategy={ verticalListSortingStrategy }
+						strategy={ rectSortingStrategy }
 					>
 						<ol className="formwerk-field-rows">
 							{ fields.map( ( field, index ) => (
@@ -291,8 +353,18 @@ export default function FieldList( {
 									count={ fields.length }
 									isSelected={ field.id === selectedId }
 									hasError={ errorIds.includes( field.id ) }
+									half={ isHalf( fields, index ) }
+									previousLabel={
+										canBeBeside( fields, index )
+											? fields[ index - 1 ].label ||
+											  __( '(no label)', 'formwerk' )
+											: ''
+									}
 									onSelect={ () => onSelect( field.id ) }
 									onMove={ move }
+									onToggleBeside={ () =>
+										toggleBeside( index )
+									}
 									onRemove={ () => onRemove( field.id ) }
 								/>
 							) ) }

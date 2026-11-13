@@ -75,7 +75,7 @@ export function createField( type ) {
 		options: hasOptions( type )
 			? [ __( 'Option 1', 'formwerk' ), __( 'Option 2', 'formwerk' ) ]
 			: [],
-		width: 'full',
+		beside: false,
 		autocomplete: DEFAULT_AUTOCOMPLETE[ type ] || '',
 	};
 }

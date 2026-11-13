@@ -76,6 +76,8 @@ final class Schema {
 		$names  = array();
 		$ids    = array();
 		$wanted = array();
+		$beside = array();
+		$legacy = array();
 
 		foreach ( is_array( $raw ) ? array_values( $raw ) : array() as $index => $item ) {
 			if ( ! is_array( $item ) ) {
@@ -113,7 +115,8 @@ final class Schema {
 				'help'         => self::text( $item['help'] ?? '', 500 ),
 				'content'      => self::multiline( $item['content'] ?? '', 2000 ),
 				'options'      => array(),
-				'width'        => 'half' === ( $item['width'] ?? '' ) ? 'half' : 'full',
+				'width'        => 'full',
+				'beside'       => false,
 				'autocomplete' => (string) preg_replace( '/[^a-z0-9 -]/', '', strtolower( self::text( $item['autocomplete'] ?? '', 60 ) ) ),
 			);
 
@@ -136,7 +139,23 @@ final class Schema {
 
 			$fields[] = $field;
 			$wanted[] = self::has_value( $type ) ? self::slug( self::text( $item['name'] ?? '' ) ) : '';
+			// Forms saved before rows existed only know "half width"; two of them in a row become a pair.
+			$beside[] = array_key_exists( 'beside', $item ) ? ! empty( $item['beside'] ) : 'half' === ( $item['width'] ?? '' );
+			$legacy[] = ! array_key_exists( 'beside', $item );
 		}//end foreach
+
+		// A field next to the previous one shares a row with it: at most two per row, never a heading.
+		foreach ( $fields as $index => $field ) {
+			$previous = $fields[ $index - 1 ] ?? null;
+			$wants    = $legacy[ $index ]
+				? $beside[ $index ] && $index > 0 && $beside[ $index - 1 ] && ! ( $previous['beside'] ?? false )
+				: $beside[ $index ];
+			if ( $wants && null !== $previous && 'heading' !== $field['type'] && 'heading' !== $previous['type'] && ! $previous['beside'] ) {
+				$fields[ $index ]['beside']    = true;
+				$fields[ $index ]['width']     = 'half';
+				$fields[ $index - 1 ]['width'] = 'half';
+			}
+		}
 
 		// Names the builder sends back belong to existing fields, and mail templates use them.
 		// They are reserved first, so a new field can never take over the name of an old one.

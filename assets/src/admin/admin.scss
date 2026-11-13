@@ -308,6 +308,10 @@ $error: #cc1818;
 }
 
 .formwerk-field-rows {
+	// Two columns: a field on its own row spans both, a pair takes one each.
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 6px;
 	margin: 0 0 16px;
 	padding: 0;
 	list-style: none;
@@ -315,9 +319,11 @@ $error: #cc1818;
 
 .formwerk-field-row {
 	display: flex;
+	flex-wrap: wrap;
+	grid-column: 1 / -1;
 	gap: 4px;
 	align-items: center;
-	margin: 0 0 6px;
+	margin: 0;
 	padding: 4px;
 	background: #fff;
 	border: 1px solid #c3c4c7;
@@ -401,6 +407,11 @@ $error: #cc1818;
 .formwerk-field-row__actions {
 	display: flex;
 	flex: none;
+	margin-left: auto;
+}
+
+.formwerk-field-row.is-half {
+	grid-column: auto;
 }
 
 // Removing sits apart from moving, so a slip of the finger does not
