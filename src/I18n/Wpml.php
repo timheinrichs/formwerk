@@ -135,9 +135,17 @@ final class Wpml {
 			}
 			$form['fields'][ $index ]['option_labels'] = $labels;
 		}
-		$form['title']               = $t( (string) $form['title'], 'form-title' );
-		$form['messages']['submit']  = $t( (string) $form['messages']['submit'], 'message-submit' );
-		$form['messages']['success'] = $t( (string) $form['messages']['success'], 'message-success' );
+		$form['title'] = $t( (string) $form['title'], 'form-title' );
+		foreach ( $form['steps'] ?? array() as $index => $step ) {
+			$form['steps'][ $index ]['title'] = $t( (string) $step['title'], 'step-' . $step['id'] . '-title' );
+		}
+		// Default texts are already in the page language; only own texts are translated.
+		foreach ( array( 'submit', 'success', 'next', 'back' ) as $key ) {
+			$value = (string) ( $form['messages'][ $key ] ?? '' );
+			if ( '' !== $value && ! FormRepository::is_default_message( $key, $value ) ) {
+				$form['messages'][ $key ] = $t( $value, 'message-' . $key );
+			}
+		}
 		if ( isset( $form['confirm'] ) ) {
 			$form['confirm']['subject'] = $t( (string) $form['confirm']['subject'], 'confirm-subject' );
 			$form['confirm']['body']    = $t( (string) $form['confirm']['body'], 'confirm-body' );
@@ -273,14 +281,34 @@ final class Wpml {
 			}
 		}
 		$add( 'form-title', $form['title'] ?? '', __( 'Form name (in emails as {form})', 'formwerk' ) );
-		$add( 'message-submit', $form['messages']['submit'] ?? '', __( 'Text on the send button', 'formwerk' ) );
-		$add( 'message-success', $form['messages']['success'] ?? '', __( 'Message after sending', 'formwerk' ), 'AREA' );
+		if ( 'steps' === ( $form['settings']['type'] ?? '' ) ) {
+			foreach ( $form['steps'] ?? array() as $index => $step ) {
+				/* translators: %d: number of the step. */
+				$add( 'step-' . $step['id'] . '-title', $step['title'], sprintf( __( 'Step %d: title', 'formwerk' ), $index + 1 ) );
+			}
+			$add( 'message-next', self::own( $form, 'next' ), __( 'Text on the button to the next step', 'formwerk' ) );
+			$add( 'message-back', self::own( $form, 'back' ), __( 'Text on the button to the previous step', 'formwerk' ) );
+		}
+		$add( 'message-submit', self::own( $form, 'submit' ), __( 'Text on the send button', 'formwerk' ) );
+		$add( 'message-success', self::own( $form, 'success' ), __( 'Message after sending', 'formwerk' ), 'AREA' );
 		if ( ! empty( $form['confirm']['enabled'] ) ) {
 			$add( 'confirm-subject', $form['confirm']['subject'], __( 'Confirmation: subject', 'formwerk' ) );
 			$add( 'confirm-body', $form['confirm']['body'], __( 'Confirmation: text', 'formwerk' ), 'AREA' );
 		}
 
 		return $strings;
+	}
+
+	/**
+	 * A visitor text the site wrote itself; '' for a default, which needs no translation here.
+	 *
+	 * @param array<string, mixed> $form Form.
+	 * @param string               $key  Message key.
+	 */
+	private static function own( array $form, string $key ): string {
+		$value = (string) ( $form['messages'][ $key ] ?? '' );
+
+		return FormRepository::is_default_message( $key, $value ) ? '' : $value;
 	}
 
 	/**

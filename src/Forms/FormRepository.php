@@ -26,6 +26,7 @@ final class FormRepository {
 	private const META_MESSAGES = '_formwerk_messages';
 	private const META_CONFIRM  = '_formwerk_confirmation';
 	private const META_SETTINGS = '_formwerk_settings';
+	private const META_STEPS    = '_formwerk_steps';
 	private const META_SPAM     = '_formwerk_spam_count';
 
 	/**
@@ -72,17 +73,20 @@ final class FormRepository {
 		if ( ! $post || self::POST_TYPE !== $post->post_type || 'publish' !== $post->post_status ) {
 			return null;
 		}
-		$fields = Schema::normalize( $this->meta( $id, self::META_FIELDS ) )['fields'];
+		$settings = $this->settings( $this->meta( $id, self::META_SETTINGS ) );
+		$steps    = Schema::steps( $this->meta( $id, self::META_STEPS ) );
+		$fields   = Schema::normalize( $this->meta( $id, self::META_FIELDS ), $steps, 'steps' === $settings['type'] )['fields'];
 
 		return array(
 			'id'       => $id,
 			'title'    => $post->post_title,
 			'modified' => $post->post_modified_gmt,
 			'fields'   => $fields,
+			'steps'    => $steps,
 			'mail'     => $this->mail( $this->meta( $id, self::META_MAIL ) ),
 			'confirm'  => $this->confirmation( $this->meta( $id, self::META_CONFIRM ) ),
 			'messages' => $this->messages( $this->meta( $id, self::META_MESSAGES ) ),
-			'settings' => $this->settings( $this->meta( $id, self::META_SETTINGS ) ),
+			'settings' => $settings,
 			'spam'     => (int) get_post_meta( $id, self::META_SPAM, true ),
 		);
 	}
@@ -130,6 +134,7 @@ final class FormRepository {
 			'title'    => '',
 			'modified' => '',
 			'fields'   => array(),
+			'steps'    => array(),
 			'mail'     => $this->mail( array() ),
 			'confirm'  => $this->confirmation( array() ),
 			'messages' => $this->messages( array() ),
@@ -156,7 +161,15 @@ final class FormRepository {
 			);
 		}
 
-		$schema = Schema::normalize( $input['fields'] ?? array() );
+		$settings = $this->settings( $input['settings'] ?? array() );
+		$steps    = Schema::steps( $input['steps'] ?? array() );
+		$schema   = Schema::normalize( $input['fields'] ?? array(), $steps, 'steps' === $settings['type'] );
+		if ( is_array( $input['steps'] ?? null ) && count( $input['steps'] ) > Schema::MAX_STEPS ) {
+			$errors[] = array(
+				'path' => 'steps',
+				'code' => 'too_many_steps',
+			);
+		}
 		foreach ( $schema['errors'] as $error ) {
 			$errors[] = array(
 				'path'  => 'fields',
@@ -174,7 +187,9 @@ final class FormRepository {
 
 		$mail     = $this->mail( $input['mail'] ?? array() );
 		$messages = $this->messages( $input['messages'] ?? array() );
-		$settings = $this->settings( $input['settings'] ?? array() );
+		if ( 'steps' === $settings['type'] ) {
+			$errors = array_merge( $errors, self::step_errors( $steps, $schema['fields'] ) );
+		}
 
 		foreach ( array( 'to', 'subject', 'body' ) as $part ) {
 			$check_placeholders = 'to' !== $part;
@@ -255,8 +270,9 @@ final class FormRepository {
 		$written = $this->store( $saved, self::META_FIELDS, $schema['fields'] )
 			&& $this->store( $saved, self::META_MAIL, $mail )
 			&& $this->store( $saved, self::META_CONFIRM, $confirm )
-			&& $this->store( $saved, self::META_MESSAGES, $messages )
-			&& $this->store( $saved, self::META_SETTINGS, $settings );
+			&& $this->store( $saved, self::META_MESSAGES, self::own_messages( $messages ) )
+			&& $this->store( $saved, self::META_SETTINGS, $settings )
+			&& $this->store( $saved, self::META_STEPS, $steps );
 		if ( ! $written ) {
 			if ( $id <= 0 ) {
 				wp_delete_post( $saved, true );
@@ -407,21 +423,112 @@ final class FormRepository {
 	}
 
 	/**
-	 * Texts shown to visitors, with defaults.
+	 * Texts shown to visitors, with defaults in the current language.
 	 *
 	 * @param mixed $raw Stored or submitted value.
 	 *
-	 * @return array{submit:string, success:string}
+	 * @return array{submit:string, success:string, next:string, back:string}
 	 */
 	private function messages( $raw ): array {
-		$raw     = is_array( $raw ) ? $raw : array();
-		$submit  = isset( $raw['submit'] ) && is_string( $raw['submit'] ) ? self::line( $raw['submit'], 100 ) : '';
-		$success = isset( $raw['success'] ) && is_string( $raw['success'] ) ? self::lines( $raw['success'], 2000 ) : '';
+		$stored = self::own_messages( $raw );
+		foreach ( self::default_messages() as $key => $default ) {
+			$stored[ $key ] = '' !== $stored[ $key ] ? $stored[ $key ] : $default;
+		}
 
-		return array(
-			'submit'  => '' !== $submit ? $submit : __( 'Send', 'formwerk' ),
-			'success' => '' !== $success ? $success : __( 'Thank you. Your message has been sent.', 'formwerk' ),
+		return $stored;
+	}
+
+	/**
+	 * The texts someone actually wrote; '' where the default applies.
+	 *
+	 * Defaults are not stored: they follow the language of the page and of later translations.
+	 * A text equal to a default (in English or in the current language) counts as the default, so
+	 * forms saved before this rule existed switch back to translated defaults.
+	 *
+	 * @param mixed $raw Stored or submitted value.
+	 *
+	 * @return array{submit:string, success:string, next:string, back:string}
+	 */
+	private static function own_messages( $raw ): array {
+		$raw     = is_array( $raw ) ? $raw : array();
+		$english = array(
+			'submit'  => 'Send',
+			'success' => 'Thank you. Your message has been sent.',
+			'next'    => 'Next',
+			'back'    => 'Back',
 		);
+		$current = self::default_messages();
+		$own     = array();
+		foreach ( $english as $key => $default ) {
+			$value       = isset( $raw[ $key ] ) && is_string( $raw[ $key ] )
+				? ( 'success' === $key ? self::lines( $raw[ $key ], 2000 ) : self::line( $raw[ $key ], 100 ) )
+				: '';
+			$own[ $key ] = in_array( $value, array( $default, $current[ $key ] ), true ) ? '' : $value;
+		}
+
+		return $own;
+	}
+
+	/**
+	 * Whether a visitor text is the default, which follows the page language by itself.
+	 *
+	 * @param string $key   'submit', 'success', 'next' or 'back'.
+	 * @param string $value Text.
+	 */
+	public static function is_default_message( string $key, string $value ): bool {
+		return '' === ( self::own_messages( array( $key => $value ) )[ $key ] ?? $value );
+	}
+
+	/**
+	 * Default texts in the current language.
+	 *
+	 * @return array{submit:string, success:string, next:string, back:string}
+	 */
+	private static function default_messages(): array {
+		return array(
+			'submit'  => __( 'Send', 'formwerk' ),
+			'success' => __( 'Thank you. Your message has been sent.', 'formwerk' ),
+			'next'    => __( 'Next', 'formwerk' ),
+			'back'    => __( 'Back', 'formwerk' ),
+		);
+	}
+
+	/**
+	 * Problems with the steps of a form "in steps": it needs at least one, and every step needs
+	 * a field to fill in (a step with only a heading would have nothing to check or send).
+	 *
+	 * @param array<int, array{id: string, title: string}> $steps  Normalised steps.
+	 * @param array<int, array<string, mixed>>             $fields Normalised fields.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	public static function step_errors( array $steps, array $fields ): array {
+		if ( array() === $steps ) {
+			return array(
+				array(
+					'path' => 'steps',
+					'code' => 'steps_required',
+				),
+			);
+		}
+		$filled = array();
+		foreach ( $fields as $field ) {
+			if ( Schema::has_value( $field['type'] ) ) {
+				$filled[ $field['step'] ] = true;
+			}
+		}
+		$errors = array();
+		foreach ( $steps as $step ) {
+			if ( ! isset( $filled[ $step['id'] ] ) ) {
+				$errors[] = array(
+					'path' => 'steps',
+					'step' => $step['id'],
+					'code' => 'step_empty',
+				);
+			}
+		}
+
+		return $errors;
 	}
 
 	/**
@@ -429,13 +536,15 @@ final class FormRepository {
 	 *
 	 * @param mixed $raw Stored or submitted value.
 	 *
-	 * @return array{max_links:int}
+	 * @return array{max_links:int, type:string}
 	 */
 	private function settings( $raw ): array {
 		$raw = is_array( $raw ) ? $raw : array();
 
 		return array(
 			'max_links' => max( 0, min( 50, (int) ( $raw['max_links'] ?? 0 ) ) ),
+			// "simple": all fields on one page; "steps": one step at a time.
+			'type'      => 'steps' === ( $raw['type'] ?? '' ) ? 'steps' : 'simple',
 		);
 	}
 

@@ -221,6 +221,12 @@ final class FormsController {
 				return __( 'Add at least one option to choose from.', 'formwerk' );
 			case 'type_invalid':
 				return __( 'This field type is not supported. Remove the field and add it again.', 'formwerk' );
+			case 'steps_required':
+				return __( 'A form in steps needs at least one step. Add a step, or switch the form type to “Simple”.', 'formwerk' );
+			case 'too_many_steps':
+				return __( 'A form can have at most 20 steps. Remove some steps.', 'formwerk' );
+			case 'step_empty':
+				return __( 'This step has no field to fill in. Move a field into it, or remove the step.', 'formwerk' );
 			case 'too_many_fields':
 				return __( 'A form can have at most 100 fields. Remove some fields.', 'formwerk' );
 			case 'mail_to_required':

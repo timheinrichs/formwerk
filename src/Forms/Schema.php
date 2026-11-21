@@ -27,6 +27,7 @@ final class Schema {
 	public const OWN_ROW_TYPES = array( 'heading', 'textarea', 'consent' );
 
 	public const MAX_FIELDS = 100;
+	public const MAX_STEPS  = 20;
 
 	private const CHOICE_TYPES = array( 'select', 'radio', 'checkboxes' );
 	private const NAME_LENGTH  = 40;
@@ -78,20 +79,57 @@ final class Schema {
 	}
 
 	/**
+	 * Normalises the steps of a form: each has a stable ID and an optional title.
+	 *
+	 * @param mixed $raw Steps as sent by the builder.
+	 *
+	 * @return array<int, array{id: string, title: string}>
+	 */
+	public static function steps( $raw ): array {
+		$steps = array();
+		$ids   = array();
+		foreach ( is_array( $raw ) ? array_values( $raw ) : array() as $index => $item ) {
+			if ( ! is_array( $item ) || count( $steps ) >= self::MAX_STEPS ) {
+				continue;
+			}
+			$id = (string) preg_replace( '/[^a-z0-9_-]/', '', strtolower( self::text( $item['id'] ?? '' ) ) );
+			if ( '' === $id || isset( $ids[ $id ] ) ) {
+				$id = 's' . ( $index + 1 ) . '_' . substr( md5( 'step' . $index . count( $ids ) ), 0, 6 );
+			}
+			$ids[ $id ] = true;
+			$steps[]    = array(
+				'id'    => $id,
+				'title' => self::text( $item['title'] ?? '', 200 ),
+			);
+		}
+
+		return $steps;
+	}
+
+	/**
 	 * Normalises a list of fields.
 	 *
-	 * @param mixed $raw Fields as sent by the builder.
+	 * With steps, every field belongs to one of them (unknown or missing: the first). In a form
+	 * shown in steps the fields are ordered step by step and a row never spans two steps; in a
+	 * simple form the steps are only remembered, for when it is switched back.
+	 *
+	 * @param mixed                                        $raw      Fields as sent by the builder.
+	 * @param array<int, array{id: string, title: string}> $steps    Normalised steps of the form.
+	 * @param bool                                         $in_steps Whether the form is shown in steps.
 	 *
 	 * @return array{fields: array<int, array<string, mixed>>, errors: array<int, array{field: string, code: string}>}
 	 */
-	public static function normalize( $raw ): array {
-		$fields = array();
-		$errors = array();
-		$names  = array();
-		$ids    = array();
-		$wanted = array();
-		$beside = array();
-		$legacy = array();
+	public static function normalize( $raw, array $steps = array(), bool $in_steps = true ): array {
+		$in_steps   = $in_steps && array() !== $steps;
+		$step_order = array_flip( array_column( $steps, 'id' ) );
+		$first_step = (string) ( $steps[0]['id'] ?? '' );
+		$fields     = array();
+		$errors     = array();
+		$names      = array();
+		$ids        = array();
+		$wanted     = array();
+		$beside     = array();
+		$legacy     = array();
 
 		foreach ( is_array( $raw ) ? array_values( $raw ) : array() as $index => $item ) {
 			if ( ! is_array( $item ) ) {
@@ -131,6 +169,7 @@ final class Schema {
 				'options'      => array(),
 				'width'        => 'full',
 				'beside'       => false,
+				'step'         => is_string( $item['step'] ?? null ) && isset( $step_order[ $item['step'] ] ) ? $item['step'] : $first_step,
 				'autocomplete' => (string) preg_replace( '/[^a-z0-9 -]/', '', strtolower( self::text( $item['autocomplete'] ?? '', 60 ) ) ),
 			);
 
@@ -158,13 +197,26 @@ final class Schema {
 			$legacy[] = ! array_key_exists( 'beside', $item );
 		}//end foreach
 
+		if ( $in_steps ) {
+			// Step by step, keeping the order within each step.
+			$order = array_keys( $fields );
+			usort(
+				$order,
+				static fn( int $a, int $b ): int => array( $step_order[ $fields[ $a ]['step'] ], $a ) <=> array( $step_order[ $fields[ $b ]['step'] ], $b )
+			);
+			$fields = array_map( static fn( int $i ): array => $fields[ $i ], $order );
+			$wanted = array_map( static fn( int $i ): string => $wanted[ $i ], $order );
+			$beside = array_map( static fn( int $i ): bool => $beside[ $i ], $order );
+			$legacy = array_map( static fn( int $i ): bool => $legacy[ $i ], $order );
+		}
+
 		// A field next to the previous one shares a row with it: at most two per row, and only short fields.
 		foreach ( $fields as $index => $field ) {
 			$previous = $fields[ $index - 1 ] ?? null;
 			$wants    = $legacy[ $index ]
 				? $beside[ $index ] && $index > 0 && $beside[ $index - 1 ] && ! ( $previous['beside'] ?? false )
 				: $beside[ $index ];
-			if ( $wants && null !== $previous && self::can_share_row( $field['type'] ) && self::can_share_row( $previous['type'] ) && ! $previous['beside'] ) {
+			if ( $wants && null !== $previous && ( ! $in_steps || $previous['step'] === $field['step'] ) && self::can_share_row( $field['type'] ) && self::can_share_row( $previous['type'] ) && ! $previous['beside'] ) {
 				$fields[ $index ]['beside']    = true;
 				$fields[ $index ]['width']     = 'half';
 				$fields[ $index - 1 ]['width'] = 'half';

@@ -7,6 +7,7 @@ declare( strict_types=1 );
 
 namespace Formwerk\Tests\Unit\Forms;
 
+use Formwerk\Forms\FormRepository;
 use Formwerk\Forms\Schema;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -368,5 +369,179 @@ final class SchemaTest extends TestCase {
 			),
 		);
 		$this->assertSame( array( false, false, false ), array_column( Schema::normalize( $items )['fields'], 'beside' ) );
+	}
+
+	/**
+	 * Steps used by the step tests.
+	 *
+	 * @return array<int, array{id: string, title: string}>
+	 */
+	private function two_steps(): array {
+		return Schema::steps(
+			array(
+				array(
+					'id'    => 'person',
+					'title' => 'You',
+				),
+				array(
+					'id'    => 'course',
+					'title' => '',
+				),
+			)
+		);
+	}
+
+	public function test_steps_get_stable_ids_and_titles(): void {
+		$steps = Schema::steps(
+			array(
+				array(
+					'id'    => 'Person!',
+					'title' => '  You ',
+				),
+				array( 'id' => 'person' ),
+				'garbage',
+			)
+		);
+
+		$this->assertSame( 'person', $steps[0]['id'] );
+		$this->assertSame( 'You', $steps[0]['title'] );
+		$this->assertNotSame( 'person', $steps[1]['id'] );
+		$this->assertCount( 2, $steps );
+	}
+
+	public function test_fields_are_ordered_step_by_step(): void {
+		$fields = Schema::normalize(
+			array(
+				array(
+					'type'  => 'text',
+					'label' => 'Course',
+					'step'  => 'course',
+				),
+				array(
+					'type'  => 'text',
+					'label' => 'Name',
+					'step'  => 'person',
+				),
+				array(
+					'type'  => 'text',
+					'label' => 'Unknown step',
+					'step'  => 'gone',
+				),
+				array(
+					'type'  => 'email',
+					'label' => 'Email',
+					'step'  => 'person',
+				),
+			),
+			$this->two_steps()
+		)['fields'];
+
+		$this->assertSame( array( 'Name', 'Unknown step', 'Email', 'Course' ), array_column( $fields, 'label' ) );
+		$this->assertSame( array( 'person', 'person', 'person', 'course' ), array_column( $fields, 'step' ) );
+	}
+
+	public function test_a_row_never_spans_two_steps(): void {
+		$fields = Schema::normalize(
+			array(
+				array(
+					'type'  => 'text',
+					'label' => 'Name',
+					'step'  => 'person',
+				),
+				array(
+					'type'   => 'text',
+					'label'  => 'Course',
+					'step'   => 'course',
+					'beside' => true,
+				),
+			),
+			$this->two_steps()
+		)['fields'];
+
+		$this->assertSame( array( false, false ), array_column( $fields, 'beside' ) );
+	}
+
+	public function test_without_steps_fields_have_no_step(): void {
+		$fields = Schema::normalize(
+			array(
+				array(
+					'type'  => 'text',
+					'label' => 'Name',
+					'step'  => 'person',
+				),
+			)
+		)['fields'];
+
+		$this->assertSame( '', $fields[0]['step'] );
+	}
+
+	public function test_every_step_needs_a_field_to_fill_in(): void {
+		$steps  = $this->two_steps();
+		$fields = Schema::normalize(
+			array(
+				array(
+					'type'  => 'text',
+					'label' => 'Name',
+					'step'  => 'person',
+				),
+				array(
+					'type'    => 'heading',
+					'content' => 'Only a heading',
+					'step'    => 'course',
+				),
+			),
+			$steps
+		)['fields'];
+
+		$this->assertSame(
+			array(
+				array(
+					'path' => 'steps',
+					'step' => 'course',
+					'code' => 'step_empty',
+				),
+			),
+			FormRepository::step_errors( $steps, $fields )
+		);
+		$this->assertSame( 'steps_required', FormRepository::step_errors( array(), $fields )[0]['code'] );
+	}
+
+	public function test_a_simple_form_keeps_the_steps_but_not_their_order(): void {
+		$fields = Schema::normalize(
+			array(
+				array(
+					'type'  => 'text',
+					'label' => 'Course',
+					'step'  => 'course',
+				),
+				array(
+					'type'   => 'text',
+					'label'  => 'Name',
+					'step'   => 'person',
+					'beside' => true,
+				),
+			),
+			$this->two_steps(),
+			false
+		)['fields'];
+
+		$this->assertSame( array( 'Course', 'Name' ), array_column( $fields, 'label' ) );
+		$this->assertSame( array( 'course', 'person' ), array_column( $fields, 'step' ) );
+		$this->assertSame( array( false, true ), array_column( $fields, 'beside' ) );
+	}
+
+	public function test_at_most_twenty_steps_are_kept(): void {
+		$raw = array();
+		for ( $i = 1; $i <= Schema::MAX_STEPS + 3; $i++ ) {
+			$raw[] = array( 'id' => 'step' . $i );
+		}
+
+		$this->assertCount( Schema::MAX_STEPS, Schema::steps( $raw ) );
+	}
+
+	public function test_default_visitor_texts_are_not_kept_as_own_texts(): void {
+		$this->assertTrue( FormRepository::is_default_message( 'next', 'Next' ) );
+		$this->assertTrue( FormRepository::is_default_message( 'submit', '' ) );
+		$this->assertFalse( FormRepository::is_default_message( 'next', 'Continue to your course' ) );
 	}
 }
