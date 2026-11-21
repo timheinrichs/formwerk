@@ -40,14 +40,26 @@ final class Renderer {
 			);
 		}
 
-		$html = sprintf(
-			'<form class="%1$s" id="%2$s" method="post" action="%3$s" novalidate data-formwerk-form="%4$d" data-formwerk-api="%5$s" data-formwerk-sending="%6$s">',
-			esc_attr( $classes ),
+		$steps = self::steps( $form );
+		$html  = sprintf(
+			'<form class="%1$s" id="%2$s" method="post" action="%3$s" novalidate data-formwerk-form="%4$d" data-formwerk-api="%5$s" data-formwerk-sending="%6$s"%7$s>',
+			esc_attr( $classes . ( array() !== $steps ? ' formwerk-form--steps' : '' ) ),
 			esc_attr( $dom_id ),
 			esc_url( admin_url( 'admin-post.php' ) ),
 			$id,
 			esc_url( rest_url( 'formwerk/v1/forms/' . $id ) ),
-			esc_attr__( 'Sending…', 'formwerk' )
+			esc_attr__( 'Sending…', 'formwerk' ),
+			array() === $steps ? '' : sprintf(
+				// Texts for the step navigation the script adds; without the script all steps are shown.
+				' data-formwerk-next="%1$s" data-formwerk-back="%2$s" data-formwerk-progress="%3$s" data-formwerk-checking="%4$s" data-formwerk-step-error="%5$s"',
+				// Like the send button: typed entities stay as typed.
+				self::e( (string) $form['messages']['next'] ),
+				self::e( (string) $form['messages']['back'] ),
+				/* translators: 1: number of the current step, 2: number of steps, 3: title of the step. */
+				esc_attr__( 'Step %1$s of %2$s: %3$s', 'formwerk' ),
+				esc_attr__( 'Checking…', 'formwerk' ),
+				esc_attr__( 'Please check the marked fields before you go on.', 'formwerk' )
+			)
 		);
 
 		$html .= $this->summary( $dom_id, (string) ( $state['message'] ?? '' ), $errors, $form['fields'] );
@@ -72,9 +84,21 @@ final class Renderer {
 		);
 
 		$html .= '<div class="formwerk-form__fields">';
+		$open  = null;
 		foreach ( $form['fields'] as $field ) {
+			if ( array() !== $steps && $field['step'] !== $open ) {
+				// Each step is a group of its own; without the script they simply follow each other.
+				$html .= ( null === $open ? '' : '</fieldset>' ) . sprintf(
+					'<fieldset class="formwerk-step" id="%1$s-step-%2$s" data-formwerk-step="%2$s"><legend class="formwerk-step__title">%3$s</legend>',
+					esc_attr( $dom_id ),
+					esc_attr( (string) $field['step'] ),
+					self::e( $steps[ $field['step'] ] )
+				);
+				$open  = $field['step'];
+			}
 			$html .= $this->field( $dom_id, $field, $values[ $field['name'] ] ?? null, (string) ( $errors[ $field['name'] ] ?? '' ) );
 		}
+		$html .= null === $open ? '' : '</fieldset>';
 		$html .= '</div>';
 
 		$html .= sprintf(
@@ -83,6 +107,27 @@ final class Renderer {
 		);
 
 		return $html . '</form>';
+	}
+
+	/**
+	 * Titles of the steps by ID, when the form is shown in steps; empty otherwise.
+	 * A step without a title is called "Step 2" and so on.
+	 *
+	 * @param array<string, mixed> $form Form.
+	 *
+	 * @return array<string, string>
+	 */
+	private static function steps( array $form ): array {
+		if ( 'steps' !== ( $form['settings']['type'] ?? '' ) || empty( $form['steps'] ) ) {
+			return array();
+		}
+		$titles = array();
+		foreach ( array_values( $form['steps'] ) as $index => $step ) {
+			/* translators: %d: number of the step. */
+			$titles[ (string) $step['id'] ] = '' !== trim( (string) $step['title'] ) ? (string) $step['title'] : sprintf( __( 'Step %d', 'formwerk' ), $index + 1 );
+		}
+
+		return $titles;
 	}
 
 	/**

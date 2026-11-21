@@ -119,6 +119,48 @@ final class Handler {
 	}
 
 	/**
+	 * Checks the fields of one step before the visitor goes on to the next.
+	 *
+	 * Nothing is stored or sent and no token is used up; the check when the form is sent stays
+	 * the one that counts. Errors read exactly like the ones shown after sending.
+	 *
+	 * @param int                  $form_id Form ID.
+	 * @param array<string, mixed> $request Unslashed request data: 'fw' (values), 'formwerk_step' (step ID), 'formwerk_lang'.
+	 *
+	 * @return array{http: int, errors: array<string, string>}
+	 */
+	public function check( int $form_id, array $request ): array {
+		return Wpml::in_language(
+			Wpml::valid_language( $request['formwerk_lang'] ?? '' ),
+			function () use ( $form_id, $request ): array {
+				$form = $this->forms->find( $form_id );
+				$step = $request['formwerk_step'] ?? '';
+				if ( null === $form || 'steps' !== $form['settings']['type'] || ! is_string( $step ) || ! in_array( $step, array_column( $form['steps'], 'id' ), true ) ) {
+					return array(
+						'http'   => 404,
+						'errors' => array(),
+					);
+				}
+				$fields = array_values( array_filter( $form['fields'], static fn( array $field ): bool => $step === $field['step'] ) );
+				$input  = isset( $request['fw'] ) && is_array( $request['fw'] ) ? $request['fw'] : array();
+				$errors = array();
+				foreach ( Validator::validate( $fields, $input )['errors'] as $name => $code ) {
+					foreach ( $fields as $field ) {
+						if ( $field['name'] === $name ) {
+							$errors[ $name ] = Messages::for_error( $code, $field );
+						}
+					}
+				}
+
+				return array(
+					'http'   => 200,
+					'errors' => $errors,
+				);
+			}
+		);
+	}
+
+	/**
 	 * Handles one submission in the visitor's language.
 	 *
 	 * @param int                  $form_id  Form ID.

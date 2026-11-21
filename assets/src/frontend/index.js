@@ -4,6 +4,7 @@
  * through a normal page request. Plain DOM code, no dependencies.
  */
 import './frontend.scss';
+import { setupSteps } from './steps';
 
 // A page token older than this is replaced as soon as someone starts filling in the form.
 // Younger tokens stay: replacing them would restart the minimum time a person needs.
@@ -98,8 +99,12 @@ function markField( parts, message ) {
 	} );
 }
 
-function clearErrors( form ) {
+// Removes the errors of all fields, or only of the named ones.
+function clearErrors( form, names = null ) {
 	form.querySelectorAll( '[data-formwerk-name]' ).forEach( ( field ) => {
+		if ( names && ! names.includes( field.dataset.formwerkName ) ) {
+			return;
+		}
 		const parts = fieldParts( form, field.dataset.formwerkName );
 		if ( parts ) {
 			markField( parts, '' );
@@ -107,7 +112,7 @@ function clearErrors( form ) {
 	} );
 }
 
-function showStatus( form, message, errors = {} ) {
+function showStatus( form, message, errors = {}, reveal = null ) {
 	const status = form.querySelector( '.formwerk-form__status' );
 	status.replaceChildren( text( 'p', message ) );
 
@@ -127,6 +132,8 @@ function showStatus( form, message, errors = {} ) {
 		link.href = `#${ target.id }`;
 		link.addEventListener( 'click', ( event ) => {
 			event.preventDefault();
+			// In a form in steps, the field may sit in another step.
+			reveal?.( target );
 			target.focus();
 		} );
 		const item = document.createElement( 'li' );
@@ -196,8 +203,49 @@ function enhance( form ) {
 		form.addEventListener( type, prepare, { passive: true } )
 	);
 
+	// Forms in steps: the server checks each step before the next one opens.
+	const check = async ( step ) => {
+		const body = new window.FormData( form );
+		body.set( 'formwerk_step', step );
+		try {
+			const response = await fetch(
+				`${ form.dataset.formwerkApi }/check`,
+				{
+					method: 'POST',
+					body,
+					credentials: 'omit',
+					headers: { Accept: 'application/json' },
+				}
+			);
+			const data = await response.json();
+			return response.ok && data && typeof data.errors === 'object'
+				? data.errors
+				: null;
+		} catch ( error ) {
+			return null;
+		}
+	};
+	const steps = form.classList.contains( 'formwerk-form--steps' )
+		? setupSteps( form, {
+				check,
+				show: ( errors ) =>
+					showStatus(
+						form,
+						form.dataset.formwerkStepError || '',
+						errors,
+						( target ) => steps?.reveal( target )
+					),
+				clear: ( names ) => clearErrors( form, names ),
+		  } )
+		: null;
+
 	form.addEventListener( 'submit', async ( event ) => {
 		event.preventDefault();
+		// Enter in an earlier step goes on to the next one instead of sending.
+		if ( steps && ! steps.isLast() ) {
+			steps.forward();
+			return;
+		}
 		if ( isSending ) {
 			return;
 		}
@@ -243,7 +291,15 @@ function enhance( form ) {
 			showSuccess( form, result.message );
 			return;
 		}
-		showStatus( form, result.message, result.errors || {} );
+		const errors = result.errors || {};
+		const first = Object.keys( errors )[ 0 ];
+		if ( steps && first ) {
+			// Back to the step with the first mistake.
+			steps.reveal( fieldParts( form, first )?.field );
+		}
+		showStatus( form, result.message, errors, ( target ) =>
+			steps?.reveal( target )
+		);
 	} );
 }
 

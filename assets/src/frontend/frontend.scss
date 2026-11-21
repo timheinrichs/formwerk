@@ -159,7 +159,74 @@
 }
 
 :where(.formwerk-form__actions) {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75em;
+	align-items: center;
 	margin-top: var(--formwerk-gap);
+}
+
+// Forms in steps. Without the script every step is a group of its own,
+// one below the other.
+:where(.formwerk-step) {
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--formwerk-gap);
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+:where(.formwerk-step__title) {
+	grid-column: 1 / -1;
+	margin: 0;
+	padding: 0;
+	font-size: 1.15em;
+	font-weight: 600;
+}
+
+// With the script the progress line names the step, so the legend is
+// only read out, not shown twice.
+:where(.formwerk-form--stepping .formwerk-step__title) {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+// Hidden steps and buttons stay hidden even where a theme sets `display`
+// on fieldsets or buttons: specific enough to win, still no !important.
+.formwerk-form.formwerk-form--stepping .formwerk-step[hidden],
+.formwerk-form.formwerk-form--stepping .formwerk-form__actions [hidden] {
+	display: none;
+}
+
+:where(.formwerk-steps) {
+	margin: 0 0 var(--formwerk-gap);
+}
+
+:where(.formwerk-steps__label) {
+	margin: 0;
+	font-weight: 600;
+}
+
+:where(.formwerk-steps__label):focus-visible {
+	outline: 2px solid currentcolor;
+	outline-offset: 3px;
+}
+
+// The bar only belongs to Formwerk's own look.
+:where(.formwerk-steps__bar) {
+	display: none;
+}
+
+:where(.formwerk-form__next[aria-disabled="true"]) {
+	opacity: 0.6;
+	cursor: progress;
 }
 
 :where(.formwerk-form__submit[aria-disabled="true"]) {
@@ -230,4 +297,56 @@
 .formwerk-form--styled :where(.formwerk-form__status, .formwerk-form__success) {
 	background-color: var(--formwerk-surface);
 	border-radius: var(--formwerk-radius);
+}
+
+.formwerk-form--styled .formwerk-steps__bar {
+	display: block;
+	height: 4px;
+	margin-top: 0.5em;
+	overflow: hidden;
+	background: var(--formwerk-surface);
+	border-radius: 2px;
+
+	span {
+		display: block;
+		height: 100%;
+		background: var(--formwerk-accent);
+		transition: width 0.2s ease-out;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.formwerk-form--styled .formwerk-steps__bar span {
+		transition: none;
+	}
+}
+
+// Next looks like the send button; Back is the quieter way back.
+.formwerk-form--styled .formwerk-form__next {
+	padding: 0.8em 1.6em;
+	font: inherit;
+	font-weight: 600;
+	line-height: 1.2;
+	color: var(--formwerk-on-accent);
+	cursor: pointer;
+	background: var(--formwerk-accent);
+	border: 0;
+	border-radius: var(--formwerk-radius);
+}
+
+.formwerk-form--styled .formwerk-form__back {
+	padding: 0.8em 1.2em;
+	font: inherit;
+	line-height: 1.2;
+	color: inherit;
+	cursor: pointer;
+	background: transparent;
+	border: 1px solid var(--formwerk-line);
+	border-radius: var(--formwerk-radius);
+}
+
+.formwerk-form--styled :where(.formwerk-form__next, .formwerk-form__back):focus-visible {
+	outline: 2px solid var(--formwerk-accent);
+	outline-offset: 3px;
 }

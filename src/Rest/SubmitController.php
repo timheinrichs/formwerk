@@ -53,6 +53,15 @@ final class SubmitController {
 		);
 		register_rest_route(
 			SmtpController::NAMESPACE,
+			'/forms/(?P<id>\d+)/check',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( $this, 'check' ),
+				'permission_callback' => '__return_true',
+			)
+		);
+		register_rest_route(
+			SmtpController::NAMESPACE,
 			'/forms/(?P<id>\d+)/submissions',
 			array(
 				'methods'             => WP_REST_Server::CREATABLE,
@@ -69,6 +78,19 @@ final class SubmitController {
 	 */
 	public function token( WP_REST_Request $request ): WP_REST_Response {
 		$response = new WP_REST_Response( array( 'token' => $this->handler->token( (int) $request['id'] ) ) );
+		$response->header( 'Cache-Control', 'no-store, max-age=0' );
+
+		return $response;
+	}
+
+	/**
+	 * Checks one step of a form "in steps" before the visitor goes on.
+	 *
+	 * @param WP_REST_Request $request Request.
+	 */
+	public function check( WP_REST_Request $request ): WP_REST_Response {
+		$result   = $this->handler->check( (int) $request['id'], $request->get_body_params() );
+		$response = new WP_REST_Response( array( 'errors' => $result['errors'] ), $result['http'] );
 		$response->header( 'Cache-Control', 'no-store, max-age=0' );
 
 		return $response;
