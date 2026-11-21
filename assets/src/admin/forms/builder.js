@@ -5,6 +5,7 @@ import {
 	Card,
 	CardBody,
 	Notice,
+	RadioControl,
 	Snackbar,
 	Spinner,
 	TabPanel,
@@ -21,7 +22,13 @@ import { Shortcode } from './form-list';
 import ConfirmationTab from './confirmation-tab';
 import MailTab from './mail-tab';
 import Preview from './preview';
-import { canBeBeside, detach, normalizeRows } from './layout';
+import {
+	canBeBeside,
+	detach,
+	moveToStep,
+	normalizeRows,
+	orderBySteps,
+} from './layout';
 import { createField, typeLabel } from './types';
 
 const controlProps = {
@@ -39,12 +46,19 @@ const tabOf = ( path ) => {
 	if ( path.startsWith( 'confirm' ) ) {
 		return 'confirm';
 	}
-	return path.startsWith( 'fields' ) ? 'fields' : null;
+	return path.startsWith( 'fields' ) || path === 'steps' ? 'fields' : null;
 };
+
+// As on the server (Schema::MAX_STEPS).
+const MAX_STEPS = 20;
+
+// IDs for new steps, in the form the server keeps.
+const newStepId = () => `s${ Math.random().toString( 36 ).slice( 2, 10 ) }`;
 
 // Errors in the order of the page: name, fields from top to bottom, then the email.
 const PATH_ORDER = [
 	'title',
+	'steps',
 	'fields',
 	'mail.to',
 	'mail.subject',
@@ -196,6 +210,9 @@ export default function Builder( {
 		errors.find( ( error ) => error.path === path && ! error.field )
 			?.message;
 	const fieldError = ( id ) => errors.find( ( error ) => error.field === id );
+	const typeError = errors.find(
+		( error ) => error.code === 'steps_required'
+	)?.message;
 	const errorIds = errors.map( ( error ) => error.field ).filter( Boolean );
 	const mailErrors = {
 		'mail.to': errorAt( 'mail.to' ),
@@ -235,11 +252,141 @@ export default function Builder( {
 		setForm( next );
 	};
 
+	// Steps only order the fields of a form shown in steps; a simple form just remembers them.
+	const arrange = ( fields, current, steps = current.steps ) =>
+		current.settings?.type === 'steps'
+			? normalizeRows( orderBySteps( fields, steps ), true )
+			: normalizeRows( fields );
+
 	const setFields = ( fields ) =>
 		setForm( ( current ) => ( {
 			...current,
-			fields: normalizeRows( fields ),
+			fields: arrange( fields, current ),
 		} ) );
+
+	const inSteps = form?.settings?.type === 'steps';
+
+	// Switching to steps the first time puts all fields into one step; switching back keeps
+	// the steps, so nothing is lost when trying both.
+	const setType = ( type ) => {
+		setForm( ( current ) => {
+			const steps =
+				type === 'steps' && ! current.steps?.length
+					? [ { id: newStepId(), title: '' } ]
+					: current.steps || [];
+			return {
+				...current,
+				settings: { ...current.settings, type },
+				steps,
+				fields: arrange(
+					current.fields.map( ( field ) =>
+						steps.some( ( step ) => step.id === field.step )
+							? field
+							: { ...field, step: steps[ 0 ]?.id || '' }
+					),
+					{ ...current, settings: { ...current.settings, type } },
+					steps
+				),
+			};
+		} );
+		dropErrors( ( error ) => error.path === 'steps' );
+	};
+
+	const setSteps = ( steps ) =>
+		setForm( ( current ) => ( {
+			...current,
+			steps,
+			fields: arrange( current.fields, current, steps ),
+		} ) );
+
+	const stepName = ( step, index ) =>
+		step?.title ||
+		sprintf(
+			/* translators: %d: number of the step. */
+			__( 'Step %d', 'formwerk' ),
+			index + 1
+		);
+
+	const addStep = () => {
+		if ( form.steps.length >= MAX_STEPS ) {
+			return;
+		}
+		const step = { id: newStepId(), title: '' };
+		setSteps( [ ...form.steps, step ] );
+		dropErrors( ( error ) => error.code === 'steps_required' );
+		focusById( `formwerk-step-${ step.id }-title`, 80 );
+		speak(
+			sprintf(
+				/* translators: %d: number of the step. */
+				__( 'Step %d added.', 'formwerk' ),
+				form.steps.length + 1
+			)
+		);
+	};
+
+	const renameStep = ( id, title ) => {
+		setSteps(
+			form.steps.map( ( step ) =>
+				step.id === id ? { ...step, title } : step
+			)
+		);
+	};
+
+	const moveStep = ( id, direction ) => {
+		const from = form.steps.findIndex( ( step ) => step.id === id );
+		const to = from + direction;
+		if ( to < 0 || to >= form.steps.length ) {
+			return;
+		}
+		const steps = [ ...form.steps ];
+		steps.splice( to, 0, ...steps.splice( from, 1 ) );
+		setSteps( steps );
+		// Stays on the arrow, so a step can be moved several places in a row.
+		const edge = direction < 0 ? to === 0 : to === steps.length - 1;
+		focusById(
+			`formwerk-step-${ id }-${ direction < 0 !== edge ? 'up' : 'down' }`,
+			80
+		);
+		speak(
+			sprintf(
+				/* translators: 1: step title, 2: new position, 3: number of steps. */
+				__( 'Step “%1$s” is now step %2$d of %3$d.', 'formwerk' ),
+				stepName( form.steps[ from ], from ),
+				to + 1,
+				steps.length
+			)
+		);
+	};
+
+	// Its fields go to the step before (or after, for the first one); undo brings everything back.
+	const removeStep = ( id ) => {
+		const index = form.steps.findIndex( ( step ) => step.id === id );
+		const target = form.steps[ index - 1 ] || form.steps[ index + 1 ];
+		if ( ! target ) {
+			return;
+		}
+		setRemoved( {
+			step: form.steps[ index ],
+			index,
+			before: { steps: form.steps, fields: form.fields },
+		} );
+		const steps = form.steps.filter( ( step ) => step.id !== id );
+		setForm( ( current ) => ( {
+			...current,
+			steps,
+			fields: arrange(
+				current.fields.map( ( field ) =>
+					field.step === id
+						? { ...field, step: target.id, beside: false }
+						: field
+				),
+				current,
+				steps
+			),
+		} ) );
+		dropErrors( ( error ) => error.step === id );
+		focusById( `formwerk-step-${ target.id }-title`, 80 );
+	};
 
 	const showTab = ( name ) =>
 		setTab( ( current ) => ( { name, key: current.key + 1 } ) );
@@ -262,8 +409,11 @@ export default function Builder( {
 		}
 	};
 
-	const addField = ( type ) => {
-		const field = createField( type );
+	const addField = ( type, stepId = null ) => {
+		const field = {
+			...createField( type ),
+			step: stepId || form.steps?.[ form.steps.length - 1 ]?.id || '',
+		};
 		setFields( [ ...form.fields, field ] );
 		// The confirmation is on but has no email field to go to yet: this one is it.
 		if (
@@ -320,6 +470,41 @@ export default function Builder( {
 		if ( ! removed ) {
 			return;
 		}
+		if ( removed.step ) {
+			// The step comes back with its fields. Changes made since stay: other step titles,
+			// field contents, and fields added in the meantime (removed ones stay removed).
+			const titles = new Map(
+				form.steps.map( ( step ) => [ step.id, step.title ] )
+			);
+			const steps = removed.before.steps.map( ( step ) =>
+				titles.has( step.id )
+					? { ...step, title: titles.get( step.id ) }
+					: step
+			);
+			const before = new Map(
+				removed.before.fields.map( ( field ) => [ field.id, field ] )
+			);
+			setForm( ( value ) => ( {
+				...value,
+				steps,
+				fields: arrange(
+					value.fields.map( ( field ) =>
+						before.has( field.id )
+							? {
+									...field,
+									step: before.get( field.id ).step,
+									beside: before.get( field.id ).beside,
+							  }
+							: field
+					),
+					value,
+					steps
+				),
+			} ) );
+			focusById( `formwerk-step-${ removed.step.id }-title`, 80 );
+			setRemoved( null );
+			return;
+		}
 		const fields = [ ...form.fields ];
 		fields.splice( removed.index, 0, removed.field );
 		// Rows as they were before the removal; other changes made since stay.
@@ -339,6 +524,28 @@ export default function Builder( {
 	};
 
 	const updateField = ( field ) => {
+		const index = form.fields.findIndex( ( item ) => item.id === field.id );
+		if (
+			index >= 0 &&
+			inSteps &&
+			field.step !== form.fields[ index ].step
+		) {
+			// Chosen in the settings: the field goes to the end of the other step, on its own row.
+			setFields(
+				moveToStep(
+					form.fields.map( ( item ) =>
+						item.id === field.id
+							? { ...field, step: item.step }
+							: item
+					),
+					form.steps,
+					index,
+					field.step
+				)
+			);
+			dropErrors( ( error ) => error.field === field.id );
+			return;
+		}
 		setFields(
 			form.fields.map( ( item ) =>
 				item.id === field.id ? field : item
@@ -359,8 +566,12 @@ export default function Builder( {
 			target = `formwerk-field-${ error.field }-${
 				error.code === 'options_required' ? 'options' : 'label'
 			}`;
+		} else if ( error.path === 'steps' ) {
+			target = error.step
+				? `formwerk-step-${ error.step }-title`
+				: 'formwerk-type-0';
 		} else if ( error.path === 'fields' ) {
-			target = 'formwerk-add-field';
+			target = inSteps ? 'formwerk-add-step' : 'formwerk-add-field';
 		} else if ( error.path.startsWith( 'mail.' ) ) {
 			target = `formwerk-mail-${ error.path.slice( 5 ) }`;
 		} else if ( error.path.startsWith( 'confirm.' ) ) {
@@ -380,6 +591,14 @@ export default function Builder( {
 				field?.label || __( '(no label)', 'formwerk' ),
 				typeLabel( field?.type )
 			);
+		}
+		if ( error.path === 'steps' ) {
+			const index = form.steps.findIndex(
+				( step ) => step.id === error.step
+			);
+			return index >= 0
+				? stepName( form.steps[ index ], index )
+				: __( 'Form type', 'formwerk' );
 		}
 		return (
 			{
@@ -412,6 +631,7 @@ export default function Builder( {
 			method: 'POST',
 			data: {
 				title: form.title,
+				steps: form.steps || [],
 				fields: form.fields.map( ( field ) => ( {
 					...field,
 					options: field.options
@@ -489,7 +709,7 @@ export default function Builder( {
 	);
 	const selected = form.fields[ selectedIndex ];
 	const previousLabelOf = ( index ) =>
-		canBeBeside( form.fields, index )
+		canBeBeside( form.fields, index, inSteps )
 			? form.fields[ index - 1 ].label || __( '(no label)', 'formwerk' )
 			: '';
 	const mark = ( title, name ) =>
@@ -566,6 +786,39 @@ export default function Builder( {
 							'Visitors do not see this name on the page. In emails it appears wherever {form} is used.',
 							'formwerk'
 						)
+					)
+				}
+			/>
+
+			<RadioControl
+				id="formwerk-type"
+				className={ `formwerk-type${
+					typeError ? ' formwerk-has-error' : ''
+				}` }
+				label={ __( 'Form type', 'formwerk' ) }
+				selected={ inSteps ? 'steps' : 'simple' }
+				options={ [
+					{
+						value: 'simple',
+						label: __(
+							'Simple: all fields on one page',
+							'formwerk'
+						),
+					},
+					{
+						value: 'steps',
+						label: __(
+							'In steps: one step at a time, with Next and Back',
+							'formwerk'
+						),
+					},
+				] }
+				onChange={ setType }
+				help={
+					typeError ||
+					__(
+						'Steps suit long forms. Without JavaScript, visitors see all steps one below the other.',
+						'formwerk'
 					)
 				}
 			/>
@@ -655,6 +908,19 @@ export default function Builder( {
 											fields={ form.fields }
 											selectedId={ selectedId }
 											errorIds={ errorIds }
+											steps={
+												inSteps ? form.steps : null
+											}
+											stepErrors={ errors.filter(
+												( error ) =>
+													error.path === 'steps' &&
+													error.step
+											) }
+											onRenameStep={ renameStep }
+											onMoveStep={ moveStep }
+											onRemoveStep={ removeStep }
+											onAddStep={ addStep }
+											maxSteps={ MAX_STEPS }
 											onSelect={ ( id ) =>
 												selectField( id, {
 													reveal: true,
@@ -755,12 +1021,21 @@ export default function Builder( {
 															selected.id
 														)
 													}
+													steps={
+														inSteps
+															? form.steps
+															: null
+													}
 													onChange={ updateField }
 												/>
 											</>
 										) : (
 											<Preview
 												fields={ form.fields }
+												steps={
+													inSteps ? form.steps : null
+												}
+												messages={ form.messages }
 												submitLabel={
 													form.messages.submit
 												}
@@ -802,6 +1077,44 @@ export default function Builder( {
 											} )
 										}
 									/>
+									{ inSteps && (
+										<>
+											<TextControl
+												{ ...controlProps }
+												label={ __(
+													'Text on the button to the next step',
+													'formwerk'
+												) }
+												value={ form.messages.next }
+												onChange={ ( next ) =>
+													setForm( {
+														...form,
+														messages: {
+															...form.messages,
+															next,
+														},
+													} )
+												}
+											/>
+											<TextControl
+												{ ...controlProps }
+												label={ __(
+													'Text on the button to the previous step',
+													'formwerk'
+												) }
+												value={ form.messages.back }
+												onChange={ ( back ) =>
+													setForm( {
+														...form,
+														messages: {
+															...form.messages,
+															back,
+														},
+													} )
+												}
+											/>
+										</>
+									) }
 									<TextareaControl
 										{ ...controlProps }
 										label={ __(
@@ -876,12 +1189,21 @@ export default function Builder( {
 							},
 						] }
 					>
-						{ sprintf(
-							/* translators: %s: field label. */
-							__( 'Field “%s” removed.', 'formwerk' ),
-							removed.field.label ||
-								__( '(no label)', 'formwerk' )
-						) }
+						{ removed.step
+							? sprintf(
+									/* translators: %s: step title, or "Step 2". */
+									__(
+										'“%s” removed. Its fields moved to the neighbouring step.',
+										'formwerk'
+									),
+									stepName( removed.step, removed.index )
+							  )
+							: sprintf(
+									/* translators: %s: field label. */
+									__( 'Field “%s” removed.', 'formwerk' ),
+									removed.field.label ||
+										__( '(no label)', 'formwerk' )
+							  ) }
 					</Snackbar>
 				</div>
 			) }

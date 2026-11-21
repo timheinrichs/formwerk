@@ -21,6 +21,7 @@ export default function FieldSettings( {
 	previousLabel,
 	nextLabel,
 	onSplitRow,
+	steps = null,
 	onChange,
 } ) {
 	if ( ! field ) {
@@ -167,6 +168,55 @@ export default function FieldSettings( {
 					onChange={ set( 'placeholder' ) }
 					help={ __(
 						'Optional. Disappears when someone starts typing, so do not put instructions here.',
+						'formwerk'
+					) }
+				/>
+			) }
+
+			{ steps && steps.length > 1 && (
+				<SelectControl
+					{ ...controlProps }
+					label={ __( 'Step', 'formwerk' ) }
+					value={ field.step }
+					onChange={ ( step ) => {
+						onChange( { ...field, step } );
+						speak(
+							sprintf(
+								/* translators: 1: field label, 2: step title. */
+								__(
+									'“%1$s” moved to step “%2$s”.',
+									'formwerk'
+								),
+								field.label,
+								steps.find( ( item ) => item.id === step )
+									?.title ||
+									sprintf(
+										/* translators: %d: number of the step. */
+										__( 'Step %d', 'formwerk' ),
+										steps.findIndex(
+											( item ) => item.id === step
+										) + 1
+									)
+							)
+						);
+					} }
+					options={ steps.map( ( step, index ) => ( {
+						value: step.id,
+						label: step.title
+							? sprintf(
+									/* translators: 1: number of the step, 2: step title. */
+									__( 'Step %1$d: %2$s', 'formwerk' ),
+									index + 1,
+									step.title
+							  )
+							: sprintf(
+									/* translators: %d: number of the step. */
+									__( 'Step %d', 'formwerk' ),
+									index + 1
+							  ),
+					} ) ) }
+					help={ __(
+						'The field moves to the end of that step. You can also drag it there.',
 						'formwerk'
 					) }
 				/>

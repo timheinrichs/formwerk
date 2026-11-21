@@ -1,4 +1,5 @@
-import { __ } from '@wordpress/i18n';
+import { useState } from '@wordpress/element';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { isHalf } from './layout';
 import { hasOptions } from './types';
@@ -115,10 +116,25 @@ function Field( { field, half } ) {
 
 // Shows the fields the way visitors get them. Uses the same markup and layout
 // rules as the real form; fonts and colours on the website come from its theme.
-export default function Preview( { fields, submitLabel } ) {
+// A form in steps shows one step at a time with working Back and Next.
+export default function Preview( {
+	fields,
+	steps = null,
+	messages,
+	submitLabel,
+} ) {
+	const [ current, setCurrent ] = useState( 0 );
 	if ( fields.length === 0 ) {
 		return null;
 	}
+	const inSteps = Array.isArray( steps ) && steps.length > 1;
+	const index = inSteps ? Math.min( current, steps.length - 1 ) : 0;
+	const step = inSteps ? steps[ index ] : null;
+	const shown = inSteps
+		? fields.filter( ( field ) => field.step === step.id )
+		: fields;
+	const last = ! inSteps || index === steps.length - 1;
+
 	return (
 		<section
 			className="formwerk-preview"
@@ -134,22 +150,57 @@ export default function Preview( { fields, submitLabel } ) {
 				) }
 			</p>
 			<div className="formwerk-form formwerk-preview__form">
+				{ inSteps && (
+					<p className="formwerk-steps__label" aria-live="polite">
+						{ sprintf(
+							/* translators: 1: number of the current step, 2: number of steps, 3: title of the step. */
+							__( 'Step %1$s of %2$s: %3$s', 'formwerk' ),
+							index + 1,
+							steps.length,
+							step.title ||
+								sprintf(
+									/* translators: %d: number of the step. */
+									__( 'Step %d', 'formwerk' ),
+									index + 1
+								)
+						) }
+					</p>
+				) }
 				<div className="formwerk-form__fields">
-					{ fields.map( ( field, index ) => (
+					{ shown.map( ( field ) => (
 						<Field
 							key={ field.id }
 							field={ field }
-							half={ isHalf( fields, index ) }
+							half={ isHalf( fields, fields.indexOf( field ) ) }
 						/>
 					) ) }
 				</div>
 				<div className="formwerk-form__actions">
-					<button
-						type="button"
-						className="button formwerk-form__submit"
-					>
-						{ submitLabel }
-					</button>
+					{ inSteps && index > 0 && (
+						<button
+							type="button"
+							className="button"
+							onClick={ () => setCurrent( index - 1 ) }
+						>
+							{ messages?.back || __( 'Back', 'formwerk' ) }
+						</button>
+					) }
+					{ last ? (
+						<button
+							type="button"
+							className="button formwerk-form__submit"
+						>
+							{ submitLabel }
+						</button>
+					) : (
+						<button
+							type="button"
+							className="button button-primary"
+							onClick={ () => setCurrent( index + 1 ) }
+						>
+							{ messages?.next || __( 'Next', 'formwerk' ) }
+						</button>
+					) }
 				</div>
 			</div>
 		</section>
