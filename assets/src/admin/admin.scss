@@ -321,9 +321,10 @@ $error: #cc1818;
 }
 
 .formwerk-field-rows {
-	// Two columns: a field on its own row spans both, a pair takes one each.
+	// Twelve columns, like the form on the website:
+	// each card takes the width of its field.
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: repeat(12, minmax(0, 1fr));
 	gap: 6px;
 	margin: 0 0 16px;
 	padding: 0;
@@ -423,33 +424,29 @@ $error: #cc1818;
 	margin-left: auto;
 }
 
-.formwerk-field-row.is-half {
-	grid-column: auto;
+// Narrow lists show every card at full width, medium ones two per row.
+@container (min-width: 480px) {
 
-	// Handle and name stay on one line; the buttons move below them.
-	.formwerk-field-row__main {
-		flex-basis: calc(100% - 40px);
+	.formwerk-field-row.is-width-half,
+	.formwerk-field-row.is-width-third,
+	.formwerk-field-row.is-width-quarter {
+		grid-column: span 6;
+
+		// Handle and name stay on one line; the buttons move below them.
+		.formwerk-field-row__main {
+			flex-basis: calc(100% - 40px);
+		}
 	}
 }
 
-// Too narrow for two cards side by side: one column,
-// the row is named on the card.
-@container (max-width: 480px) {
+@container (min-width: 640px) {
 
-	.formwerk-field-row.is-half {
-		grid-column: 1 / -1;
+	.formwerk-field-row.is-width-third {
+		grid-column: span 4;
 	}
-}
 
-// Pressed is a state, not an action:
-// a quiet tint instead of the full primary fill.
-.formwerk-field-row__pair.components-button.is-pressed {
-	color: var(--wp-admin-theme-color, #2271b1);
-	background: rgba(34, 113, 177, 0.1);
-
-	&:hover:not(:disabled) {
-		color: var(--wp-admin-theme-color-darker-10, #135e96);
-		background: rgba(34, 113, 177, 0.16);
+	.formwerk-field-row.is-width-quarter {
+		grid-column: span 3;
 	}
 }
 
@@ -662,8 +659,68 @@ $error: #cc1818;
 	}
 }
 
-.formwerk-layout-info p {
-	margin: 0 0 8px;
+.formwerk-width {
+	min-width: 0;
+	margin: 0 0 16px;
+	padding: 0;
+	border: 0;
+}
+
+.formwerk-width__legend {
+	margin-bottom: 8px;
+	padding: 0;
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 1.4;
+	text-transform: uppercase;
+}
+
+// Looks like a toggle group; underneath they are radio buttons.
+.formwerk-width__options {
+	display: flex;
+	border: 1px solid #949494;
+	border-radius: 2px;
+}
+
+.formwerk-width__option {
+	position: relative;
+	flex: 1;
+	text-align: center;
+
+	input {
+		position: absolute;
+		inset: 0;
+		margin: 0;
+		opacity: 0;
+		cursor: pointer;
+	}
+
+	span {
+		display: block;
+		padding: 8px 4px;
+		font-weight: 500;
+	}
+
+	& + & {
+		border-left: 1px solid #949494;
+	}
+
+	&.is-checked span {
+		color: #fff;
+		background: var(--wp-admin-theme-color, #2271b1);
+	}
+
+	input:focus-visible + span {
+		outline: 2px solid var(--wp-admin-theme-color, #2271b1);
+		outline-offset: 2px;
+	}
+}
+
+.formwerk-width__help {
+	margin: 8px 0 0;
+	font-size: 12px;
+	font-style: normal;
+	color: #757575;
 }
 
 // Last, because these page-level notices are the most specific rule here.

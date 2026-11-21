@@ -22,9 +22,10 @@ final class Schema {
 	public const TYPES = array( 'text', 'email', 'tel', 'number', 'date', 'textarea', 'select', 'radio', 'checkboxes', 'consent', 'heading' );
 
 	/**
-	 * Types that always take a whole row: headings, long text, and consent (its text needs the width).
+	 * Widths a field can have: 100 %, 50 %, 33 % and 25 % of the form. Fields follow each other
+	 * in rows; a field that no longer fits starts the next row.
 	 */
-	public const OWN_ROW_TYPES = array( 'heading', 'textarea', 'consent' );
+	public const WIDTHS = array( 'full', 'half', 'third', 'quarter' );
 
 	public const MAX_FIELDS = 100;
 	public const MAX_STEPS  = 20;
@@ -50,15 +51,6 @@ final class Schema {
 		'ú' => 'u',
 		'í' => 'i',
 	);
-
-	/**
-	 * Whether a field of this type may sit next to another one.
-	 *
-	 * @param string $type Field type.
-	 */
-	public static function can_share_row( string $type ): bool {
-		return ! in_array( $type, self::OWN_ROW_TYPES, true );
-	}
 
 	/**
 	 * Whether fields of this type collect a value.
@@ -128,8 +120,6 @@ final class Schema {
 		$names      = array();
 		$ids        = array();
 		$wanted     = array();
-		$beside     = array();
-		$legacy     = array();
 
 		foreach ( is_array( $raw ) ? array_values( $raw ) : array() as $index => $item ) {
 			if ( ! is_array( $item ) ) {
@@ -168,7 +158,6 @@ final class Schema {
 				'content'      => self::multiline( $item['content'] ?? '', 2000 ),
 				'options'      => array(),
 				'width'        => 'full',
-				'beside'       => false,
 				'step'         => is_string( $item['step'] ?? null ) && isset( $step_order[ $item['step'] ] ) ? $item['step'] : $first_step,
 				'autocomplete' => (string) preg_replace( '/[^a-z0-9 -]/', '', strtolower( self::text( $item['autocomplete'] ?? '', 60 ) ) ),
 			);
@@ -190,11 +179,12 @@ final class Schema {
 				}
 			}
 
+			// Forms from 0.3 to 0.5 stored "half" for both fields of a row; it stays half.
+			$width          = $item['width'] ?? '';
+			$field['width'] = is_string( $width ) && in_array( $width, self::WIDTHS, true ) ? $width : 'full';
+
 			$fields[] = $field;
 			$wanted[] = self::has_value( $type ) ? self::slug( self::text( $item['name'] ?? '' ) ) : '';
-			// Forms saved before rows existed only know "half width"; two of them in a row become a pair.
-			$beside[] = array_key_exists( 'beside', $item ) ? ! empty( $item['beside'] ) : 'half' === ( $item['width'] ?? '' );
-			$legacy[] = ! array_key_exists( 'beside', $item );
 		}//end foreach
 
 		if ( $in_steps ) {
@@ -206,21 +196,6 @@ final class Schema {
 			);
 			$fields = array_map( static fn( int $i ): array => $fields[ $i ], $order );
 			$wanted = array_map( static fn( int $i ): string => $wanted[ $i ], $order );
-			$beside = array_map( static fn( int $i ): bool => $beside[ $i ], $order );
-			$legacy = array_map( static fn( int $i ): bool => $legacy[ $i ], $order );
-		}
-
-		// A field next to the previous one shares a row with it: at most two per row, and only short fields.
-		foreach ( $fields as $index => $field ) {
-			$previous = $fields[ $index - 1 ] ?? null;
-			$wants    = $legacy[ $index ]
-				? $beside[ $index ] && $index > 0 && $beside[ $index - 1 ] && ! ( $previous['beside'] ?? false )
-				: $beside[ $index ];
-			if ( $wants && null !== $previous && ( ! $in_steps || $previous['step'] === $field['step'] ) && self::can_share_row( $field['type'] ) && self::can_share_row( $previous['type'] ) && ! $previous['beside'] ) {
-				$fields[ $index ]['beside']    = true;
-				$fields[ $index ]['width']     = 'half';
-				$fields[ $index - 1 ]['width'] = 'half';
-			}
 		}
 
 		// Names the builder sends back belong to existing fields, and mail templates use them.

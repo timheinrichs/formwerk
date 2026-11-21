@@ -22,13 +22,7 @@ import { Shortcode } from './form-list';
 import ConfirmationTab from './confirmation-tab';
 import MailTab from './mail-tab';
 import Preview from './preview';
-import {
-	canBeBeside,
-	detach,
-	moveToStep,
-	normalizeRows,
-	orderBySteps,
-} from './layout';
+import { moveToStep, orderBySteps } from './layout';
 import { createField, typeLabel } from './types';
 
 const controlProps = {
@@ -255,8 +249,8 @@ export default function Builder( {
 	// Steps only order the fields of a form shown in steps; a simple form just remembers them.
 	const arrange = ( fields, current, steps = current.steps ) =>
 		current.settings?.type === 'steps'
-			? normalizeRows( orderBySteps( fields, steps ), true )
-			: normalizeRows( fields );
+			? orderBySteps( fields, steps )
+			: fields;
 
 	const setFields = ( fields ) =>
 		setForm( ( current ) => ( {
@@ -376,9 +370,7 @@ export default function Builder( {
 			steps,
 			fields: arrange(
 				current.fields.map( ( field ) =>
-					field.step === id
-						? { ...field, step: target.id, beside: false }
-						: field
+					field.step === id ? { ...field, step: target.id } : field
 				),
 				current,
 				steps
@@ -445,13 +437,10 @@ export default function Builder( {
 	const removeField = ( id ) => {
 		const index = form.fields.findIndex( ( field ) => field.id === id );
 		const field = form.fields[ index ];
-		// The field next to it, if any, keeps its place but gets a row of its own.
-		const fields = detach( form.fields, index ).filter(
-			( item ) => item.id !== id
-		);
+		const fields = form.fields.filter( ( item ) => item.id !== id );
 		setFields( fields );
 		dropErrors( ( error ) => error.field === id );
-		setRemoved( { field, index, before: form.fields } );
+		setRemoved( { field, index } );
 		const next = fields[ index ] || fields[ index - 1 ];
 		if ( selectedId === id ) {
 			setSelectedId( next?.id || null );
@@ -493,7 +482,6 @@ export default function Builder( {
 							? {
 									...field,
 									step: before.get( field.id ).step,
-									beside: before.get( field.id ).beside,
 							  }
 							: field
 					),
@@ -507,17 +495,7 @@ export default function Builder( {
 		}
 		const fields = [ ...form.fields ];
 		fields.splice( removed.index, 0, removed.field );
-		// Rows as they were before the removal; other changes made since stay.
-		const besideBefore = new Map(
-			removed.before.map( ( item ) => [ item.id, item.beside ] )
-		);
-		setFields(
-			fields.map( ( item ) =>
-				besideBefore.has( item.id )
-					? { ...item, beside: besideBefore.get( item.id ) }
-					: item
-			)
-		);
+		setFields( fields );
 		selectField( removed.field.id );
 		focusById( `formwerk-row-${ removed.field.id }` );
 		setRemoved( null );
@@ -530,7 +508,7 @@ export default function Builder( {
 			inSteps &&
 			field.step !== form.fields[ index ].step
 		) {
-			// Chosen in the settings: the field goes to the end of the other step, on its own row.
+			// Chosen in the settings: the field goes to the end of the other step.
 			setFields(
 				moveToStep(
 					form.fields.map( ( item ) =>
@@ -708,10 +686,6 @@ export default function Builder( {
 		( field ) => field.id === selectedId
 	);
 	const selected = form.fields[ selectedIndex ];
-	const previousLabelOf = ( index ) =>
-		canBeBeside( form.fields, index, inSteps )
-			? form.fields[ index - 1 ].label || __( '(no label)', 'formwerk' )
-			: '';
 	const mark = ( title, name ) =>
 		tabHasError( name )
 			? sprintf(
@@ -989,32 +963,6 @@ export default function Builder( {
 												</h2>
 												<FieldSettings
 													field={ selected }
-													previousLabel={ previousLabelOf(
-														selectedIndex
-													) }
-													nextLabel={
-														form.fields[
-															selectedIndex + 1
-														]?.beside
-															? form.fields[
-																	selectedIndex +
-																		1
-															  ].label ||
-															  __(
-																	'(no label)',
-																	'formwerk'
-															  )
-															: ''
-													}
-													onSplitRow={ () =>
-														updateField( {
-															...form.fields[
-																selectedIndex +
-																	1
-															],
-															beside: false,
-														} )
-													}
 													error={
 														selected &&
 														fieldError(

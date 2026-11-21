@@ -1,6 +1,5 @@
 import { speak } from '@wordpress/a11y';
 import {
-	Button,
 	SelectControl,
 	TextControl,
 	TextareaControl,
@@ -8,6 +7,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 
+import { WIDTHS } from './layout';
 import { AUTOCOMPLETE_OPTIONS, hasOptions, hasValue, typeLabel } from './types';
 
 const controlProps = {
@@ -15,12 +15,59 @@ const controlProps = {
 	__next40pxDefaultSize: true,
 };
 
+const WIDTH_LABELS = () => ( {
+	full: __( '100 %', 'formwerk' ),
+	half: __( '50 %', 'formwerk' ),
+	third: __( '33 %', 'formwerk' ),
+	quarter: __( '25 %', 'formwerk' ),
+} );
+
+// A row of four choices that look like a toggle group, built from radio buttons:
+// arrow keys move between them, and screen readers announce "1 of 4".
+function WidthChoice( { id, value, onChange } ) {
+	const labels = WIDTH_LABELS();
+	return (
+		<fieldset
+			className="formwerk-width"
+			aria-describedby={ `${ id }-help` }
+		>
+			<legend className="formwerk-width__legend">
+				{ __( 'Width', 'formwerk' ) }
+			</legend>
+			<div className="formwerk-width__options">
+				{ WIDTHS.map( ( width ) => (
+					<label
+						key={ width }
+						htmlFor={ `${ id }-${ width }` }
+						className={ `formwerk-width__option${
+							value === width ? ' is-checked' : ''
+						}` }
+					>
+						<input
+							type="radio"
+							name={ id }
+							id={ `${ id }-${ width }` }
+							value={ width }
+							checked={ value === width }
+							onChange={ () => onChange( width ) }
+						/>
+						<span>{ labels[ width ] }</span>
+					</label>
+				) ) }
+			</div>
+			<p className="formwerk-width__help" id={ `${ id }-help` }>
+				{ __(
+					'Fields follow each other in rows; a field that no longer fits starts the next row. On small screens every field takes the full width.',
+					'formwerk'
+				) }
+			</p>
+		</fieldset>
+	);
+}
+
 export default function FieldSettings( {
 	field,
 	error,
-	previousLabel,
-	nextLabel,
-	onSplitRow,
 	steps = null,
 	onChange,
 } ) {
@@ -100,7 +147,6 @@ export default function FieldSettings( {
 				aria-invalid={ labelError ? 'true' : undefined }
 				help={ labelError ? errorHelp( error.message ) : labelHelp }
 			/>
-
 			{ field.type === 'heading' && (
 				<TextareaControl
 					{ ...controlProps }
@@ -114,7 +160,6 @@ export default function FieldSettings( {
 					rows={ 4 }
 				/>
 			) }
-
 			{ isChoice && (
 				<TextareaControl
 					{ ...controlProps }
@@ -136,7 +181,6 @@ export default function FieldSettings( {
 					rows={ 5 }
 				/>
 			) }
-
 			{ hasValue( field.type ) && (
 				<ToggleControl
 					__nextHasNoMarginBottom
@@ -146,7 +190,6 @@ export default function FieldSettings( {
 					help={ requiredHelp }
 				/>
 			) }
-
 			{ hasValue( field.type ) && (
 				<TextControl
 					{ ...controlProps }
@@ -159,7 +202,6 @@ export default function FieldSettings( {
 					) }
 				/>
 			) }
-
 			{ isText && (
 				<TextControl
 					{ ...controlProps }
@@ -172,7 +214,6 @@ export default function FieldSettings( {
 					) }
 				/>
 			) }
-
 			{ steps && steps.length > 1 && (
 				<SelectControl
 					{ ...controlProps }
@@ -221,89 +262,21 @@ export default function FieldSettings( {
 					) }
 				/>
 			) }
-
-			{ ( field.beside || previousLabel ) && (
-				<SelectControl
-					{ ...controlProps }
-					label={ __( 'Layout', 'formwerk' ) }
-					value={ field.beside ? 'beside' : 'own' }
-					onChange={ ( value ) => {
-						onChange( { ...field, beside: value === 'beside' } );
-						speak(
-							value === 'beside'
-								? sprintf(
-										/* translators: 1: field label, 2: label of the field above. */
-										__(
-											'“%1$s” is now next to “%2$s”.',
-											'formwerk'
-										),
-										field.label,
-										previousLabel
-								  )
-								: sprintf(
-										/* translators: %s: field label. */
-										__(
-											'“%s” is now on its own row.',
-											'formwerk'
-										),
-										field.label
-								  )
-						);
-					} }
-					options={ [
-						{ value: 'own', label: __( 'Own row', 'formwerk' ) },
-						{
-							value: 'beside',
-							label: sprintf(
-								/* translators: %s: label of the field above. */
-								__( 'Next to “%s”', 'formwerk' ),
-								previousLabel ||
-									__( 'the field above', 'formwerk' )
-							),
-						},
-					] }
-					help={ __(
-						'Two fields in one row share it half and half. On small screens they are shown one below the other.',
-						'formwerk'
-					) }
-				/>
-			) }
-
-			{ nextLabel && (
-				<div className="formwerk-layout-info">
-					<p>
-						{ sprintf(
-							/* translators: %s: label of the field below. */
-							__( 'Shares a row with “%s”.', 'formwerk' ),
-							nextLabel
-						) }
-					</p>
-					<Button
-						variant="secondary"
-						size="compact"
-						onClick={ () => {
-							onSplitRow();
-							speak(
-								sprintf(
-									/* translators: %s: field label. */
-									__(
-										'“%s” is now on its own row.',
-										'formwerk'
-									),
-									nextLabel
-								)
-							);
-						} }
-					>
-						{ sprintf(
-							/* translators: %s: label of the field below. */
-							__( 'Put “%s” on its own row', 'formwerk' ),
-							nextLabel
-						) }
-					</Button>
-				</div>
-			) }
-
+			<WidthChoice
+				id={ `formwerk-field-${ field.id }-width` }
+				value={ field.width || 'full' }
+				onChange={ ( width ) => {
+					onChange( { ...field, width } );
+					speak(
+						sprintf(
+							/* translators: 1: field label, 2: width, e.g. "50 %". */
+							__( '“%1$s” now has a width of %2$s.', 'formwerk' ),
+							field.label,
+							WIDTH_LABELS()[ width ]
+						)
+					);
+				} }
+			/>
 			{ [ 'text', 'email', 'tel' ].includes( field.type ) && (
 				<SelectControl
 					{ ...controlProps }
@@ -317,7 +290,6 @@ export default function FieldSettings( {
 					) }
 				/>
 			) }
-
 			{ hasValue( field.type ) && field.name && (
 				<p className="formwerk-hint">
 					{ __(

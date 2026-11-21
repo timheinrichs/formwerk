@@ -25,15 +25,17 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 
-import {
-	canBeBeside,
-	isHalf,
-	moveField,
-	moveToStep,
-	normalizeRows,
-	stepMove,
-} from './layout';
+import { moveField, moveToStep, stepMove } from './layout';
 import { FIELD_TYPES, hasValue, typeLabel } from './types';
+
+// "50 %" etc., for the card.
+function widthLabel( width ) {
+	return {
+		half: __( '50 %', 'formwerk' ),
+		third: __( '33 %', 'formwerk' ),
+		quarter: __( '25 %', 'formwerk' ),
+	}[ width ];
+}
 
 function Row( {
 	field,
@@ -42,11 +44,8 @@ function Row( {
 	canMoveDown,
 	isSelected,
 	hasError,
-	half,
-	pair,
 	onSelect,
 	onMove,
-	onToggleBeside,
 	onRemove,
 } ) {
 	const {
@@ -65,7 +64,7 @@ function Row( {
 		isSelected && 'is-selected',
 		isDragging && 'is-dragging',
 		hasError && 'has-error',
-		half && 'is-half',
+		`is-width-${ field.width || 'full' }`,
 	]
 		.filter( Boolean )
 		.join( ' ' );
@@ -130,13 +129,9 @@ function Row( {
 						</strong>
 					) }
 					{ typeLabel( field.type ) }
-					{ pair?.pressed &&
-						' · ' +
-							sprintf(
-								/* translators: %s: label of the other field in the row. */
-								__( 'Shares a row with “%s”', 'formwerk' ),
-								pair.partner
-							) }
+					{ field.width &&
+						field.width !== 'full' &&
+						` · ${ widthLabel( field.width ) }` }
 				</span>
 			</button>
 			<span className="formwerk-field-row__actions">
@@ -166,22 +161,6 @@ function Row( {
 					accessibleWhenDisabled
 					onClick={ () => onMove( index, index + 1 ) }
 				/>
-				{ pair && (
-					// The same label in both states; aria-pressed tells whether the two share a row.
-					<Button
-						className="formwerk-field-row__pair"
-						size="small"
-						icon="columns"
-						isPressed={ pair.pressed }
-						label={ sprintf(
-							/* translators: 1: label of the lower field, 2: label of the upper field. */
-							__( 'Put “%1$s” next to “%2$s”', 'formwerk' ),
-							pair.lower,
-							pair.upper
-						) }
-						onClick={ onToggleBeside }
-					/>
-				) }
 				<Button
 					className="formwerk-field-row__remove"
 					size="small"
@@ -281,16 +260,6 @@ export default function FieldList( {
 			steps.findIndex( ( item ) => item.id === step?.id ) + 1
 		);
 
-	const separatedMessages = ( separated ) =>
-		separated.map( ( [ first, second ] ) =>
-			sprintf(
-				/* translators: 1, 2: field labels. */
-				__( '“%1$s” and “%2$s” no longer share a row.', 'formwerk' ),
-				first.label,
-				second.label
-			)
-		);
-
 	// "position 2 of 4", or in a form in steps "position 2 of 4 in step “Course”".
 	const place = ( index ) => {
 		const field = fields[ index ];
@@ -354,7 +323,6 @@ export default function FieldList( {
 								fields[ from ].label,
 								place( to )
 						  ),
-					...separatedMessages( result.separated ),
 				].join( ' ' )
 			);
 			return;
@@ -362,7 +330,6 @@ export default function FieldList( {
 		if ( to < 0 || to >= fields.length || from === to ) {
 			return;
 		}
-		// A field that moves leaves its row; the one that sat next to it stays where it is.
 		const source = inSteps
 			? fields.map( ( field, index ) =>
 					index === from
@@ -370,18 +337,14 @@ export default function FieldList( {
 						: field
 			  )
 			: fields;
-		const result = moveField( source, from, to, inSteps );
-		onChange( result.fields );
+		onChange( moveField( source, from, to ) );
 		speak(
-			[
-				sprintf(
-					/* translators: 1: field label, 2: new place, e.g. "position 2 of 4". */
-					__( '“%1$s” moved to %2$s.', 'formwerk' ),
-					fields[ from ].label,
-					place( to )
-				),
-				...separatedMessages( result.separated ),
-			].join( ' ' )
+			sprintf(
+				/* translators: 1: field label, 2: new place, e.g. "position 2 of 4". */
+				__( '“%1$s” moved to %2$s.', 'formwerk' ),
+				fields[ from ].label,
+				place( to )
+			)
 		);
 	};
 
@@ -450,60 +413,6 @@ export default function FieldList( {
 		),
 	};
 
-	const labelAt = ( index ) =>
-		fields[ index ]?.label || __( '(no label)', 'formwerk' );
-
-	// The row button of a field: on the lower field it pairs it with the one above, on the
-	// upper field of a pair it is the same switch, so either half can split the row.
-	const pairOf = ( index ) => {
-		if ( fields[ index + 1 ]?.beside ) {
-			return {
-				target: index + 1,
-				pressed: true,
-				lower: labelAt( index + 1 ),
-				upper: labelAt( index ),
-				partner: labelAt( index + 1 ),
-			};
-		}
-		if ( canBeBeside( fields, index, inSteps ) ) {
-			return {
-				target: index,
-				pressed: Boolean( fields[ index ].beside ),
-				lower: labelAt( index ),
-				upper: labelAt( index - 1 ),
-				partner: labelAt( index - 1 ),
-			};
-		}
-		return null;
-	};
-
-	const toggleBeside = ( index ) => {
-		const field = fields[ index ];
-		const beside = ! field.beside;
-		onChange(
-			normalizeRows(
-				fields.map( ( item, position ) =>
-					position === index ? { ...item, beside } : item
-				),
-				inSteps
-			)
-		);
-		speak(
-			beside
-				? sprintf(
-						/* translators: 1: field label, 2: label of the field above. */
-						__( '“%1$s” is now next to “%2$s”.', 'formwerk' ),
-						field.label,
-						fields[ index - 1 ]?.label
-				  )
-				: sprintf(
-						/* translators: %s: field label. */
-						__( '“%s” is now on its own row.', 'formwerk' ),
-						field.label
-				  )
-		);
-	};
-
 	const onDragEnd = ( { active, over } ) => {
 		if ( ! over || active.id === over.id ) {
 			return;
@@ -568,11 +477,8 @@ export default function FieldList( {
 			}
 			isSelected={ field.id === selectedId }
 			hasError={ errorIds.includes( field.id ) }
-			half={ isHalf( fields, index ) }
-			pair={ pairOf( index ) }
 			onSelect={ () => onSelect( field.id ) }
 			onMove={ move }
-			onToggleBeside={ () => toggleBeside( pairOf( index ).target ) }
 			onRemove={ () => onRemove( field.id ) }
 		/>
 	);

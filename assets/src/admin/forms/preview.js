@@ -1,13 +1,12 @@
 import { useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 
-import { isHalf } from './layout';
 import { hasOptions } from './types';
 
-function Field( { field, half } ) {
+function Field( { field } ) {
 	const classes = `formwerk-field formwerk-field--${
 		field.type
-	} formwerk-field--${ half ? 'half' : 'full' }`;
+	} formwerk-field--${ field.width || 'full' }`;
 	const id = `formwerk-preview-${ field.id }`;
 	const required = field.required && (
 		<span className="formwerk-field__required">
@@ -168,11 +167,7 @@ export default function Preview( {
 				) }
 				<div className="formwerk-form__fields">
 					{ shown.map( ( field ) => (
-						<Field
-							key={ field.id }
-							field={ field }
-							half={ isHalf( fields, fields.indexOf( field ) ) }
-						/>
+						<Field key={ field.id } field={ field } />
 					) ) }
 				</div>
 				<div className="formwerk-form__actions">

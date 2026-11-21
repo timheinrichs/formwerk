@@ -272,103 +272,10 @@ final class SchemaTest extends TestCase {
 	/**
 	 * @param array<int, array<string, mixed>> $items Fields as sent.
 	 *
-	 * @return array<int, string> Width per field, as 'full' or 'half'.
+	 * @return array<int, string> Width per field: 'full', 'half', 'third' or 'quarter'.
 	 */
 	private function widths( array $items ): array {
 		return array_column( Schema::normalize( $items )['fields'], 'width' );
-	}
-
-	public function test_a_field_can_sit_next_to_the_previous_one(): void {
-		$items = array(
-			array(
-				'type'  => 'text',
-				'label' => 'Vorname',
-			),
-			array(
-				'type'   => 'text',
-				'label'  => 'Nachname',
-				'beside' => true,
-			),
-			array(
-				'type'  => 'email',
-				'label' => 'E-Mail',
-			),
-		);
-
-		$this->assertSame( array( 'half', 'half', 'full' ), $this->widths( $items ) );
-		$this->assertSame( array( false, true, false ), array_column( Schema::normalize( $items )['fields'], 'beside' ) );
-	}
-
-	public function test_rows_hold_two_fields_and_no_headings(): void {
-		$items = array(
-			array(
-				'type'   => 'text',
-				'label'  => 'Erstes',
-				'beside' => true,
-			),
-			array(
-				'type'   => 'text',
-				'label'  => 'Zweites',
-				'beside' => true,
-			),
-			array(
-				'type'   => 'text',
-				'label'  => 'Drittes',
-				'beside' => true,
-			),
-			array(
-				'type'  => 'heading',
-				'label' => 'Abschnitt',
-			),
-			array(
-				'type'   => 'text',
-				'label'  => 'Nach Überschrift',
-				'beside' => true,
-			),
-			array(
-				'type'   => 'heading',
-				'label'  => 'Überschrift daneben',
-				'beside' => true,
-			),
-		);
-
-		$this->assertSame( array( 'half', 'half', 'full', 'full', 'full', 'full' ), $this->widths( $items ) );
-	}
-
-	public function test_half_width_from_older_forms_becomes_pairs_without_gaps(): void {
-		$half  = array(
-			'type'  => 'text',
-			'label' => 'Halb',
-			'width' => 'half',
-		);
-		$full  = array(
-			'type'  => 'text',
-			'label' => 'Voll',
-		);
-		$items = array( $half, $half, $half, $full, $half, $half, $half );
-
-		// Pairs 1+2 and 5+6; the third and the last half field had no partner and use the whole row.
-		$this->assertSame( array( 'half', 'half', 'full', 'full', 'half', 'half', 'full' ), $this->widths( $items ) );
-	}
-
-	public function test_long_text_and_consent_keep_their_own_row(): void {
-		$items = array(
-			array(
-				'type'  => 'text',
-				'label' => 'Name',
-			),
-			array(
-				'type'   => 'textarea',
-				'label'  => 'Message',
-				'beside' => true,
-			),
-			array(
-				'type'   => 'consent',
-				'label'  => 'Privacy',
-				'beside' => true,
-			),
-		);
-		$this->assertSame( array( false, false, false ), array_column( Schema::normalize( $items )['fields'], 'beside' ) );
 	}
 
 	/**
@@ -440,27 +347,6 @@ final class SchemaTest extends TestCase {
 		$this->assertSame( array( 'person', 'person', 'person', 'course' ), array_column( $fields, 'step' ) );
 	}
 
-	public function test_a_row_never_spans_two_steps(): void {
-		$fields = Schema::normalize(
-			array(
-				array(
-					'type'  => 'text',
-					'label' => 'Name',
-					'step'  => 'person',
-				),
-				array(
-					'type'   => 'text',
-					'label'  => 'Course',
-					'step'   => 'course',
-					'beside' => true,
-				),
-			),
-			$this->two_steps()
-		)['fields'];
-
-		$this->assertSame( array( false, false ), array_column( $fields, 'beside' ) );
-	}
-
 	public function test_without_steps_fields_have_no_step(): void {
 		$fields = Schema::normalize(
 			array(
@@ -513,11 +399,13 @@ final class SchemaTest extends TestCase {
 					'type'  => 'text',
 					'label' => 'Course',
 					'step'  => 'course',
+					'half'  => true,
 				),
 				array(
 					'type'   => 'text',
 					'label'  => 'Name',
 					'step'   => 'person',
+					'half'   => true,
 					'beside' => true,
 				),
 			),
@@ -527,7 +415,6 @@ final class SchemaTest extends TestCase {
 
 		$this->assertSame( array( 'Course', 'Name' ), array_column( $fields, 'label' ) );
 		$this->assertSame( array( 'course', 'person' ), array_column( $fields, 'step' ) );
-		$this->assertSame( array( false, true ), array_column( $fields, 'beside' ) );
 	}
 
 	public function test_at_most_twenty_steps_are_kept(): void {
@@ -543,5 +430,63 @@ final class SchemaTest extends TestCase {
 		$this->assertTrue( FormRepository::is_default_message( 'next', 'Next' ) );
 		$this->assertTrue( FormRepository::is_default_message( 'submit', '' ) );
 		$this->assertFalse( FormRepository::is_default_message( 'next', 'Continue to your course' ) );
+	}
+
+	public function test_every_field_has_one_of_four_widths(): void {
+		$items = array(
+			array(
+				'type'  => 'text',
+				'label' => 'Voll',
+			),
+			array(
+				'type'  => 'text',
+				'label' => 'Halb',
+				'width' => 'half',
+			),
+			array(
+				'type'  => 'textarea',
+				'label' => 'Drittel',
+				'width' => 'third',
+			),
+			array(
+				'type'  => 'consent',
+				'label' => 'Viertel',
+				'width' => 'quarter',
+			),
+			array(
+				'type'  => 'text',
+				'label' => 'Unbekannt',
+				'width' => 'huge',
+			),
+		);
+
+		$this->assertSame( array( 'full', 'half', 'third', 'quarter', 'full' ), $this->widths( $items ) );
+	}
+
+	public function test_rows_from_older_versions_keep_half_width(): void {
+		$items = array(
+			// 0.3 to 0.5: both fields of a row stored the computed width "half".
+			array(
+				'type'  => 'text',
+				'label' => 'Vorname',
+				'width' => 'half',
+			),
+			array(
+				'type'   => 'text',
+				'label'  => 'Nachname',
+				'width'  => 'half',
+				'beside' => true,
+			),
+			// Before 0.3: only "half"; a single one now keeps its width as well.
+			array(
+				'type'  => 'email',
+				'label' => 'E-Mail',
+				'width' => 'half',
+			),
+		);
+		$fields = Schema::normalize( $items )['fields'];
+
+		$this->assertSame( array( 'half', 'half', 'half' ), array_column( $fields, 'width' ) );
+		$this->assertArrayNotHasKey( 'beside', $fields[1] );
 	}
 }

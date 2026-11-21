@@ -28,7 +28,7 @@
 
 :where(.formwerk-form__fields) {
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: repeat(12, minmax(0, 1fr));
 	gap: var(--formwerk-gap);
 }
 
@@ -40,11 +40,24 @@
 	border: 0;
 }
 
-// Two columns once the form itself is wide enough, whatever the screen is.
+// Fields follow each other in rows of 12 columns; a field that no longer fits
+// starts the next row. Narrow forms show every field at full width, medium
+// ones at most two per row, whatever the screen is.
 @container (min-width: 480px) {
 
-	:where(.formwerk-field--half) {
-		grid-column: span 1;
+	:where(.formwerk-field--half, .formwerk-field--third, .formwerk-field--quarter) {
+		grid-column: span 6;
+	}
+}
+
+@container (min-width: 600px) {
+
+	:where(.formwerk-field--third) {
+		grid-column: span 4;
+	}
+
+	:where(.formwerk-field--quarter) {
+		grid-column: span 3;
 	}
 }
 
@@ -171,7 +184,7 @@
 :where(.formwerk-step) {
 	display: grid;
 	grid-column: 1 / -1;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: repeat(12, minmax(0, 1fr));
 	gap: var(--formwerk-gap);
 	min-width: 0;
 	margin: 0;
