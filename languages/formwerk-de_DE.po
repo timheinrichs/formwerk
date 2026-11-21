@@ -35,12 +35,12 @@ msgid "Tim Heinrichs"
 msgstr "Tim Heinrichs"
 
 #. translators: 1: required PHP version, 2: running PHP version.
-#: formwerk.php:41
+#: formwerk.php:43
 #, php-format
 msgid "PHP %1$s or newer is required. This site runs PHP %2$s, so the plugin is inactive."
 msgstr "PHP %1$s oder neuer wird benötigt. Diese Website läuft mit PHP %2$s, deshalb ist das Plugin inaktiv."
 
-#: formwerk.php:48
+#: formwerk.php:50
 msgid "The vendor folder is missing, so the plugin is inactive. Install the release ZIP from GitHub, or run \"composer install\" in the plugin folder."
 msgstr "Der Ordner „vendor“ fehlt, deshalb ist das Plugin inaktiv. Installiere das Release-ZIP von GitHub oder führe im Plugin-Ordner „composer install“ aus."
 
@@ -536,7 +536,7 @@ msgstr "Das Protokoll konnte nicht geladen werden."
 msgid "Loading settings…"
 msgstr "Einstellungen werden geladen …"
 
-#: formwerk.php:46
+#: formwerk.php:48
 msgid "The PHP extension \"mbstring\" is missing, so the plugin is inactive. Please ask your web host to enable it."
 msgstr "Die PHP-Erweiterung „mbstring“ fehlt, deshalb ist das Plugin inaktiv. Bitte deinen Webhoster, sie einzuschalten."
 
@@ -1784,7 +1784,15 @@ msgid ""
 "\n"
 "--\n"
 "{site}"
-msgstr "Danke für deine Nachricht. Wir haben sie erhalten und melden uns bei dir.\n\nDeine Angaben:\n\n{all_fields}\n\n--\n{site}"
+msgstr ""
+"Danke für deine Nachricht. Wir haben sie erhalten und melden uns bei dir.\n"
+"\n"
+"Deine Angaben:\n"
+"\n"
+"{all_fields}\n"
+"\n"
+"--\n"
+"{site}"
 
 #. translators: %s: field label.
 #: src/I18n/Wpml.php:263
@@ -2019,3 +2027,27 @@ msgstr "Besucher*innen sehen diesen Namen nicht auf der Seite. In E-Mails steht 
 #: build/admin.js:30
 msgid "Confirmation"
 msgstr "Bestätigung"
+
+#: src/Update/Updater.php:97
+msgid "The version information could not be loaded from GitHub right now. Formwerk keeps working as before. Please try again later."
+msgstr "Die Versionsinformationen konnten gerade nicht von GitHub geladen werden. Formwerk funktioniert weiter wie bisher. Bitte versuche es später noch einmal."
+
+#: src/Update/Updater.php:113
+msgid "Forms that never lose a submission, and reliable email for the whole website: Formwerk sends every email of the site through a real mailbox (SMTP), so it arrives in the inbox instead of the spam folder."
+msgstr "Formulare, bei denen keine Einsendung verloren geht, und zuverlässiger Mailversand für die ganze Website: Formwerk verschickt jede E-Mail der Website über ein echtes Postfach (SMTP), damit sie im Posteingang ankommt statt im Spam."
+
+#: src/Update/Updater.php:114
+msgid "All changes on GitHub"
+msgstr "Alle Änderungen auf GitHub"
+
+#: src/Update/Updater.php:142
+msgid "The update was not installed, because it could not be checked against the published version right now. Formwerk keeps working as before. Please try again later."
+msgstr "Das Update wurde nicht installiert, weil es gerade nicht mit der veröffentlichten Version abgeglichen werden konnte. Formwerk funktioniert weiter wie bisher. Bitte versuche es später noch einmal."
+
+#: src/Update/Updater.php:153
+msgid "The update was not installed, because the downloaded file does not match the published version (checksum). Formwerk keeps working as before. Please try again later. If it happens again, contact the person who looks after your website."
+msgstr "Das Update wurde nicht installiert, weil die heruntergeladene Datei nicht mit der veröffentlichten Version übereinstimmt (Prüfsumme). Formwerk funktioniert weiter wie bisher. Bitte versuche es später noch einmal. Wenn es wieder passiert, melde dich bei der Person, die deine Website betreut."
+
+#: src/Update/Updater.php:277
+msgid "The update could not be downloaded from GitHub. Formwerk keeps working as before. Please try again later."
+msgstr "Das Update konnte nicht von GitHub heruntergeladen werden. Formwerk funktioniert weiter wie bisher. Bitte versuche es später noch einmal."
