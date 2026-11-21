@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 772 250" width="772" height="250">
+  <!-- Source of banner-772x250.png and banner-1544x500.png (bin/brand-images.sh). -->
+  <style>
+    .tile { fill: #1e1e1e; } .field { fill: #ffffff; } .sent { fill: #4ab866; } .name { fill: #1e1e1e; }
+    .card { fill: #ffffff; stroke: #dcdcde; stroke-width: 1.5; } .input { fill: #f6f7f7; stroke: #c3c4c7; stroke-width: 1.2; }
+    .label { fill: #8c8f94; } .button { fill: #4ab866; }
+  </style>
+  <rect width="772" height="250" fill="#f0f0f1"/>
+  <g transform="translate(352 69) scale(1.75)">
+  <rect class="tile" width="64" height="64" rx="14"/>
+  
+  <rect class="field" x="17" y="15" width="30" height="9" rx="2.5"/>
+  <rect class="field" x="17" y="27.5" width="20" height="9" rx="2.5"/>
+  <rect class="sent" x="17" y="40" width="9" height="9" rx="2.5"/>
+</g>
+  <!-- A small form: two fields sharing a row, a full-width field, the send button.
+       The left half stays free: WordPress puts the plugin name there
+       (bottom left on wide screens, top left on narrow ones). -->
+  <g transform="translate(500 42) scale(0.95)">
+    <rect class="card" x="0" y="0" width="242" height="174" rx="10"/>
+    <rect class="label" x="20" y="22" width="44" height="6" rx="3"/>
+    <rect class="input" x="20" y="34" width="96" height="26" rx="5"/>
+    <rect class="label" x="126" y="22" width="56" height="6" rx="3"/>
+    <rect class="input" x="126" y="34" width="96" height="26" rx="5"/>
+    <rect class="label" x="20" y="74" width="64" height="6" rx="3"/>
+    <rect class="input" x="20" y="86" width="202" height="40" rx="5"/>
+    <rect class="button" x="20" y="138" width="64" height="22" rx="5"/>
+  </g>
+</svg>
