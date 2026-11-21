@@ -15,7 +15,7 @@ folder, and lets you build forms that cannot lose a submission.
 | SMTP delivery, test email, email log | Available since 0.1.0 |
 | Form builder, submissions, spam protection | Available since 0.2.0 |
 | Confirmation email, fields side by side, CSV export, retention, WPML | Available since 0.3.0 |
-| Updates from within WordPress | Planned for 1.0.0 |
+| Updates from within WordPress | Available since 0.4.0 |
 
 ## Requirements
 
@@ -30,8 +30,20 @@ folder, and lets you build forms that cannot lose a submission.
 2. In WordPress, open **Plugins → Add New Plugin → Upload Plugin**, choose the ZIP and activate the plugin.
 3. Open **Formwerk → Email** in the menu and set up the mail server (see below).
 
-To update, upload the ZIP of a newer release the same way. WordPress asks whether to replace the installed version;
-settings are kept.
+### Updates
+
+From 0.4.0 on, new releases appear under **Dashboard → Updates** and in the plugin list like any other update,
+with the changes under **View details**. Automatic updates can be switched on in the plugin list. Versions before
+0.4.0 are updated once by uploading the newer ZIP as above; WordPress asks whether to replace the installed version,
+and settings are kept.
+
+- **Source.** Only the latest release of this repository on GitHub. Drafts and pre-releases are never offered.
+  The header `Update URI` makes sure WordPress never installs a different plugin of the same name from
+  WordPress.org over Formwerk.
+- **Check.** The ZIP must carry the expected name and come from this repository's release downloads, and its SHA-256
+  must match the checksum GitHub publishes with the release. Otherwise the update stops and nothing is changed.
+- **What is sent.** WordPress asks GitHub about twice a day (**Check again** under Dashboard → Updates asks at
+  once). The request carries no token and no address of your website, only the user agent `Formwerk/<version>`.
 
 ## Setting up email delivery
 
@@ -202,7 +214,8 @@ npm run build
 | PHP coding standards | `composer lint` (`composer lint:fix` to autofix) |
 | Build / watch assets | `npm run build` / `npm start` |
 | Lint JS / CSS | `npm run lint:js` / `npm run lint:css` |
-| Build the release ZIP locally | `bash bin/build-zip.sh` (writes `dist/`, removes Composer dev packages; run `composer install` afterwards) |
+| Build the release ZIP locally | `bash bin/build-zip.sh` (writes the ZIP and the requirements file to `dist/`) |
+| Render icons and banners | `bash bin/brand-images.sh` (needs Google Chrome; sources in `assets/brand/icon.svg`, `assets/src/brand/banner.svg`) |
 
 To try the plugin, mount or symlink this folder into `wp-content/plugins/formwerk` of a local WordPress install.
 A local mail catcher such as [Mailpit](https://mailpit.axllent.org/) is handy as the SMTP server.
@@ -214,8 +227,10 @@ screens, the block and the form script in `assets/src/` (compiled to `build/`), 
 
 1. Set the new version in `formwerk.php`, `src/Plugin.php` and `package.json`. A unit test fails if they differ.
 2. Commit, then tag the commit on `main` as `v<version>` and push the tag.
-3. The release workflow runs the tests, builds the ZIP and attaches it to a new GitHub release. It refuses a tag that
-   does not match the plugin version.
+3. The release workflow runs the tests, builds the ZIP and `formwerk-<version>.json` (minimum WordPress and PHP
+   versions, read from the plugin header) and attaches both to a new GitHub release. It refuses a tag that does not
+   match the plugin version. Sites with Formwerk 0.4.0 or newer then see the update.
+4. Do not publish releases as pre-release or rename the ZIP: the updater ignores them.
 
 ## License
 

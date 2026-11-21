@@ -50,7 +50,13 @@ Vor jedem Commit müssen `composer test`, `composer lint`, `npm run lint:js` und
 
 - SemVer. Pro Phase/Feature ein Branch (`feat/…`, `fix/…`, `chore/…`), bei parallelen Arbeiten als Worktree;
   Merge nach `main`.
-- Release = Tag `vX.Y.Z` auf `main`. Die GitHub-Action baut das ZIP (ab Phase 5).
+- Release = Tag `vX.Y.Z` auf `main`. Die GitHub-Action baut `formwerk-X.Y.Z.zip` und `formwerk-X.Y.Z.json`
+  (Mindestversionen) und hängt beide an. Websites ab 0.4.0 holen das Update selbst (`src/Update/`, Header
+  `Update URI`); ZIP-Namen und Tag-Format nicht ändern, sonst findet der Updater nichts.
+- Update-Weg testen nur in der zweiten Instanz `~/Repos/formwerk-dev/update-test` (Port 8482, ohne Repo-Mount):
+  `bash install.sh 0.3.0` installiert einen Build mit dieser Versionsangabe. In der Haupt-Instanz würde ein
+  Update das Repo überschreiben.
+- Icons/Banner für den Update-Dialog: `bash bin/brand-images.sh` nach Änderungen an den SVG-Quellen.
 - Repo ist öffentlich: keine Zugangsdaten, keine Kundendaten, keine Live-Hostnamen in Code, Tests oder Commits.
 
 ## Lokal testen

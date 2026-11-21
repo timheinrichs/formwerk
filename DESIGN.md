@@ -116,6 +116,9 @@ Schatten, auch nicht im eigenen Styling.
 - **Don't** eine Markenfarbe oder eigene Schrift ins Backend bringen. Ausnahme mit Absicht: das Formwerk-Zeichen
   als einfarbiges Menü-Icon (färbt sich mit dem Admin-Farbschema) und das Logo klein (20px hoch, `alt=""`) über
   dem Seitentitel der Formwerk-Seiten. Es ist eine leise Signatur, kein zweiter Titel; der Titel bleibt Text.
+  Icon und Banner im Update-Dialog (`assets/brand/`): Zeichen und eine kleine Formular-Skizze rechts auf hellem
+  Grau, ohne Wortmarke. Die linke Hälfte bleibt frei, weil WordPress dort den Plugin-Namen einblendet (breit unten
+  links, schmal oben links).
 - **Don't** WordPress-Komponenten per CSS umgestalten oder nachbauen.
 - **Don't** im Standard-Frontend feste Farben, Schriftfamilien oder Button-Stile setzen.
 - **Don't** `!important` im Frontend-CSS verwenden.
