@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Formwerk 0.5.0-dev\n"
+"Project-Id-Version: Formwerk 0.5.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/formwerk\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-21T16:38:59+00:00\n"
+"POT-Creation-Date: 2026-11-21T17:26:56+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: formwerk\n"
@@ -118,7 +118,7 @@ msgstr ""
 #: src/Admin/Export.php:185
 #: src/Admin/SubmissionsTable.php:327
 #: src/Admin/SubmissionsTable.php:350
-#: build/admin.js:54
+#: build/admin.js:44
 msgid "Sent"
 msgstr ""
 
@@ -142,7 +142,7 @@ msgstr ""
 #: src/Admin/FormsPage.php:49
 #: src/Admin/FormsPage.php:67
 #: src/Forms/FormRepository.php:42
-#: build/admin.js:38
+#: build/admin.js:28
 msgid "Forms"
 msgstr ""
 
@@ -301,15 +301,15 @@ msgid "Send confirmation"
 msgstr ""
 
 #: src/Admin/SubmissionsPage.php:501
-#: build/admin.js:54
+#: build/admin.js:44
 msgid "Details"
 msgstr ""
 
 #: src/Admin/SubmissionsPage.php:503
 #: src/Admin/SubmissionsTable.php:62
 #: src/Submissions/Privacy.php:85
-#: build/admin.js:38
-#: build/admin.js:50
+#: build/admin.js:28
+#: build/admin.js:40
 #: build/block.js:1
 msgid "Form"
 msgstr ""
@@ -360,8 +360,8 @@ msgid "Delete %s submissions"
 msgstr ""
 
 #: src/Admin/SubmissionsPage.php:606
-#: build/admin.js:42
-#: build/admin.js:55
+#: build/admin.js:32
+#: build/admin.js:45
 msgid "Cancel"
 msgstr ""
 
@@ -406,7 +406,7 @@ msgid "Filter by form"
 msgstr ""
 
 #: src/Admin/SubmissionsTable.php:172
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "All forms"
 msgstr ""
 
@@ -437,7 +437,7 @@ msgid "View"
 msgstr ""
 
 #: src/Admin/SubmissionsTable.php:244
-#: build/admin.js:41
+#: build/admin.js:31
 msgid "Delete"
 msgstr ""
 
@@ -498,12 +498,12 @@ msgid "Thank you. Your message has been sent."
 msgstr ""
 
 #: src/Forms/FormRepository.php:491
-#: build/admin.js:45
+#: build/admin.js:35
 msgid "Next"
 msgstr ""
 
 #: src/Forms/FormRepository.php:492
-#: build/admin.js:45
+#: build/admin.js:35
 msgid "Back"
 msgstr ""
 
@@ -514,13 +514,13 @@ msgid "Formwerk: the form with the ID %d does not exist. Only you can see this n
 msgstr ""
 
 #: src/Frontend/Renderer.php:51
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Sending…"
 msgstr ""
 
 #. translators: 1: number of the current step, 2: number of steps, 3: title of the step.
 #: src/Frontend/Renderer.php:59
-#: build/admin.js:44
+#: build/admin.js:34
 #, php-format,js-format
 msgid "Step %1$s of %2$s: %3$s"
 msgstr ""
@@ -539,23 +539,23 @@ msgstr ""
 
 #. translators: %d: number of the step.
 #: src/Frontend/Renderer.php:127
-#: build/admin.js:8
-#: build/admin.js:29
-#: build/admin.js:31
-#: build/admin.js:45
-#: build/admin.js:46
+#: build/admin.js:6
+#: build/admin.js:24
+#: build/admin.js:26
+#: build/admin.js:35
+#: build/admin.js:36
 #, php-format,js-format
 msgid "Step %d"
 msgstr ""
 
 #: src/Frontend/Renderer.php:203
 #: build/admin.js:2
-#: build/admin.js:43
+#: build/admin.js:33
 msgid "(required)"
 msgstr ""
 
 #: src/Frontend/Renderer.php:275
-#: build/admin.js:43
+#: build/admin.js:33
 msgid "Please choose"
 msgstr ""
 
@@ -600,32 +600,32 @@ msgid "Step %d: title"
 msgstr ""
 
 #: src/I18n/Wpml.php:289
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Text on the button to the next step"
 msgstr ""
 
 #: src/I18n/Wpml.php:290
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Text on the button to the previous step"
 msgstr ""
 
 #: src/I18n/Wpml.php:292
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Text on the send button"
 msgstr ""
 
 #: src/I18n/Wpml.php:293
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Message after sending"
 msgstr ""
 
 #: src/I18n/Wpml.php:295
-#: build/admin.js:50
+#: build/admin.js:40
 msgid "Confirmation: subject"
 msgstr ""
 
 #: src/I18n/Wpml.php:296
-#: build/admin.js:50
+#: build/admin.js:40
 msgid "Confirmation: text"
 msgstr ""
 
@@ -1086,7 +1086,7 @@ msgid "I have read the privacy policy and agree."
 msgstr ""
 
 #: build/admin.js:1
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "Heading"
 msgstr ""
 
@@ -1135,13 +1135,11 @@ msgid "Option 2"
 msgstr ""
 
 #: build/admin.js:1
-#: build/admin.js:14
-#: build/admin.js:19
+#: build/admin.js:11
+#: build/admin.js:33
+#: build/admin.js:39
+#: build/admin.js:40
 #: build/admin.js:43
-#: build/admin.js:49
-#: build/admin.js:50
-#: build/admin.js:51
-#: build/admin.js:53
 msgid "(no label)"
 msgstr ""
 
@@ -1155,419 +1153,385 @@ msgstr ""
 msgid "Needs attention"
 msgstr ""
 
-#. translators: %s: label of the other field in the row.
-#: build/admin.js:3
-#, js-format
-msgid "Shares a row with “%s”"
+#: build/admin.js:2
+#: build/admin.js:22
+msgid "50 %"
+msgstr ""
+
+#: build/admin.js:2
+#: build/admin.js:22
+msgid "33 %"
+msgstr ""
+
+#: build/admin.js:2
+#: build/admin.js:22
+msgid "25 %"
 msgstr ""
 
 #. translators: %s: field label.
-#: build/admin.js:4
+#: build/admin.js:3
 #, js-format
 msgid "Move “%s” up"
 msgstr ""
 
 #. translators: %s: field label.
-#: build/admin.js:5
+#: build/admin.js:4
 #, js-format
 msgid "Move “%s” down"
 msgstr ""
 
-#. translators: 1: label of the lower field, 2: label of the upper field.
-#: build/admin.js:6
-#, js-format
-msgid "Put “%1$s” next to “%2$s”"
-msgstr ""
-
 #. translators: %s: field label.
-#: build/admin.js:7
+#: build/admin.js:5
 #, js-format
 msgid "Remove “%s”"
 msgstr ""
 
-#: build/admin.js:7
+#: build/admin.js:5
 msgid "Add field"
 msgstr ""
 
-#. translators: 1, 2: field labels.
-#: build/admin.js:9
-#, js-format
-msgid "“%1$s” and “%2$s” no longer share a row."
-msgstr ""
-
 #. translators: 1: position, 2: number of fields.
-#: build/admin.js:10
+#: build/admin.js:7
 #, js-format
 msgid "position %1$d of %2$d"
 msgstr ""
 
 #. translators: 1: position, 2: number of fields in the step, 3: step title.
-#: build/admin.js:11
+#: build/admin.js:8
 #, js-format
 msgid "position %1$d of %2$d in step “%3$s”"
 msgstr ""
 
 #. translators: 1: field label, 2: step title.
-#: build/admin.js:12
-#: build/admin.js:28
+#: build/admin.js:9
+#: build/admin.js:23
 #, js-format
 msgid "“%1$s” moved to step “%2$s”."
 msgstr ""
 
 #. translators: 1: field label, 2: new place, e.g. "position 2 of 4".
-#: build/admin.js:13
-#: build/admin.js:14
+#: build/admin.js:10
+#: build/admin.js:11
 #, js-format
 msgid "“%1$s” moved to %2$s."
 msgstr ""
 
 #. translators: 1: field label, 2: step title.
-#: build/admin.js:15
+#: build/admin.js:12
 #, js-format
 msgid "“%1$s” is over step “%2$s”."
 msgstr ""
 
 #. translators: 1: field label, 2: place, e.g. "position 2 of 4".
-#: build/admin.js:16
+#: build/admin.js:13
 #, js-format
 msgid "Picked up “%1$s” at %2$s. Use the arrow keys to move it, Space to drop it, Escape to cancel."
 msgstr ""
 
 #. translators: 1: field label, 2: place, e.g. "position 2 of 4".
-#: build/admin.js:17
+#: build/admin.js:14
 #, js-format
 msgid "“%1$s” is now at %2$s."
 msgstr ""
 
 #. translators: 1: field label, 2: place, e.g. "position 2 of 4".
-#: build/admin.js:18
+#: build/admin.js:15
 #, js-format
 msgid "“%1$s” dropped at %2$s."
 msgstr ""
 
 #. translators: %s: field label.
-#: build/admin.js:19
+#: build/admin.js:16
 #, js-format
 msgid "Moving “%s” cancelled."
 msgstr ""
 
-#: build/admin.js:19
+#: build/admin.js:16
 msgid "To move a field, press Space, use the arrow keys, then press Space again. Press Escape to cancel."
 msgstr ""
 
-#. translators: 1: field label, 2: label of the field above.
-#: build/admin.js:20
-#: build/admin.js:32
-#, js-format
-msgid "“%1$s” is now next to “%2$s”."
-msgstr ""
-
-#. translators: %s: field label.
-#: build/admin.js:21
-#: build/admin.js:33
-#: build/admin.js:36
-#, js-format
-msgid "“%s” is now on its own row."
-msgstr ""
-
 #. translators: 1: number of the step, 2: number of steps, 3: step title.
-#: build/admin.js:22
+#: build/admin.js:17
 #, js-format
 msgid "Step %1$d of %2$d: %3$s"
 msgstr ""
 
 #. translators: 1: number of the step, 2: number of steps.
-#: build/admin.js:23
+#: build/admin.js:18
 #, js-format
 msgid "Step %1$d of %2$d"
 msgstr ""
 
 #. translators: %s: step title.
-#: build/admin.js:24
+#: build/admin.js:19
 #, js-format
 msgid "Move step “%s” up"
 msgstr ""
 
 #. translators: %s: step title.
-#: build/admin.js:25
+#: build/admin.js:20
 #, js-format
 msgid "Move step “%s” down"
 msgstr ""
 
 #. translators: %s: step title.
-#: build/admin.js:26
+#: build/admin.js:21
 #, js-format
 msgid "Remove step “%s”"
 msgstr ""
 
-#: build/admin.js:26
+#: build/admin.js:21
 msgid "Title of the step"
 msgstr ""
 
-#: build/admin.js:26
+#: build/admin.js:21
 msgid "Visitors see it in the line “Step 1 of 2: About you”. Without a title the step is called “Step 1”."
 msgstr ""
 
-#: build/admin.js:26
+#: build/admin.js:21
 msgid "This step has no field to fill in yet. Move a field into it, or the form cannot be saved."
 msgstr ""
 
-#: build/admin.js:26
+#: build/admin.js:21
 msgid "No fields yet. Add one, or drag a field here."
 msgstr ""
 
-#: build/admin.js:26
+#: build/admin.js:21
 msgid "Add step"
 msgstr ""
 
 #. translators: %d: largest number of steps.
-#: build/admin.js:27
+#: build/admin.js:22
 #, js-format
 msgid "A form can have at most %d steps."
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "This form has no fields yet. Add the first one, for example a name or an email address."
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
+msgid "100 %"
+msgstr ""
+
+#: build/admin.js:22
+msgid "Width"
+msgstr ""
+
+#: build/admin.js:22
+msgid "Fields follow each other in rows; a field that no longer fits starts the next row. On small screens every field takes the full width."
+msgstr ""
+
+#: build/admin.js:22
 msgid "Select a field in the list to change its settings."
 msgstr ""
 
-#: build/admin.js:27
-#: build/admin.js:42
-#: build/admin.js:51
-#: build/admin.js:55
+#: build/admin.js:22
+#: build/admin.js:32
+#: build/admin.js:41
+#: build/admin.js:45
 msgid "Error:"
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "The form can only be sent when this field is filled in."
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "The form can only be sent when the box is ticked."
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "The form can only be sent when an option is chosen."
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "The sentence visitors agree to, shown next to the checkbox."
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "Shown as a heading between the fields. May stay empty if you only need the text below."
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "Label"
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "Text"
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "Optional note for visitors, for example how to fill in the following fields."
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "Options"
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "One option per line."
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "Required"
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "Help text"
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "Optional. Shown between label and field, for example what the answer is used for."
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "Example in the empty field"
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "Optional. Disappears when someone starts typing, so do not put instructions here."
 msgstr ""
 
-#: build/admin.js:27
+#: build/admin.js:22
 msgid "Step"
 msgstr ""
 
 #. translators: 1: number of the step, 2: step title.
-#: build/admin.js:30
+#: build/admin.js:25
 #, js-format
 msgid "Step %1$d: %2$s"
 msgstr ""
 
-#: build/admin.js:31
+#: build/admin.js:26
 msgid "The field moves to the end of that step. You can also drag it there."
 msgstr ""
 
-#: build/admin.js:31
-msgid "Layout"
-msgstr ""
-
-#: build/admin.js:33
-msgid "Own row"
-msgstr ""
-
-#. translators: %s: label of the field above.
-#: build/admin.js:34
+#. translators: 1: field label, 2: width, e.g. "50 %".
+#: build/admin.js:27
 #, js-format
-msgid "Next to “%s”"
+msgid "“%1$s” now has a width of %2$s."
 msgstr ""
 
-#: build/admin.js:34
-msgid "the field above"
-msgstr ""
-
-#: build/admin.js:34
-msgid "Two fields in one row share it half and half. On small screens they are shown one below the other."
-msgstr ""
-
-#. translators: %s: label of the field below.
-#: build/admin.js:35
-#, js-format
-msgid "Shares a row with “%s”."
-msgstr ""
-
-#. translators: %s: label of the field below.
-#: build/admin.js:37
-#, js-format
-msgid "Put “%s” on its own row"
-msgstr ""
-
-#: build/admin.js:37
+#: build/admin.js:27
 msgid "Browser suggestion"
 msgstr ""
 
-#: build/admin.js:37
+#: build/admin.js:27
 msgid "Lets browsers fill in the field with saved details of the visitor."
 msgstr ""
 
-#: build/admin.js:37
+#: build/admin.js:27
 msgid "To put this answer into the email text, use:"
 msgstr ""
 
-#: build/admin.js:37
+#: build/admin.js:27
 msgid "The look of the forms could not be loaded."
 msgstr ""
 
-#: build/admin.js:37
+#: build/admin.js:27
 msgid "Look of the forms"
 msgstr ""
 
-#: build/admin.js:37
+#: build/admin.js:27
 msgid "Like the rest of the website"
 msgstr ""
 
-#: build/admin.js:37
+#: build/admin.js:27
 msgid "Fields and buttons look the way your theme designs them. Choose this first."
 msgstr ""
 
-#: build/admin.js:37
+#: build/admin.js:27
 msgid "Formwerk’s own look"
 msgstr ""
 
-#: build/admin.js:37
+#: build/admin.js:27
 msgid "Fields and buttons get a plain, complete design. Choose this if the forms look unfinished with your theme."
 msgstr ""
 
-#: build/admin.js:37
+#: build/admin.js:27
 msgid "Saved. The forms on your website now use this look."
 msgstr ""
 
-#: build/admin.js:37
+#: build/admin.js:27
 msgid "The look was not changed."
 msgstr ""
 
-#: build/admin.js:37
+#: build/admin.js:27
 msgid "Save look"
 msgstr ""
 
-#: build/admin.js:37
+#: build/admin.js:27
 msgid "Shortcode copied"
 msgstr ""
 
 #. translators: %s: shortcode.
-#: build/admin.js:38
+#: build/admin.js:28
 #, js-format
 msgid "Copy shortcode %s"
 msgstr ""
 
-#: build/admin.js:38
+#: build/admin.js:28
 msgid "Copied"
 msgstr ""
 
-#: build/admin.js:38
+#: build/admin.js:28
 msgid "Copy"
 msgstr ""
 
-#: build/admin.js:38
+#: build/admin.js:28
 msgid "Shortcode copied."
 msgstr ""
 
-#: build/admin.js:38
+#: build/admin.js:28
 msgid "The forms could not be loaded."
 msgstr ""
 
-#: build/admin.js:38
-#: build/admin.js:45
+#: build/admin.js:28
+#: build/admin.js:35
 msgid "Add form"
 msgstr ""
 
-#: build/admin.js:38
-#: build/admin.js:45
-#: build/admin.js:54
-#: build/admin.js:58
+#: build/admin.js:28
+#: build/admin.js:35
+#: build/admin.js:44
+#: build/admin.js:48
 msgid "Try again"
 msgstr ""
 
-#: build/admin.js:38
+#: build/admin.js:28
 msgid "Loading forms…"
 msgstr ""
 
-#: build/admin.js:38
+#: build/admin.js:28
 msgid "No forms yet"
 msgstr ""
 
-#: build/admin.js:38
+#: build/admin.js:28
 msgid "A form collects messages from visitors, for example a contact request or a registration. Every message is saved here and sent to you by email."
 msgstr ""
 
-#: build/admin.js:38
-#: build/admin.js:39
+#: build/admin.js:28
+#: build/admin.js:29
 msgid "Shortcode"
 msgstr ""
 
-#: build/admin.js:38
-#: build/admin.js:39
+#: build/admin.js:28
+#: build/admin.js:29
 msgid "Fields to fill in"
 msgstr ""
 
-#: build/admin.js:38
-#: build/admin.js:39
+#: build/admin.js:28
+#: build/admin.js:29
 msgid "Last changed"
 msgstr ""
 
-#: build/admin.js:38
+#: build/admin.js:28
 msgid "Actions"
 msgstr ""
 
 #. translators: %d: number of rejected spam attempts.
-#: build/admin.js:39
+#: build/admin.js:29
 #, js-format
 msgid "%d spam attempt rejected"
 msgid_plural "%d spam attempts rejected"
@@ -1575,623 +1539,623 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: form name.
-#: build/admin.js:40
+#: build/admin.js:30
 #, js-format
 msgid "Edit “%s”"
 msgstr ""
 
-#: build/admin.js:40
+#: build/admin.js:30
 msgid "Edit"
 msgstr ""
 
 #. translators: %s: form name.
-#: build/admin.js:41
+#: build/admin.js:31
 #, js-format
 msgid "Delete “%s”"
 msgstr ""
 
-#: build/admin.js:41
+#: build/admin.js:31
 msgid "To show a form, paste its shortcode into a page, or add the “Formwerk form” block."
 msgstr ""
 
 #. translators: %s: form name.
-#: build/admin.js:42
+#: build/admin.js:32
 #, js-format
 msgid "Delete the form “%s”?"
 msgstr ""
 
-#: build/admin.js:42
+#: build/admin.js:32
 msgid "Pages that show this form will show nothing in its place. Submissions already received are kept. The form itself cannot be restored."
 msgstr ""
 
-#: build/admin.js:42
+#: build/admin.js:32
 msgid "The form was not deleted."
 msgstr ""
 
-#: build/admin.js:42
+#: build/admin.js:32
 msgid "Delete form"
 msgstr ""
 
-#: build/admin.js:42
+#: build/admin.js:32
 msgid "Form name"
 msgstr ""
 
-#: build/admin.js:42
+#: build/admin.js:32
 msgid "Page address"
 msgstr ""
 
-#: build/admin.js:42
+#: build/admin.js:32
 msgid "Date and time"
 msgstr ""
 
-#: build/admin.js:42
+#: build/admin.js:32
 msgid "Website name"
 msgstr ""
 
-#: build/admin.js:42
+#: build/admin.js:32
 msgid "Insert placeholder"
 msgstr ""
 
-#: build/admin.js:42
+#: build/admin.js:32
 msgid "Insert a placeholder into subject or text"
 msgstr ""
 
-#: build/admin.js:42
+#: build/admin.js:32
 msgid "All fields"
 msgstr ""
 
 #. translators: %s: field label.
-#: build/admin.js:43
+#: build/admin.js:33
 #, js-format
 msgid "Insert the answer to “%s”"
 msgstr ""
 
-#: build/admin.js:43
+#: build/admin.js:33
 msgid "New fields get their own placeholder once the form is saved. “All fields” already includes them."
 msgstr ""
 
-#: build/admin.js:43
+#: build/admin.js:33
 msgid "After sending the form, the person who filled it in gets an email from you, for example to confirm a registration. Replies to it reach the addresses under “Notification”."
 msgstr ""
 
-#: build/admin.js:43
+#: build/admin.js:33
 msgid "Send a confirmation"
 msgstr ""
 
-#: build/admin.js:43
+#: build/admin.js:33
 msgid "The form has no email field yet. Add one under “Fields”, so the confirmation knows where to go."
 msgstr ""
 
-#: build/admin.js:43
+#: build/admin.js:33
 msgid "Email address from field"
 msgstr ""
 
-#: build/admin.js:43
+#: build/admin.js:33
 msgid "Choose an email field"
 msgstr ""
 
-#: build/admin.js:43
+#: build/admin.js:33
 msgid "This field is optional. When it is left empty, no confirmation is sent."
 msgstr ""
 
-#: build/admin.js:43
-#: build/admin.js:50
-#: build/admin.js:54
+#: build/admin.js:33
+#: build/admin.js:40
+#: build/admin.js:44
 msgid "Subject"
 msgstr ""
 
-#: build/admin.js:43
-#: build/admin.js:50
+#: build/admin.js:33
+#: build/admin.js:40
 msgid "Email text"
 msgstr ""
 
-#: build/admin.js:43
+#: build/admin.js:33
 msgid "“All fields” adds a copy of everything the person entered."
 msgstr ""
 
-#: build/admin.js:43
+#: build/admin.js:33
 msgid "Every submission is saved under “Submissions” and also sent to you by email. If the visitor entered an email address, a reply to that email goes straight to them."
 msgstr ""
 
-#: build/admin.js:43
-#: build/admin.js:50
+#: build/admin.js:33
+#: build/admin.js:40
 msgid "Send to"
 msgstr ""
 
-#: build/admin.js:43
+#: build/admin.js:33
 msgid "One or more email addresses, separated by commas."
 msgstr ""
 
-#: build/admin.js:43
+#: build/admin.js:33
 msgid "{all_fields} lists every field with its label. Keep it in the text and no answer can be missing from the email."
 msgstr ""
 
-#: build/admin.js:43
-#: build/admin.js:51
+#: build/admin.js:33
+#: build/admin.js:41
 msgid "Preview"
 msgstr ""
 
-#: build/admin.js:43
+#: build/admin.js:33
 msgid "Layout and wording as visitors see them. Fonts and colours follow your website. You can type here to try it; nothing is sent."
 msgstr ""
 
-#: build/admin.js:45
+#: build/admin.js:35
 msgid "The form could not be loaded."
 msgstr ""
 
-#: build/admin.js:45
+#: build/admin.js:35
 msgid "Edit form"
 msgstr ""
 
-#: build/admin.js:45
+#: build/admin.js:35
 msgid "Back to all forms"
 msgstr ""
 
-#: build/admin.js:45
+#: build/admin.js:35
 msgid "Loading form…"
 msgstr ""
 
 #. translators: %d: number of the step.
-#: build/admin.js:47
+#: build/admin.js:37
 #, js-format
 msgid "Step %d added."
 msgstr ""
 
 #. translators: 1: step title, 2: new position, 3: number of steps.
-#: build/admin.js:48
+#: build/admin.js:38
 #, js-format
 msgid "Step “%1$s” is now step %2$d of %3$d."
 msgstr ""
 
 #. translators: %s: field label.
-#: build/admin.js:49
-#: build/admin.js:53
+#: build/admin.js:39
+#: build/admin.js:43
 #, js-format
 msgid "Field “%s” removed."
 msgstr ""
 
 #. translators: 1: field label, 2: field type.
-#: build/admin.js:50
+#: build/admin.js:40
 #, js-format
 msgid "Field “%1$s” (%2$s)"
 msgstr ""
 
-#: build/admin.js:50
-#: build/admin.js:51
+#: build/admin.js:40
+#: build/admin.js:41
 msgid "Form type"
 msgstr ""
 
-#: build/admin.js:50
-#: build/admin.js:51
+#: build/admin.js:40
+#: build/admin.js:41
 msgid "Name of the form"
 msgstr ""
 
-#: build/admin.js:50
-#: build/admin.js:51
+#: build/admin.js:40
+#: build/admin.js:41
 msgid "Fields"
 msgstr ""
 
-#: build/admin.js:50
+#: build/admin.js:40
 msgid "Confirmation: recipient"
 msgstr ""
 
 #. translators: %s: tab title.
-#: build/admin.js:51
+#: build/admin.js:41
 #, js-format
 msgid "%s (needs attention)"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Unsaved changes"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "All changes saved"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Not saved yet"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Form saved. To show it on your website, add the “Formwerk form” block to a page, or paste this shortcode:"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Form saved."
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "The form was not saved. Your changes are still here."
 msgstr ""
 
-#: build/admin.js:51
-#: build/admin.js:57
+#: build/admin.js:41
+#: build/admin.js:47
 msgid "Saving…"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Save form"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "For example “Contact” or “Course registration”"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Visitors do not see this name on the page. In emails it appears wherever {form} is used."
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Simple: all fields on one page"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "In steps: one step at a time, with Next and Back"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Steps suit long forms. Without JavaScript, visitors see all steps one below the other."
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "All points are corrected. Save the form now."
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Notification"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Confirmation"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Messages and spam protection"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Show"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Field settings"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Replaces the form once a submission was saved. Say what happens next, for example when you will reply."
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Spam protection"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Links allowed per submission"
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Spam often contains many links. Submissions with more links than this are rejected with a note to the sender. 0 means no limit."
 msgstr ""
 
-#: build/admin.js:51
+#: build/admin.js:41
 msgid "Undo"
 msgstr ""
 
 #. translators: %s: step title, or "Step 2".
-#: build/admin.js:52
+#: build/admin.js:42
 #, js-format
 msgid "“%s” removed. Its fields moved to the neighbouring step."
 msgstr ""
 
 #. translators: 1: first email address, 2: number of further recipients.
-#: build/admin.js:54
+#: build/admin.js:44
 #, js-format
 msgid "%1$s and %2$d more"
 msgstr ""
 
-#: build/admin.js:54
+#: build/admin.js:44
 msgid "Show less"
 msgstr ""
 
-#: build/admin.js:54
+#: build/admin.js:44
 msgid "Show more"
 msgstr ""
 
-#: build/admin.js:54
+#: build/admin.js:44
 msgid "No failed emails so far. If an email from this website cannot be sent, it appears here with the reason. Test emails are listed too. Entries are removed after 30 days."
 msgstr ""
 
-#: build/admin.js:54
-#: build/admin.js:55
+#: build/admin.js:44
+#: build/admin.js:45
 msgid "Email log"
 msgstr ""
 
-#: build/admin.js:54
+#: build/admin.js:44
 msgid "Failed emails and test results, newest first"
 msgstr ""
 
-#: build/admin.js:54
+#: build/admin.js:44
 msgid "Time"
 msgstr ""
 
-#: build/admin.js:54
+#: build/admin.js:44
 msgid "Result"
 msgstr ""
 
-#: build/admin.js:54
+#: build/admin.js:44
 msgid "Recipient"
 msgstr ""
 
-#: build/admin.js:54
+#: build/admin.js:44
 msgid "Failed"
 msgstr ""
 
 #. translators: %d: number of log entries.
-#: build/admin.js:55
+#: build/admin.js:45
 #, js-format
 msgid "Show all %d entries"
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "Clear log"
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "Delete all log entries?"
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "This cannot be undone."
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "The log could not be cleared."
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "Delete entries"
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "Mail server (SMTP host)"
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "Encryption"
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "Port"
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "Server requires login"
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "Username"
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "Password"
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "Sender address"
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "Sender name"
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "Use this sender for every email"
 msgstr ""
 
-#: build/admin.js:55
+#: build/admin.js:45
 msgid "Fixed in wp-config.php."
 msgstr ""
 
 #. translators: %s: field label.
-#: build/admin.js:56
+#: build/admin.js:46
 #, js-format
 msgid "%s (required)"
 msgstr ""
 
 #. translators: %s: host name of the mail server.
-#: build/admin.js:57
+#: build/admin.js:47
 #, js-format
 msgid "Emails from this website are sent through %s."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Emails are currently not sent through the mail server, because the settings below are incomplete or invalid. The web server sends them instead, which often ends in spam folders."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "No mail server is set. Emails are sent by the web server, which often ends in spam folders."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Saved. Now send a test email below to check that the mail server accepts it."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Saved, but the mail server cannot be used yet. Emails are sent by the web server until this is corrected:"
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Saved. No mail server is set, so emails are sent by the web server."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "The settings were not saved. Your entries are still here."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Some settings are fixed by the person who maintains this website (in the file wp-config.php). They are shown here but cannot be changed."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "The saved mail password can no longer be read. This can happen after the website was moved. Enter the password again in the “Password” field and save."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Mail server"
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Emails sent through a real mailbox arrive more reliably and are less likely to land in spam. You get these details from your email provider."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "For example smtp.example.com. Leave empty to send email without a mail server."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "STARTTLS (usually port 587)"
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "SSL/TLS (usually port 465)"
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "None (not recommended)"
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Follows the encryption. Change it only if your provider names a different port."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Almost every mail server does."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Often the full email address of the mailbox."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "A password is saved. Leave empty to keep it."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Stored encrypted in the database."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Note for developers: this website has no security keys in wp-config.php, so the key that protects the password lies in the same database. Add the keys, or set the password with the constant FORMWERK_SMTP_PASSWORD."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Sender"
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Use the address of the mailbox above. Other addresses are often rejected or marked as spam."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Shown to recipients, for example the name of your website."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Also replaces senders that other plugins set. Switch this on if their emails are rejected."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Save settings"
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "You have unsaved changes."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Copy details"
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Copied."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "No mail server is set. The test is sent by the web server, the way WordPress sends email by default."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Sends a short email with the saved settings, so you can check that it arrives."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "The mail server settings above cannot be used yet. Until they are corrected, the test is sent by the web server and does not check the mail server."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Send a test email"
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Save your changes first. The test always uses the saved settings."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "The test could not be started."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Send test to"
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Send test email"
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Conversation with the mail server (technical details)"
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Passwords and the email text are hidden. You can send these details to your email provider or developer."
 msgstr ""
 
-#: build/admin.js:57
+#: build/admin.js:47
 msgid "Conversation with the mail server"
 msgstr ""
 
 #. translators: %s: raw error message.
-#: build/admin.js:58
+#: build/admin.js:48
 #, js-format
 msgid "Error: %s"
 msgstr ""
 
-#: build/admin.js:58
+#: build/admin.js:48
 msgid "Leave without saving?"
 msgstr ""
 
-#: build/admin.js:58
+#: build/admin.js:48
 msgid "Your changes to this form have not been saved and will be lost."
 msgstr ""
 
-#: build/admin.js:58
+#: build/admin.js:48
 msgid "Discard changes"
 msgstr ""
 
-#: build/admin.js:58
+#: build/admin.js:48
 msgid "Keep editing"
 msgstr ""
 
-#: build/admin.js:58
+#: build/admin.js:48
 msgid "The settings could not be loaded."
 msgstr ""
 
-#: build/admin.js:58
+#: build/admin.js:48
 msgid "The log could not be loaded."
 msgstr ""
 
-#: build/admin.js:58
+#: build/admin.js:48
 msgid "Loading settings…"
 msgstr ""
 
