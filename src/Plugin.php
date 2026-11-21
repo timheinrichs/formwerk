@@ -18,6 +18,7 @@ use Formwerk\Frontend\Controller as FrontendController;
 use Formwerk\Frontend\Renderer;
 use Formwerk\I18n\Wpml;
 use Formwerk\Rest\FormsController;
+use Formwerk\Update\Updater;
 use Formwerk\Rest\SubmitController;
 use Formwerk\Submissions\Handler;
 use Formwerk\Submissions\Notifier;
@@ -35,7 +36,7 @@ use Formwerk\Smtp\TestMail;
  */
 final class Plugin {
 
-	public const VERSION = '0.3.1';
+	public const VERSION = '0.4.0-dev';
 
 	/**
 	 * Shared instance.
@@ -119,6 +120,9 @@ final class Plugin {
 
 		add_action( 'rest_api_init', array( new FormsController( $forms ), 'register_routes' ) );
 		add_action( 'rest_api_init', array( new SubmitController( $handler ), 'register_routes' ) );
+
+		// Also outside wp-admin: WordPress checks for updates in its scheduled tasks.
+		( new Updater() )->register();
 
 		if ( is_admin() ) {
 			( new FormsPage() )->register();
