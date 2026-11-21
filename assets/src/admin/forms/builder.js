@@ -139,20 +139,22 @@ export default function Builder( {
 		return () => window.removeEventListener( 'beforeunload', warn );
 	}, [ isDirty ] );
 
-	// The page heading says what is being done.
+	// The page heading says what is being done. While an existing form is still
+	// loading, its ID from the address already tells.
+	const isEditing = Boolean( form?.id || formId > 0 );
 	useEffect( () => {
 		const heading = document.querySelector( '.wrap > h1' );
 		if ( ! heading ) {
 			return undefined;
 		}
 		const original = heading.textContent;
-		heading.textContent = form?.id
+		heading.textContent = isEditing
 			? __( 'Edit form', 'formwerk' )
 			: __( 'Add form', 'formwerk' );
 		return () => {
 			heading.textContent = original;
 		};
-	}, [ form?.id ] );
+	}, [ isEditing ] );
 
 	if ( loadError ) {
 		return (
