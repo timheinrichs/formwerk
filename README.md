@@ -83,9 +83,9 @@ without the plugin.
    page, **In steps** shows one step at a time with **Next** and **Back**.
 2. **Fields.** Add fields with **Add field**. Select a field to change its label, help text and options.
    Move fields by dragging the handle, with the arrow buttons, or with the keyboard (Space, arrow keys, Space).
-   Two short fields can share a row: use the row button on the card or **Layout** in the field settings. Headings,
-   long text and consent always take a whole row, and on small screens the two fields are shown one below the other.
-   Moving a field takes it out of its row; it never joins a new one by itself.
+   **Width** in the field settings sets each field to 100, 50, 33 or 25 % of the form. Fields follow each other in
+   rows, and a field that no longer fits starts the next row, so two 50 % fields share a row, and so do a 33 % and
+   a 25 % one. In narrow forms every field takes the full width, in medium ones at most two share a row.
    **Preview** shows the form the way visitors see it.
    In a form in steps, each step is its own area with a title. Drag fields from one step into another, use the arrow
    buttons (at the edge of a step a field moves into the next one), or choose the **Step** in the field settings.

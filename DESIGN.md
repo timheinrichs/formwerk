@@ -79,9 +79,10 @@ damit iOS beim Fokus nicht zoomt.
 - **Backend, schmal:** Unter 782px rückt die Seitenspalte unter die Feldliste; die Auswahl eines Felds scrollt zu
   seinen Einstellungen. Tabellen werden zu gestapelten Karten mit Spaltennamen. Nichts scrollt horizontal, außer
   dem Mail-Protokoll in seinem eigenen, per Tastatur erreichbaren Rahmen.
-- **Frontend:** ein Raster mit zwei Spalten für die Feldbreiten „voll“ und „halb“. Unterhalb einer Breite des
-  Formular-Containers von 480px (Container Query) sind alle Felder voll breit. Reihenfolge immer Label, Hilfetext,
-  Feld, Fehlermeldung.
+- **Frontend:** ein Raster mit 12 Spalten; jedes Feld hat eine Breite von 100, 50, 33 oder 25 % und rückt in die
+  nächste Zeile, wenn es nicht mehr passt. Container Queries: unter 480px alle Felder voll breit, bis 600px höchstens
+  zwei pro Zeile, darüber die eingestellten Breiten. Im Builder dasselbe Raster für die Karten (dort ab 640px).
+  Reihenfolge immer Label, Hilfetext, Feld, Fehlermeldung.
 - **Abstände:** im Backend das 4px-Raster von WordPress (8, 12, 16, 20, 24, 32px), im Frontend in `em`
   (`--formwerk-gap: 1.25em` zwischen Feldern), damit sie mit der Schriftgröße des Themes mitwachsen.
 
