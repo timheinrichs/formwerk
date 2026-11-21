@@ -15,6 +15,7 @@ folder, and lets you build forms that cannot lose a submission.
 | SMTP delivery, test email, email log | Available since 0.1.0 |
 | Form builder, submissions, spam protection | Available since 0.2.0 |
 | Confirmation email, fields side by side, CSV export, retention, WPML | Available since 0.3.0 |
+| Forms in steps | Available since 0.5.0 |
 | Updates from within WordPress | Available since 0.4.0 |
 
 ## Requirements
@@ -78,13 +79,18 @@ without the plugin.
 ## Building a form
 
 1. Open **Formwerk → Forms** and choose **Add form**. Give it a name, for example "Course registration". Visitors do
-   not see it; emails show it where `{form}` is used.
+   not see it; emails show it where `{form}` is used. Choose the **form type**: **Simple** shows all fields on one
+   page, **In steps** shows one step at a time with **Next** and **Back**.
 2. **Fields.** Add fields with **Add field**. Select a field to change its label, help text and options.
    Move fields by dragging the handle, with the arrow buttons, or with the keyboard (Space, arrow keys, Space).
    Two short fields can share a row: use the row button on the card or **Layout** in the field settings. Headings,
    long text and consent always take a whole row, and on small screens the two fields are shown one below the other.
    Moving a field takes it out of its row; it never joins a new one by itself.
    **Preview** shows the form the way visitors see it.
+   In a form in steps, each step is its own area with a title. Drag fields from one step into another, use the arrow
+   buttons (at the edge of a step a field moves into the next one), or choose the **Step** in the field settings.
+   Removing a step moves its fields to the step next to it, and **Undo** brings it back. Switching back to **Simple**
+   keeps the steps, so nothing is lost when you try both.
 3. **Notification.** Enter who receives the submissions. The email text starts with `{all_fields}`, which lists
    every field with its label; keep it, and no answer can be missing from the email. Replies to the email go to the
    address the visitor entered.
@@ -94,7 +100,15 @@ without the plugin.
 6. **Save form**, then add the block **Formwerk form** to a page, or paste the shortcode `[formwerk id="…"]`.
 
 Saving is blocked while something would break the form: a missing name or recipient, a field without label or
-options, or a placeholder that matches no field. The message names each point and takes you to it.
+options, a step without a field to fill in, or a placeholder that matches no field. The message names each point and
+takes you to it.
+
+### Forms in steps
+
+Visitors see "Step 1 of 3: About you" and the fields of that step. **Next** asks the server whether the step is
+complete, with the same messages as on sending, and stays on the step until it is; nothing is stored yet. **Back**
+keeps everything entered. If sending finds a mistake in an earlier step, the form opens that step. Without
+JavaScript, all steps appear one below the other and the form is sent as one page.
 
 ### Placeholders
 

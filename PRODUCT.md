@@ -73,7 +73,9 @@ formwerk macht Datenverlust durch Fehlkonfiguration unmöglich, statt davor zu w
   2026-11-12).
 - **Begriffe:** „Formular“, „Feld“, „Einsendung“, „Benachrichtigung“ (Mail an die Website), „Bestätigung“ (Mail an
   die einsendende Person), „Platzhalter“.
-- **Nicht in v1:** Datei-Uploads, mehrseitige Formulare, bedingte Felder, Zahlungen.
+- **Formulare in Schritten** (seit 0.5.0): Weiter/Zurück mit Prüfung pro Schritt; ohne JS alle Schritte untereinander.
+  Bedingte Felder folgen in 0.6.0.
+- **Nicht in v1:** Datei-Uploads, Zahlungen.
 - **Lizenz:** GPL-2.0-or-later (bestätigt am 2026-11-12).
 - **Offen:** Welche Rolle neben Administrator*innen Formulare bearbeiten und Einsendungen sehen darf.
 

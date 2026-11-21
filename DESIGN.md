@@ -3,7 +3,7 @@ name: formwerk
 description: Formulare und SMTP für WordPress – im Backend ein Teil von WordPress, im Frontend ein Teil des Themes.
 ---
 
-<!-- Stand: v0.2.0 (2026-11-12). Die Werte unten sind die umgesetzten; bei Änderungen am Code hier nachziehen. -->
+<!-- Stand: v0.5.0 (2026-11-21). Die Werte unten sind die umgesetzten; bei Änderungen am Code hier nachziehen. -->
 
 # Design System: formwerk
 
@@ -70,7 +70,11 @@ damit iOS beim Fokus nicht zoomt.
   unter der Admin-Leiste stehen. Darunter der Name, dann Tabs (Felder, Benachrichtigung, Bestätigung, Meldungen
   und Spamschutz). Der Builder nutzt die volle Breite wie andere wp-admin-Seiten; nur Hilfetexte bleiben für die
   Lesbarkeit auf 80 Zeichen begrenzt. Im Tab Felder links die Feldliste, rechts eine mitlaufende Spalte,
-  umschaltbar zwischen Feldeinstellungen und Vorschau.
+  umschaltbar zwischen Feldeinstellungen und Vorschau. Unter dem Namen die Formularart (Einfach / In Schritten);
+  in Schritten ist jeder Schritt ein eigener grauer Bereich mit Titel, Feldliste und „Feld hinzufügen“.
+- **Frontend, Schritte:** ohne JS alle Schritte als `fieldset` mit `legend` untereinander. Mit JS eine Zeile
+  „Schritt 2 von 3: Kurs“ (bekommt beim Wechsel den Fokus), nur der aktuelle Schritt, Buttons „Zurück“ und
+  „Weiter“, auf dem letzten Schritt „Absenden“. Der Fortschrittsbalken gehört nur zum eigenen Stil.
 - **Backend, Listen und Einstellungen:** Standardseiten von wp-admin (`.wrap`, Seitentitel, `WP_List_Table`).
 - **Backend, schmal:** Unter 782px rückt die Seitenspalte unter die Feldliste; die Auswahl eines Felds scrollt zu
   seinen Einstellungen. Tabellen werden zu gestapelten Karten mit Spaltennamen. Nichts scrollt horizontal, außer

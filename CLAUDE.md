@@ -21,7 +21,9 @@ Vor jedem Commit müssen `composer test`, `composer lint`, `npm run lint:js` und
 - `assets/src/`: JS/SCSS-Quellen (React, `@wordpress/components`). `src/` gehört PHP, darum liegt JS hier.
   Einstiegspunkte stehen in `webpack.config.js`, Ausgabe nach `build/` (nicht versioniert).
 - `src/Forms/`: reine Logik (Schema, Validator, Placeholders, SpamGuard) plus FormRepository (Post-Type
-  `formwerk_form`, JSON in Post-Meta). `src/Submissions/`: Store (eigene Tabelle), Handler (einziger Weg jeder
+  `formwerk_form`, JSON in Post-Meta). Formularart in `settings.type` (`simple`/`steps`), Schritte in
+  `_formwerk_steps` (`{id, title}`), jedes Feld hat `step`; `Schema::normalize()` sortiert nach Schritten, Zeilen
+  gehen nie über Schrittgrenzen. Prüfung pro Schritt: `POST formwerk/v1/forms/{id}/check` (`Handler::check()`). `src/Submissions/`: Store (eigene Tabelle), Handler (einziger Weg jeder
   Einsendung: Token → Validierung → Spam → Dedupe → Limits → speichern → Benachrichtigung → Bestätigung mit
   eigener Link-Prüfung und Grenzen), Notifier, RateLimiter, Retention (Cron), Privacy, CsvExport.
   `src/I18n/Wpml.php`: String-Pakete pro Formular, ohne WPML ein No-op.
